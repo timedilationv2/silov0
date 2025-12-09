@@ -20,9 +20,9 @@ Experimental personal blog-style feed for AI news, notes, and quick posts. This 
 - Keep the existing HTML/CSS/JS; just swap the data source from `posts/posts.json` to the API endpoint when ready.
 
 ## Structure
-- `index.html` — static entrypoint with search + tag filter.
-- `styles.css` — dark, minimal styling tuned for cards.
-- `scripts/app.js` — fetches `posts/posts.json` and renders cards with search/filter.
+- `index.html` — static entrypoint with search + tag filter, tag cloud, and archive helpers.
+- `styles.css` — dark, minimal styling tuned for cards and browse helpers.
+- `scripts/app.js` — fetches `posts/posts.json` and renders cards with search/filter, tag counts, and month archive filtering.
 - `posts/posts.json` — editable list of entries (title, date, summary, tags).
 
 ## Log

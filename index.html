@@ -49,13 +49,9 @@
               <input id="search" class="search-input" type="search" placeholder="Search posts or tags…" aria-label="Search" />
               <select id="tag-filter" class="tag-filter" aria-label="Filter by tag">
                 <option value="">All topics</option>
-                <option value="models">Models</option>
-                <option value="infra">Infra</option>
-                <option value="safety">Safety</option>
-                <option value="policy">Policy</option>
-                <option value="agents">Agents</option>
               </select>
             </div>
+            <div id="active-filters" class="active-filters" aria-live="polite"></div>
             <div style="margin-top: 10px; font-size: 0.85rem; color: var(--accent);" id="result-count" aria-live="polite"></div>
           </div>
         </div>
@@ -73,6 +69,28 @@
     </header>
 
     <main>
+      <section class="panel meta-panel" aria-label="Browse helpers">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Navigate faster</p>
+            <h2>Tags, archive, and export</h2>
+            <p class="section-copy">Jump to posts by tag or month, or download everything as JSON.</p>
+          </div>
+          <a class="link" href="posts/posts.json" download>Download posts.json</a>
+        </div>
+
+        <div class="meta-grid">
+          <div>
+            <p class="eyebrow">Tags with counts</p>
+            <div id="tag-cloud" class="tag-cloud" aria-live="polite"></div>
+          </div>
+          <div>
+            <p class="eyebrow">Archive</p>
+            <ul id="archive-list" class="archive-list" aria-live="polite"></ul>
+          </div>
+        </div>
+      </section>
+
       <section id="cards" class="panel">
         <div class="section-head">
           <div>
