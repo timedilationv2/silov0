@@ -3,37 +3,117 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>silov0 · AI news log</title>
+    <title>silov0 · AI news micro-blog</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <div class="ambient"></div>
     <header class="page-header">
-      <div class="brand">
-        <span class="dot"></span>
-        <div>
-          <p class="eyebrow">AI news micro-blog</p>
-          <h1>silov0</h1>
+      <div class="top-bar">
+        <div class="brand">
+          <span class="dot" aria-hidden="true"></span>
+          <div>
+            <p class="eyebrow">AI news micro-blog</p>
+            <p class="brand-title">silov0</p>
+          </div>
         </div>
+        <nav class="nav-links" aria-label="Site">
+          <a href="#cards" class="ghost">Cards</a>
+          <a href="#table-view" class="ghost">Table rollup</a>
+          <a class="btn" href="https://github.com/timedilationv2/silov0" target="_blank" rel="noreferrer noopener">
+            GitHub repo
+          </a>
+        </nav>
       </div>
-      <p class="tagline">
-        Fast notes and links on models, infra, safety, and policy. Lightweight publishing over
-        polish.
-      </p>
-      <div class="controls">
-        <input id="search" type="search" placeholder="Search posts or tags…" aria-label="Search" />
-        <select id="tag-filter" aria-label="Filter by tag">
-          <option value="">All topics</option>
-        </select>
+
+      <div class="hero">
+        <div class="hero-copy">
+          <h1>silov0 · AI news micro-blog</h1>
+          <p class="tagline">Fast notes on models, infra, safety, and policy.</p>
+          <p class="tagline">Written by Arsalan Khan (technical writer / systems builder) as a static-first AI news log.</p>
+          <div class="write-about">
+            <p class="eyebrow">What shows up here:</p>
+            <ul class="topic-list">
+              <li>Quick takes on model releases and evals</li>
+            </ul>
+          </div>
+          <div class="controls">
+            <input id="search" type="search" placeholder="Search posts or tags…" aria-label="Search" />
+            <select id="tag-filter" aria-label="Filter by tag">
+              <option value="">All topics</option>
+            </select>
+            <div class="pill" id="result-count" aria-live="polite">0 posts</div>
+          </div>
+        </div>
+        <div class="hero-panel">
+          <p class="eyebrow">Static-first</p>
+          <p>
+            Edit <code>posts/posts.json</code>, commit, and redeploy. Keep entries tight; prioritize links and takeaways over
+            polish.
+          </p>
+          <a class="link" href="https://github.com/timedilationv2/silov0" target="_blank" rel="noreferrer noopener">
+            Open the GitHub repo →
+          </a>
+        </div>
       </div>
     </header>
 
     <main>
-      <section id="posts" class="post-list" aria-live="polite"></section>
-      <p id="empty-state" class="empty" hidden>No posts yet. Add entries in <code>posts/posts.json</code>.</p>
+      <section id="cards" class="panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Card view</p>
+            <h2>Latest drops</h2>
+          </div>
+          <div class="legend">
+            <span class="swatch"></span>
+            <small>Hover to lift + accent border</small>
+          </div>
+        </div>
+        <section id="posts" class="post-list" aria-live="polite"></section>
+        <p id="empty-state" class="empty" hidden>
+          No posts yet. Add entries in <code>posts/posts.json</code> and refresh.
+        </p>
+      </section>
+
+      <section id="table-view" class="panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Table rollup</p>
+            <h2>Skimmable timeline</h2>
+            <p class="section-copy">Roll over rows to see tags and dates at a glance.</p>
+          </div>
+          <a class="btn ghost" href="https://github.com/timedilationv2/silov0" target="_blank" rel="noreferrer noopener">
+            GitHub
+          </a>
+        </div>
+        <div class="table-wrap" aria-live="polite">
+          <table>
+            <caption class="sr-only">Posts table view</caption>
+            <thead>
+              <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Date</th>
+                <th scope="col">Tags</th>
+                <th scope="col">Summary</th>
+              </tr>
+            </thead>
+            <tbody id="post-rows"></tbody>
+          </table>
+        </div>
+        <p id="empty-table" class="empty" hidden>Nothing to show. Add posts to populate the table.</p>
+      </section>
     </main>
 
     <footer class="page-footer">
-      <small>Static-first. Edit <code>posts/posts.json</code> and redeploy.</small>
+      <div>
+        <p class="eyebrow">Stay current</p>
+        <p>Built for quick publishing. Filter by tag, skim in cards or table, and link back to the repo.</p>
+      </div>
+      <div class="footer-links">
+        <a class="link" href="https://github.com/timedilationv2/silov0" target="_blank" rel="noreferrer noopener">GitHub repo</a>
+        <a class="link" href="#cards">Back to top ↑</a>
+      </div>
     </footer>
 
     <script src="./scripts/app.js" type="module"></script>
