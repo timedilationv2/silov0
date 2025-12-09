@@ -1,5 +1,40 @@
 [
   {
+
+    "id": "agents-vs-guis",
+    "title": "Agents versus traditional GUIs",
+    "date": "2024-12-26",
+    "tags": ["agents", "ux"],
+    "summary": "Notes on when autonomous flows beat menu-driven UX, and the checkpoints needed to keep agent actions explainable."
+  },
+  {
+    "id": "oss-model-wins",
+    "title": "When open-source models actually win",
+    "date": "2024-12-24",
+    "tags": ["models", "open-source", "infra"],
+    "summary": "Benchmarks are noisy, but smaller OSS stacks win when latency, control, and cost matter more than SOTA headline scores."
+  },
+  {
+    "id": "safety-vs-deploy",
+    "title": "Safety docs versus deployment reality",
+    "date": "2024-12-22",
+    "tags": ["safety", "policy"],
+    "summary": "Release notes promise red-teaming and eval gates, yet production launches still hinge on rollout scripts and alerting discipline."
+  },
+  {
+    "id": "eval-fatigue",
+    "title": "Eval fatigue is a product problem",
+    "date": "2024-12-20",
+    "tags": ["evals", "product"],
+    "summary": "Teams drown in dashboards; what they need are opinionated thresholds, auto-triage, and fewer bespoke scorecards."
+  },
+  {
+    "id": "static-first",
+    "title": "Why this site is static-first",
+    "date": "2024-12-18",
+    "tags": ["meta", "architecture"],
+    "summary": "Flat files, zero runtime, and cheap hosting keep the publishing loop tight while still leaving room for richer experiments later."
+=======
     "id": "deploying-400k-context",
     "title": "Deploying 400K context into prod",
     "date": "2025-01-06",
@@ -33,5 +68,6 @@
     "date": "2025-01-02",
     "summary": "Weekly OSS sweep: small edge-friendly models, a tokenizer update cutting memory, and cleaner tracing from a new serving fork.",
     "tags": ["models", "open-source", "community"]
+
   }
 ]
