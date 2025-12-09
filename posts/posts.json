@@ -1,67 +1,37 @@
 [
-
-    "id": "agents-vs-guis",
-    "title": "Agents versus traditional GUIs",
-    "date": "2024-12-26",
-    "tags": ["agents", "ux"],
-    "summary": "Notes on when autonomous flows beat menu-driven UX, and the checkpoints needed to keep agent actions explainable."
-  },
   {
-    "id": "oss-model-wins",
-    "title": "When open-source models actually win",
-    "date": "2024-12-24",
-    "tags": ["models", "open-source", "infra"],
-    "summary": "Benchmarks are noisy, but smaller OSS stacks win when latency, control, and cost matter more than SOTA headline scores."
-  },
-  {
-    "id": "safety-vs-deploy",
-    "title": "Safety docs versus deployment reality",
-    "date": "2024-12-22",
-    "tags": ["safety", "policy"],
-    "summary": "Release notes promise red-teaming and eval gates, yet production launches still hinge on rollout scripts and alerting discipline."
-  },
-  {
-    "id": "eval-fatigue",
-    "title": "Eval fatigue is a product problem",
-    "date": "2024-12-20",
-    "tags": ["evals", "product"],
-    "summary": "Teams drown in dashboards; what they need are opinionated thresholds, auto-triage, and fewer bespoke scorecards."
-  },
-  {
-    "id": "static-first",
-    "title": "Why this site is static-first",
-    "date": "2024-12-18",
-    "tags": ["meta", "architecture"],
-    "summary": "Flat files, zero runtime, and cheap hosting keep the publishing loop tight while still leaving room for richer experiments later."
-
+    "id": "deploying-400k-context",
     "title": "Deploying 400K context into prod",
     "date": "2025-01-06",
-    "summary": "Notes on rolling out extra-long context for retrieval-heavy features without blowing up latency or token budgets.",
+    "summary": "Rolled out extra-long context for retrieval-heavy features without blowing up latency budgets; shared the rollout gates and metrics to watch.",
     "tags": ["models", "infra", "product"]
   },
   {
+    "id": "agentic-support-handoffs",
     "title": "Agentic workflows in customer support",
     "date": "2025-01-05",
-    "summary": "Tiny experiment wiring agents into ticket triage: when to let them summarize, when to let humans take over, and what metrics actually moved.",
+    "summary": "Experimented with agent assist on ticket triage: where summaries help, when humans step back in, and which handoff metrics moved.",
     "tags": ["agents", "product", "ops"]
   },
   {
+    "id": "inference-cost-checkin",
     "title": "Inference cost curve, January check-in",
     "date": "2025-01-04",
-    "summary": "Quick benchmark sweep: GPU rentals down 8% MoM, context window premiums stable, and vLLM optimizations still the cheapest win for most stacks.",
+    "summary": "Benchmark sweep showed GPU rentals drifting down 8% MoM and context premiums flattening; vLLM optimizations still the cheapest win.",
     "tags": ["infra", "pricing", "ops"]
   },
   {
+    "id": "safety-evals-that-stick",
     "title": "Safety evals that actually stuck",
     "date": "2025-01-03",
-    "summary": "Running lightweight refusal and jailbreak checks before launch shaved off support escalations; sharing the harness and the thresholds that mattered.",
+    "summary": "Lightweight refusal and jailbreak checks before launch shaved off escalations; captured the harness and thresholds that mattered most.",
     "tags": ["safety", "evals", "policy"]
   },
   {
+    "id": "oss-release-radar",
     "title": "Open-source release radar",
     "date": "2025-01-02",
-    "summary": "Week’s OSS notes: solid small models for edge, a tokenizer update that halves memory in one workload, and cleaner tracing from the new serving fork.",
+    "summary": "Weekly OSS sweep: small edge-friendly models, a tokenizer update cutting memory, and cleaner tracing from a new serving fork.",
     "tags": ["models", "open-source", "community"]
-
   }
 ]
