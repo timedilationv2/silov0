@@ -18,20 +18,18 @@ async function loadPosts() {
 }
 
 function renderTags(tags) {
-  return tags.map((tag) => `<span class="tag">${tag}</span>`).join("")
+  return tags.map((tag) => `<span class="post-tag">${tag}</span>`).join("")
 }
 
 function renderPost(post) {
   const { title, date, summary, tags } = post
+  const formattedDate = new Date(date).toLocaleDateString()
   return `
-    <article class="post">
-      <div class="meta">
-        <span>${new Date(date).toLocaleDateString()}</span>
-        <span>${tags.slice(0, 2).join(" · ")}</span>
-      </div>
-      <h3>${title}</h3>
-      <p>${summary}</p>
-      <div class="tags">${renderTags(tags)}</div>
+    <article class="post-card">
+      <p class="post-meta">${formattedDate} · ${tags.slice(0, 3).join(" · ")}</p>
+      <h3 class="post-title">${title}</h3>
+      <p class="post-summary">${summary}</p>
+      <div class="post-tags">${renderTags(tags)}</div>
     </article>
   `
 }
@@ -42,6 +40,7 @@ function populateTags(posts) {
   Array.from(unique)
     .sort()
     .forEach((tag) => {
+      if (tagFilter.querySelector(`option[value="${tag}"]`)) return
       const opt = document.createElement("option")
       opt.value = tag
       opt.textContent = tag
@@ -66,8 +65,10 @@ function render(posts) {
   if (!posts.length) {
     postsContainer.innerHTML = ""
     emptyState.hidden = false
+    emptyState.textContent = "No posts yet. Add entries in posts/posts.json."
     return
   }
+
   emptyState.hidden = true
   postsContainer.innerHTML = posts.map(renderPost).join("")
 }

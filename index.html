@@ -3,38 +3,53 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>silov0 · AI news log</title>
+    <title>silov0 · AI news micro-blog</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <header class="page-header">
-      <div class="brand">
-        <span class="dot"></span>
-        <div>
-          <p class="eyebrow">AI news micro-blog</p>
-          <h1>silov0</h1>
+    <main class="layout">
+      <header class="hero">
+        <h1>silov0 · AI news micro-blog</h1>
+        <p class="hero-tagline">
+          Fast notes on models, infra, safety, and policy — built as a static-first experiment.
+        </p>
+        <p class="hero-meta">
+          Lightweight publishing over polish. Short takes, fast updates, no clickbait.
+        </p>
+      </header>
+
+      <section class="controls">
+        <div class="controls-row">
+          <input
+            id="search"
+            class="search-input"
+            type="search"
+            placeholder="Search posts by title or summary…"
+            aria-label="Search posts"
+          />
+          <select id="tag-filter" class="tag-filter" aria-label="Filter by topic">
+            <option value="">All topics</option>
+            <option value="models">Models</option>
+            <option value="infra">Infra</option>
+            <option value="safety">Safety</option>
+            <option value="policy">Policy</option>
+            <option value="agents">Agents</option>
+            <option value="ops">Ops</option>
+          </select>
         </div>
-      </div>
-      <p class="tagline">
-        Fast notes and links on models, infra, safety, and policy. Lightweight publishing over
-        polish.
-      </p>
-      <div class="controls">
-        <input id="search" type="search" placeholder="Search posts or tags…" aria-label="Search" />
-        <select id="tag-filter" aria-label="Filter by tag">
-          <option value="">All topics</option>
-        </select>
-      </div>
-    </header>
+      </section>
 
-    <main>
-      <section id="posts" class="post-list" aria-live="polite"></section>
-      <p id="empty-state" class="empty" hidden>No posts yet. Add entries in <code>posts/posts.json</code>.</p>
+      <section id="posts" class="posts" aria-live="polite">
+        <p id="empty-state" class="empty-state">Loading posts…</p>
+      </section>
+
+      <footer class="footer">
+        <p>
+          Built by <a href="https://github.com/timedilationv2">timedilationv2</a> ·
+          <a href="https://github.com/timedilationv2/silov0">view source on GitHub</a>
+        </p>
+      </footer>
     </main>
-
-    <footer class="page-footer">
-      <small>Static-first. Edit <code>posts/posts.json</code> and redeploy.</small>
-    </footer>
 
     <script src="./scripts/app.js" type="module"></script>
   </body>
