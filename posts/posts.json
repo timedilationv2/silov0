@@ -1,0 +1,20 @@
+[
+  {
+    "title": "Setting up the signal chain",
+    "date": "2024-12-24",
+    "summary": "Sketching what belongs here: weekly AI news drops, release notes worth reading, and a personal take on why they matter.",
+    "tags": ["meta", "roadmap", "news"]
+  },
+  {
+    "title": "Model releases worth a skim",
+    "date": "2024-12-23",
+    "summary": "Shortlist of fresh models and inference updates to watch this week: faster context windows, more efficient MoE serving, and cheaper GPU-friendly configs.",
+    "tags": ["models", "infra"]
+  },
+  {
+    "title": "Safety & policy pulse",
+    "date": "2024-12-22",
+    "summary": "Recent alignment papers, eval releases, and policy statements that will likely shape how providers gate APIs in early 2025.",
+    "tags": ["safety", "policy", "research"]
+  }
+]
