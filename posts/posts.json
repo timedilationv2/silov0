@@ -1,5 +1,5 @@
 [
-  {
+
     "id": "agents-vs-guis",
     "title": "Agents versus traditional GUIs",
     "date": "2024-12-26",
@@ -33,5 +33,35 @@
     "date": "2024-12-18",
     "tags": ["meta", "architecture"],
     "summary": "Flat files, zero runtime, and cheap hosting keep the publishing loop tight while still leaving room for richer experiments later."
+
+    "title": "Deploying 400K context into prod",
+    "date": "2025-01-06",
+    "summary": "Notes on rolling out extra-long context for retrieval-heavy features without blowing up latency or token budgets.",
+    "tags": ["models", "infra", "product"]
+  },
+  {
+    "title": "Agentic workflows in customer support",
+    "date": "2025-01-05",
+    "summary": "Tiny experiment wiring agents into ticket triage: when to let them summarize, when to let humans take over, and what metrics actually moved.",
+    "tags": ["agents", "product", "ops"]
+  },
+  {
+    "title": "Inference cost curve, January check-in",
+    "date": "2025-01-04",
+    "summary": "Quick benchmark sweep: GPU rentals down 8% MoM, context window premiums stable, and vLLM optimizations still the cheapest win for most stacks.",
+    "tags": ["infra", "pricing", "ops"]
+  },
+  {
+    "title": "Safety evals that actually stuck",
+    "date": "2025-01-03",
+    "summary": "Running lightweight refusal and jailbreak checks before launch shaved off support escalations; sharing the harness and the thresholds that mattered.",
+    "tags": ["safety", "evals", "policy"]
+  },
+  {
+    "title": "Open-source release radar",
+    "date": "2025-01-02",
+    "summary": "Week’s OSS notes: solid small models for edge, a tokenizer update that halves memory in one workload, and cleaner tracing from the new serving fork.",
+    "tags": ["models", "open-source", "community"]
+
   }
 ]

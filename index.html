@@ -7,19 +7,21 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+
     <div class="ambient"></div>
+    
     <header class="page-header">
       <div class="top-bar">
-        <div class="brand">
+        <div class="brand-title">
           <span class="dot" aria-hidden="true"></span>
           <div>
             <p class="eyebrow">AI news micro-blog</p>
-            <p class="brand-title">silov0</p>
+            <span>silov0</span>
           </div>
         </div>
         <nav class="nav-links" aria-label="Site">
           <a href="#cards" class="ghost">Cards</a>
-          <a href="#table-view" class="ghost">Table rollup</a>
+          <a href="#table-view" class="ghost">Table view</a>
           <a class="btn" href="https://github.com/timedilationv2/silov0" target="_blank" rel="noreferrer noopener">
             GitHub repo
           </a>
@@ -29,29 +31,39 @@
       <div class="hero">
         <div class="hero-copy">
           <h1>silov0 · AI news micro-blog</h1>
-          <p class="tagline">Fast notes on models, infra, safety, and policy.</p>
-          <p class="tagline">Written by Arsalan Khan (technical writer / systems builder) as a static-first AI news log.</p>
+          <p class="hero-meta">Fast notes on models, infra, safety, and policy.</p>
+          <p class="hero-meta">Written by Arsalan Khan as a static-first AI news log.</p>
+          
           <div class="write-about">
             <p class="eyebrow">What shows up here:</p>
             <ul class="topic-list">
               <li>Quick takes on model releases and evals</li>
+              <li>Infrastructure updates and safety notes</li>
             </ul>
           </div>
+          
           <div class="controls">
-            <input id="search" type="search" placeholder="Search posts or tags…" aria-label="Search" />
-            <select id="tag-filter" aria-label="Filter by tag">
-              <option value="">All topics</option>
-            </select>
-            <div class="pill" id="result-count" aria-live="polite">0 posts</div>
+            <div class="controls-row">
+              <input id="search" class="search-input" type="search" placeholder="Search posts or tags…" aria-label="Search" />
+              <select id="tag-filter" class="tag-filter" aria-label="Filter by tag">
+                <option value="">All topics</option>
+                <option value="models">Models</option>
+                <option value="infra">Infra</option>
+                <option value="safety">Safety</option>
+                <option value="policy">Policy</option>
+                <option value="agents">Agents</option>
+              </select>
+            </div>
+            <div style="margin-top: 10px; font-size: 0.85rem; color: var(--accent);" id="result-count" aria-live="polite"></div>
           </div>
         </div>
+        
         <div class="hero-panel">
           <p class="eyebrow">Static-first</p>
-          <p>
-            Edit <code>posts/posts.json</code>, commit, and redeploy. Keep entries tight; prioritize links and takeaways over
-            polish.
+          <p style="font-size: 0.9rem; line-height: 1.5; color: var(--text);">
+            Edit <code>posts/posts.json</code>, commit, and redeploy. Keep entries tight; prioritize links and takeaways over polish.
           </p>
-          <a class="link" href="https://github.com/timedilationv2/silov0" target="_blank" rel="noreferrer noopener">
+          <a class="link" href="https://github.com/timedilationv2/silov0" target="_blank" rel="noreferrer noopener" style="margin-top: auto;">
             Open the GitHub repo →
           </a>
         </div>
@@ -70,8 +82,10 @@
             <small>Hover to lift + accent border</small>
           </div>
         </div>
-        <section id="posts" class="post-list" aria-live="polite"></section>
-        <p id="empty-state" class="empty" hidden>
+        
+        <section id="posts" class="posts" aria-live="polite"></section>
+        
+        <p id="empty-state" class="empty-state" hidden>
           No posts yet. Add entries in <code>posts/posts.json</code> and refresh.
         </p>
       </section>
@@ -83,32 +97,33 @@
             <h2>Skimmable timeline</h2>
             <p class="section-copy">Roll over rows to see tags and dates at a glance.</p>
           </div>
-          <a class="btn ghost" href="https://github.com/timedilationv2/silov0" target="_blank" rel="noreferrer noopener">
-            GitHub
+          <a class="btn ghost" href="#cards">
+            Back to Cards ↑
           </a>
         </div>
+        
         <div class="table-wrap" aria-live="polite">
           <table>
             <caption class="sr-only">Posts table view</caption>
             <thead>
               <tr>
-                <th scope="col">Title</th>
-                <th scope="col">Date</th>
-                <th scope="col">Tags</th>
+                <th scope="col" style="width: 25%;">Title</th>
+                <th scope="col" style="width: 15%;">Date</th>
+                <th scope="col" style="width: 20%;">Tags</th>
                 <th scope="col">Summary</th>
               </tr>
             </thead>
             <tbody id="post-rows"></tbody>
           </table>
         </div>
-        <p id="empty-table" class="empty" hidden>Nothing to show. Add posts to populate the table.</p>
+        <p id="empty-table" class="empty-state" hidden>Nothing to show. Add posts to populate the table.</p>
       </section>
     </main>
 
     <footer class="page-footer">
       <div>
         <p class="eyebrow">Stay current</p>
-        <p>Built for quick publishing. Filter by tag, skim in cards or table, and link back to the repo.</p>
+        <p>Built for quick publishing. Filter by tag, skim in cards or table.</p>
       </div>
       <div class="footer-links">
         <a class="link" href="https://github.com/timedilationv2/silov0" target="_blank" rel="noreferrer noopener">GitHub repo</a>
