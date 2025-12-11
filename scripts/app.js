@@ -6,7 +6,8 @@ const searchInput = document.getElementById("search")
 const tagFilter = document.getElementById("tag-filter")
 const resultCount = document.getElementById("result-count")
 
-let posts = []
+let allPosts = []
+let currentFiltered = []
 
 function formatDate(dateString) {
   // Use UTC so dates from JSON don't shift across timezones
@@ -76,15 +77,15 @@ function updateEmptyStates(filtered) {
 function updateResultCount(filtered) {
   if (!resultCount) return
 
-  if (!posts.length) {
+  if (!allPosts.length) {
     resultCount.textContent = ""
     return
   }
 
-  if (filtered.length === posts.length) {
-    resultCount.textContent = `${posts.length} posts`
+  if (filtered.length === allPosts.length) {
+    resultCount.textContent = `${allPosts.length} posts`
   } else {
-    resultCount.textContent = `Showing ${filtered.length} of ${posts.length} posts`
+    resultCount.textContent = `Showing ${filtered.length} of ${allPosts.length} posts`
   }
 }
 
@@ -92,7 +93,7 @@ function applyFilters() {
   const query = (searchInput?.value || "").trim().toLowerCase()
   const selectedTag = tagFilter?.value || ""
 
-  const filtered = posts.filter((post) => {
+  const filtered = allPosts.filter((post) => {
     const tags = Array.isArray(post.tags) ? post.tags : []
     const matchesTag = selectedTag ? tags.includes(selectedTag) : true
 
@@ -103,6 +104,7 @@ function applyFilters() {
     return matchesTag && matchesSearch
   })
 
+  currentFiltered = filtered
   renderCards(filtered)
   renderTable(filtered)
   updateEmptyStates(filtered)
@@ -114,7 +116,7 @@ function buildTagFilterOptions() {
 
   const tagCounts = new Map()
 
-  posts.forEach((post) => {
+  allPosts.forEach((post) => {
     const tags = Array.isArray(post.tags) ? post.tags : []
     tags.forEach((tag) => {
       tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1)
@@ -157,8 +159,58 @@ async function fetchPosts() {
   }
 }
 
+function buildMarkdownDigest(posts) {
+  if (!posts || posts.length === 0) {
+    return "# silov0 digest\n\n_No posts match your filters._\n"
+  }
+
+  const header =
+    `# silov0 digest\n\n` +
+    `Generated from ${posts.length} post` +
+    (posts.length === 1 ? "" : "s") +
+    ".\n\n"
+
+  const body = posts
+    .map((p) => {
+      const date = formatDate(p.date)
+      const tags =
+        p.tags && p.tags.length ? ` _(tags: ${p.tags.join(", ")})_` : ""
+      const link = p.url ? `\n[Source](${p.url})` : ""
+      const summary = p.summary || ""
+      return `## ${p.title}\n${date}${tags}\n\n${summary}${link}\n`
+    })
+    .join("\n")
+
+  return header + body
+}
+
+async function exportDigest() {
+  const posts = currentFiltered && currentFiltered.length
+    ? currentFiltered
+    : allPosts
+
+  const markdown = buildMarkdownDigest(posts)
+
+  try {
+    await navigator.clipboard.writeText(markdown)
+    if (resultCount) {
+      const count = posts.length
+      resultCount.textContent =
+        `Copied digest for ${count} post` +
+        (count === 1 ? "" : "s") +
+        " to clipboard."
+    }
+  } catch (err) {
+    console.error("Clipboard write failed", err)
+    if (resultCount) {
+      resultCount.textContent =
+        "Could not copy digest – clipboard permissions denied."
+    }
+  }
+}
+
 async function init() {
-  posts = await fetchPosts()
+  allPosts = await fetchPosts()
 
   buildTagFilterOptions()
   applyFilters()
@@ -168,6 +220,10 @@ async function init() {
   }
   if (tagFilter) {
     tagFilter.addEventListener("change", applyFilters)
+  }
+  const exportButton = document.getElementById("export-markdown")
+  if (exportButton) {
+    exportButton.addEventListener("click", exportDigest)
   }
 }
 

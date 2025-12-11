@@ -1,3 +1,6 @@
+
+export * from "./postsStore.js"
+
 export {
   addPost,
   buildTagIndex,
@@ -9,5 +12,5 @@ export {
   savePosts,
   sortPosts,
   DEFAULT_POSTS_PATH,
-} from "./postsStore.js"
+} from "
 export { createContentService, createApiAdapter } from "./service.js"
