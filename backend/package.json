@@ -1,0 +1,24 @@
+{
+  "name": "silov0-backend",
+  "version": "0.1.0",
+  "description": "Backend helpers for the silov0 content feed (posts ingestion, filtering, export).",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./service": "./src/service.js"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "silov0",
+    "content",
+    "blog",
+    "api"
+  ],
+  "license": "MIT"
+}
