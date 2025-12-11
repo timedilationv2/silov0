@@ -1,0 +1,30 @@
+{
+  "name": "@timedilationv2/silov0-backend",
+  "version": "0.1.0",
+  "description": "Content utilities and helpers for the silov0 AI news micro-blog.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "bin": {
+    "silov0-digest": "./bin/silov0-digest.js"
+  },
+  "scripts": {
+    "dev": "node src/server.js",
+    "test": "node --test"
+  },
+  "keywords": [
+    "blog",
+    "ai",
+    "content",
+    "silov0"
+  ],
+  "author": "Arsalan Khan",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "express": "^4.21.0"
+  }
+}

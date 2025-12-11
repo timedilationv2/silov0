@@ -24,6 +24,29 @@ Experimental personal blog-style feed for AI news, notes, and quick posts. This 
 - `styles.css` — dark, minimal styling tuned for cards and browse helpers.
 - `scripts/app.js` — fetches `posts/posts.json` and renders cards with search/filter, tag counts, and month archive filtering.
 - `posts/posts.json` — editable list of entries (title, date, summary, tags).
+- `backend/` — publishable Node package with helpers for ingesting, validating, filtering, and exporting posts. The service wrapper keeps storage pluggable so the same logic can back a future API, CLI, or shared library.
+
+## Backend package
+The `backend` directory is a tiny, publishable package meant to keep post operations reusable across multiple repos (API service, static site generator, or a shared client library).
+
+- Install dependencies and run tests: `cd backend && npm test` (Node 18+).
+- Library entrypoint: `import { createContentService } from "silov0-backend"`.
+- Example Express wiring:
+  ```js
+  import express from "express"
+  import bodyParser from "body-parser"
+  import { createContentService, createApiAdapter } from "silov0-backend"
+
+  const app = express()
+  const service = createContentService()
+  const api = createApiAdapter(service)
+  app.use(bodyParser.json())
+  app.get("/api/posts", api.list)
+  app.get("/api/posts/filter", api.filter)
+  app.post("/api/posts", api.add)
+  ```
+
+This keeps the content model consistent while making it trivial to lift the same logic into API, worker, or library contexts later.
 
 ## Log
 - 2024-12-24: Repo scaffolded; defined scope for AI news micro-blog; added static layout with search/tag filter and sample posts.***
