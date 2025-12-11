@@ -1,19 +1,27 @@
+
 # @timedilationv2/silov0-backend
+
+# silov0-backend
+
 
 Backend helpers for the **silov0** AI news micro-blog.
 
 - Stores posts in `../posts/posts.json`
 - Provides pure functions for loading, filtering, and tagging
 - Exposes an optional Express server for `/api/posts`
+
 - Ships a small `silov0-digest` CLI to print a Markdown digest from `posts.json`
 
-## Local usage
+
+
+
 
 ```bash
 cd backend
 npm install
 npm run dev   # Starts Express on http://localhost:3001
 ```
+
 
 CLI:
 
@@ -22,6 +30,7 @@ cd backend
 npm install
 npx silov0-digest
 ```
+
 
 Routes:
 - GET /api/posts – full list

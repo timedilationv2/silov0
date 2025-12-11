@@ -79,9 +79,12 @@
           </select>
         </label>
 
+
         <button id="export-markdown" class="export-button">
           Copy digest as Markdown
         </button>
+
+
 
         <span id="result-count" class="result-count"></span>
       </section>
@@ -92,6 +95,7 @@
           <h2>Latest drops</h2>
           <p>Hover to lift + accent border.</p>
         </header>
+
 
         <p id="empty-state" class="empty-state">
           No posts yet. Add entries in <code>posts/posts.json</code> and
@@ -133,6 +137,49 @@
         <p class="back-link">
           <a href="#cards">Back to Cards ↑</a>
         </p>
+
+
+        <p id="empty-state" class="empty-state">
+          No posts yet. Add entries in <code>posts/posts.json</code> and
+          refresh.
+        </p>
+
+        <div id="posts" class="post-grid">
+          <!-- JS will render cards here -->
+        </div>
+      </section>
+
+      <!-- Table view -->
+      <section id="table" class="view-section">
+        <header class="section-header">
+          <h2>Skimmable timeline</h2>
+          <p>Roll over rows to see tags and dates at a glance.</p>
+        </header>
+
+        <p id="empty-table" class="empty-state">
+          Nothing to show. Add posts to populate the table.
+        </p>
+
+        <div class="table-wrapper">
+          <table class="posts-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Tags</th>
+                <th>Summary</th>
+              </tr>
+            </thead>
+            <tbody id="post-rows">
+              <!-- JS will render rows here -->
+            </tbody>
+          </table>
+        </div>
+
+        <p class="back-link">
+          <a href="#cards">Back to Cards ↑</a>
+        </p>
+
       </section>
     </main>
 
