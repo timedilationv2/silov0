@@ -48,5 +48,27 @@ The `backend` directory is a tiny, publishable package meant to keep post operat
 
 This keeps the content model consistent while making it trivial to lift the same logic into API, worker, or library contexts later.
 
+## How to add posts
+Posts live in `posts/posts.json`. Each entry should follow this shape:
+
+```json
+{
+  "id": "2024-05-20-new-model",
+  "title": "Concise headline",
+  "date": "2024-05-20",
+  "summary": "One to three sentences describing the update.",
+  "tags": ["models", "latency"],
+  "url": "https://example.com/source-link"
+}
+```
+
+Guidelines:
+- `id` should be `YYYY-MM-DD-slug` so ordering is predictable.
+- Add new posts to the top of the array to show them first.
+- `tags` is optional but helps search and filtering.
+- `url` is optional; when present, it is linked in the Markdown digest.
+
+When editing the JSON, keep it as a valid array. Reload the site to see the cards and table update automatically from the file.
+
 ## Log
 - 2024-12-24: Repo scaffolded; defined scope for AI news micro-blog; added static layout with search/tag filter and sample posts.***
