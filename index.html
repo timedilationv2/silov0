@@ -1,8 +1,9 @@
 <!DOCTYPE html>
+<!-- Docusaurus-style docs layout rewrite · 2024-06-11 -->
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>silov0 · AI news micro-blog</title>
+    <title>silov0 · API &amp; Docs</title>
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover"
@@ -11,181 +12,274 @@
   </head>
   <body>
     <header class="site-header">
-      <nav class="top-nav">
-        <a href="#cards">Cards</a>
-        <a href="#table">Table view</a>
-        <a href="https://github.com/timedilationv2/silov0" target="_blank"
-          >GitHub repo</a
-        >
+      <div class="brand-stack">
+        <div class="logo-chip">s</div>
+        <div class="brand-text">
+          <span class="brand-name">silov0</span>
+          <span class="brand-tagline">AI news &amp; micro APIs</span>
+        </div>
+      </div>
+      <nav class="header-links">
+        <a href="#overview">Docs</a>
+        <a href="#endpoints">API</a>
+        <a href="#live-demo">Live demo</a>
+        <a href="https://github.com/timedilationv2/silov0" target="_blank" rel="noreferrer noopener">GitHub</a>
       </nav>
-
-      <div class="hero">
-        <h1>silov0 · AI news micro-blog &amp; portfolio slice</h1>
-        <p>
-          I'm Arsalan Khan, shipping applied AI products and writing fast notes
-          along the way.
-        </p>
-        <p>
-          This is a static, backend-free feed to show how I'd publish AI news,
-          launches, and takeaways.
-        </p>
-
-        <section class="hero-topics">
-          <h2>What I write about</h2>
-          <ul>
-            <li>Applied LLM product notes and release retros</li>
-            <li>Infra tuning: latency budgets, cost curves, rollout habits</li>
-            <li>Safety, policy, and evaluation guardrails that actually stick</li>
-            <li>Open-source ecosystem shifts worth tracking</li>
-          </ul>
-        </section>
-
-        <section class="hero-meta">
-          <h2>Static-first</h2>
-          <p>
-            Edit <code>posts/posts.json</code>, commit, and redeploy. Keep
-            entries tight; prioritize links and takeaways over polish.
-          </p>
-          <p>
-            <a
-              href="https://github.com/timedilationv2/silov0"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Open the GitHub repo →</a
-            >
-          </p>
-        </section>
+      <div class="header-meta">
+        <span class="pill">Docs</span>
+        <span class="muted">Last updated Jun 2024</span>
       </div>
     </header>
 
-    <main class="layout">
-      <!-- Controls -->
-      <section class="controls">
-        <label class="search-label">
-          <span>Search</span>
-          <input
-            id="search"
-            type="search"
-            placeholder="Search titles, summaries, tags…"
-            autocomplete="off"
-          />
-        </label>
-
-        <label class="filter-label">
-          <span>Tag</span>
-          <select id="tag-filter">
-            <option value="">All topics</option>
-            <!-- JS will inject tag options here -->
-          </select>
-        </label>
-
-
-        <button id="export-markdown" class="export-button">
-          Copy digest as Markdown
-        </button>
-
-
-
-        <span id="result-count" class="result-count"></span>
-      </section>
-
-      <!-- Cards view -->
-      <section id="cards" class="view-section">
-        <header class="section-header">
-          <h2>Latest drops</h2>
-          <p>Hover to lift + accent border.</p>
-        </header>
-
-
-        <p id="empty-state" class="empty-state">
-          No posts yet. Add entries in <code>posts/posts.json</code> and
-          refresh.
-        </p>
-
-        <div id="posts" class="post-grid">
-          <!-- JS will render cards here -->
+    <div class="doc-layout">
+      <nav class="doc-sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-heading">Guide</div>
+          <a href="#overview">Overview</a>
+          <a href="#authentication">Authentication</a>
+          <a href="#filtering">Filtering</a>
+          <a href="#changelog">Changelog</a>
         </div>
-      </section>
-
-      <!-- Table view -->
-      <section id="table" class="view-section">
-        <header class="section-header">
-          <h2>Skimmable timeline</h2>
-          <p>Roll over rows to see tags and dates at a glance.</p>
-        </header>
-
-        <p id="empty-table" class="empty-state">
-          Nothing to show. Add posts to populate the table.
-        </p>
-
-        <div class="table-wrapper">
-          <table class="posts-table">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Date</th>
-                <th>Tags</th>
-                <th>Summary</th>
-              </tr>
-            </thead>
-            <tbody id="post-rows">
-              <!-- JS will render rows here -->
-            </tbody>
-          </table>
+        <div class="sidebar-section">
+          <div class="sidebar-heading">API</div>
+          <a href="#endpoints">Resources</a>
+          <a href="#endpoint-posts">GET /posts</a>
+          <a href="#endpoint-posts-id">GET /posts/{id}</a>
+          <a href="#endpoint-tags">GET /tags</a>
         </div>
-
-        <p class="back-link">
-          <a href="#cards">Back to Cards ↑</a>
-        </p>
-
-
-        <p id="empty-state" class="empty-state">
-          No posts yet. Add entries in <code>posts/posts.json</code> and
-          refresh.
-        </p>
-
-        <div id="posts" class="post-grid">
-          <!-- JS will render cards here -->
+        <div class="sidebar-section">
+          <div class="sidebar-heading">Hands-on</div>
+          <a href="#live-demo">Live demo</a>
         </div>
-      </section>
+      </nav>
 
-      <!-- Table view -->
-      <section id="table" class="view-section">
-        <header class="section-header">
-          <h2>Skimmable timeline</h2>
-          <p>Roll over rows to see tags and dates at a glance.</p>
-        </header>
+      <main class="doc-main">
+        <article class="doc-article">
+          <div class="doc-hero">
+            <div>
+              <p class="eyebrow">Documentation</p>
+              <h1>silov0 API docs</h1>
+              <p class="lead">
+                An AI news feed delivered as structured JSON. These docs mirror a typical
+                Docusaurus layout so you can browse concepts, endpoints, and a live data
+                demo in one place.
+              </p>
+            </div>
+            <div class="hero-callout">
+              <p class="muted">Static HTML powered by <code>posts/posts.json</code>.</p>
+              <p class="muted">Swap in your own backend to ship it as a real API.</p>
+            </div>
+          </div>
 
-        <p id="empty-table" class="empty-state">
-          Nothing to show. Add posts to populate the table.
-        </p>
+          <section id="overview" class="doc-section">
+            <div class="section-header">
+              <h2>Overview</h2>
+              <span class="section-anchor">#overview</span>
+            </div>
+            <p>
+              silov0 condenses AI release notes, product updates, and applied research
+              takeaways into concise posts. Each entry has a title, summary, date, and
+              optional link, making it easy to surface as a changelog or feed.
+            </p>
+            <p>
+              The static site doubles as an API façade: <code>posts/posts.json</code> is read
+              client-side and rendered into cards and tables. If you replace the JSON
+              source with a hosted endpoint, this layout becomes a production-ready docs
+              surface.
+            </p>
+          </section>
 
-        <div class="table-wrapper">
-          <table class="posts-table">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Date</th>
-                <th>Tags</th>
-                <th>Summary</th>
-              </tr>
-            </thead>
-            <tbody id="post-rows">
-              <!-- JS will render rows here -->
-            </tbody>
-          </table>
-        </div>
+          <section id="authentication" class="doc-section">
+            <div class="section-header">
+              <h2>Authentication</h2>
+              <span class="section-anchor">#authentication</span>
+            </div>
+            <p>
+              The bundled demo runs without auth because it fetches a local JSON file.
+              In a deployed service, requests would include an
+              <code>Authorization: Bearer &lt;api_key&gt;</code> header. Keys gate read access and
+              prevent unauthorized mutations.
+            </p>
+            <div class="callout">
+              <strong>Tip:</strong> Store API keys on the server when proxying requests. Client-side
+              keys should be limited to public, cacheable reads.
+            </div>
+          </section>
 
-        <p class="back-link">
-          <a href="#cards">Back to Cards ↑</a>
-        </p>
+          <section id="endpoints" class="doc-section">
+            <div class="section-header">
+              <h2>Resources &amp; endpoints</h2>
+              <span class="section-anchor">#endpoints</span>
+            </div>
+            <p>
+              silov0 exposes two core resources: <strong>posts</strong> (the news items) and
+              <strong>tags</strong> (topic labels). Use tags to cluster updates, or search across
+              titles and summaries to surface relevant items.
+            </p>
+            <div class="endpoint" id="endpoint-posts">
+              <h3>GET /posts</h3>
+              <p>Returns the full feed of posts with metadata and tag arrays.</p>
+              <ul>
+                <li><code>?tag=models</code> filters to posts that include the tag.</li>
+                <li><code>?q=latency</code> searches titles and summaries.</li>
+                <li><code>?limit=20</code> caps page size in a hosted deployment.</li>
+              </ul>
+            </div>
+            <div class="endpoint" id="endpoint-posts-id">
+              <h3>GET /posts/{id}</h3>
+              <p>Retrieves a single post by identifier, useful for deep links.</p>
+            </div>
+            <div class="endpoint" id="endpoint-tags">
+              <h3>GET /tags</h3>
+              <p>Lists all known tags and counts so you can build filters.</p>
+            </div>
+            <div class="code-slab">
+              <div class="code-slab-header">Example request</div>
+              <pre><code>curl "https://api.silov0.dev/posts?tag=models&amp;q=latency" \
+  -H "Authorization: Bearer sk_test_123"</code></pre>
+            </div>
+            <div class="code-slab">
+              <div class="code-slab-header">Sample response</div>
+              <pre><code>{
+  "posts": [
+    {
+      "id": "launch-42",
+      "title": "New model latency tuning",
+      "summary": "Cut median latency by 18% with better batching",
+      "date": "2024-04-18",
+      "tags": ["models", "latency"],
+      "url": "https://example.com/post"
+    }
+  ]
+}</code></pre>
+            </div>
+            <div class="code-slab">
+              <div class="code-slab-header">JavaScript fetch</div>
+              <pre><code>async function loadPosts() {
+  const res = await fetch('/posts?tag=evaluation');
+  const { posts } = await res.json();
+  return posts;
+}</code></pre>
+            </div>
+          </section>
 
-      </section>
-    </main>
+          <section id="filtering" class="doc-section">
+            <div class="section-header">
+              <h2>Filtering</h2>
+              <span class="section-anchor">#filtering</span>
+            </div>
+            <p>
+              Combine query parameters to slice the feed. For example,
+              <code>/posts?tag=models&amp;q=latency</code> surfaces latency-focused model updates.
+              The controls below mirror how a consumer app can pair text search with tag
+              selection.
+            </p>
+          </section>
 
-    <footer class="site-footer">
-      <p>Built for quick publishing. Filter by tag, skim in cards or table.</p>
-    </footer>
+          <section id="live-demo" class="doc-section live-demo">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Live demo</p>
+                <h2>Explore posts in-page</h2>
+                <p class="muted">
+                  Search and filter directly against <code>posts/posts.json</code> to see how the
+                  payload renders as cards and tables.
+                </p>
+              </div>
+              <button id="export-markdown" class="btn">Copy digest as Markdown</button>
+            </div>
+
+            <div class="controls">
+              <label class="search-label">
+                <span>Search</span>
+                <input
+                  id="search"
+                  type="search"
+                  placeholder="Search titles, summaries, tags…"
+                  autocomplete="off"
+                />
+              </label>
+
+              <label class="filter-label">
+                <span>Tag</span>
+                <select id="tag-filter">
+                  <option value="">All topics</option>
+                </select>
+              </label>
+
+              <span id="result-count" class="result-count"></span>
+            </div>
+
+            <section id="cards" class="view-section">
+              <header class="section-header">
+                <h3>Card view</h3>
+                <p class="muted">Lift on hover. Fallback text appears if no posts load.</p>
+              </header>
+
+              <p id="empty-state" class="empty-state">
+                No posts yet. Add entries in <code>posts/posts.json</code> and refresh.
+              </p>
+
+              <div id="posts" class="post-grid"></div>
+            </section>
+
+            <section id="table" class="view-section">
+              <header class="section-header">
+                <h3>Table view</h3>
+                <p class="muted">Rows condense the feed for quick scanning.</p>
+              </header>
+
+              <p id="empty-table" class="empty-state">
+                Nothing to show. Add posts to populate the table.
+              </p>
+
+              <div class="table-wrapper">
+                <table class="posts-table">
+                  <thead>
+                    <tr>
+                      <th>Title</th>
+                      <th>Date</th>
+                      <th>Tags</th>
+                      <th>Summary</th>
+                    </tr>
+                  </thead>
+                  <tbody id="post-rows"></tbody>
+                </table>
+              </div>
+            </section>
+          </section>
+
+          <section id="changelog" class="doc-section">
+            <div class="section-header">
+              <h2>Changelog</h2>
+              <span class="section-anchor">#changelog</span>
+            </div>
+            <ul class="timeline">
+              <li>
+                <strong>June 2024</strong> — Restyled the docs shell to mirror a Docusaurus
+                experience with a sticky sidebar and right-hand TOC.
+              </li>
+              <li>
+                <strong>May 2024</strong> — Added code samples and live demo embed for the feed.
+              </li>
+              <li>
+                <strong>April 2024</strong> — Introduced Markdown digest export and table view.
+              </li>
+            </ul>
+          </section>
+        </article>
+      </main>
+
+      <aside class="doc-toc">
+        <div class="toc-title">On this page</div>
+        <a href="#overview">Overview</a>
+        <a href="#authentication">Authentication</a>
+        <a href="#endpoints">Resources &amp; endpoints</a>
+        <a href="#filtering">Filtering</a>
+        <a href="#live-demo">Live demo</a>
+        <a href="#changelog">Changelog</a>
+      </aside>
+    </div>
 
     <script src="scripts/app.js"></script>
   </body>
