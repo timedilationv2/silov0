@@ -1,4 +1,137 @@
 <!DOCTYPE html>
+<!-- Polished docs-style layout refresh · 2024-06-12 -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>silov0 · API & Docs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero" id="overview">
+        <div class="hero-text">
+          <p class="eyebrow">AI news micro-blog</p>
+          <h1>silov0</h1>
+          <p class="lead">
+            A compact feed of AI release notes and product updates rendered from
+            <code>posts/posts.json</code>. Filter the feed, skim cards or tables, and copy a digest without leaving this page.
+          </p>
+          <div class="hero-actions">
+            <a class="ghost" href="#cards">Cards</a>
+            <a class="ghost" href="#table">Table</a>
+            <a class="ghost" href="#changelog">Changelog</a>
+          </div>
+        </div>
+        <div class="hero-panel">
+          <div class="badge-row">
+            <span class="pill">Docs</span>
+            <span class="muted">Last updated Jun 2024</span>
+          </div>
+          <p class="muted">
+            The JSON file is the CMS: drop new entries into <code>posts/posts.json</code> and refresh. The UI below keeps every control inline so search, tag filters, and digest export feel like one surface.
+          </p>
+          <p class="muted">Swap the fetch call in <code>scripts/app.js</code> for a hosted endpoint when you are ready.</p>
+        </div>
+      </header>
+
+      <main class="content">
+        <section class="section controls-section" id="controls">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Controls</p>
+              <h2>Filter and export</h2>
+              <p class="muted">
+                Search across titles and summaries, narrow by tag, then copy a Markdown digest of whatever is visible.
+              </p>
+            </div>
+            <button id="export-markdown" class="btn">Copy digest as Markdown</button>
+          </div>
+          <div class="controls-bar">
+            <label class="control">
+              <span>Search</span>
+              <input
+                id="search"
+                type="search"
+                placeholder="Search titles, summaries, tags…"
+                autocomplete="off"
+              />
+            </label>
+            <label class="control">
+              <span>Tag</span>
+              <select id="tag-filter">
+                <option value="">All topics</option>
+              </select>
+            </label>
+            <div class="control result">
+              <span class="muted">Result count</span>
+              <span id="result-count" class="result-count"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="cards">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Results</p>
+              <h2>Cards view</h2>
+              <p class="muted">Dense cards for browsing the feed. Empty states appear when filters remove everything.</p>
+            </div>
+          </div>
+          <p id="empty-state" class="empty-state">
+            No posts yet. Add entries in <code>posts/posts.json</code> and refresh.
+          </p>
+          <div id="posts" class="post-grid"></div>
+        </section>
+
+        <section class="section" id="table">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Results</p>
+              <h2>Table view</h2>
+              <p class="muted">Tight rows for scanning titles, dates, tags, and summaries.</p>
+            </div>
+          </div>
+          <p id="empty-table" class="empty-state">
+            Nothing to show. Add posts to populate the table.
+          </p>
+          <div class="table-wrapper">
+            <table class="posts-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Date</th>
+                  <th>Tags</th>
+                  <th>Summary</th>
+                </tr>
+              </thead>
+              <tbody id="post-rows"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="changelog">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Meta</p>
+              <h2>Changelog</h2>
+              <p class="muted">Milestones for the docs and live demo surface.</p>
+            </div>
+          </div>
+          <ul class="timeline">
+            <li>
+              <strong>June 2024</strong> — Simplified the layout into a hero, unified controls bar, and clearer cards/table separation.
+            </li>
+            <li>
+              <strong>May 2024</strong> — Added Markdown digest export, inline filtering, and endpoint copy.
+            </li>
+            <li>
+              <strong>April 2024</strong> — Initial static feed with search, tags, and JSON-backed rendering.
+            </li>
+          </ul>
+        </section>
+      </main>
+=======
 
 <!-- Docusaurus-style docs layout rewrite · 2024-06-11 -->
 =======
@@ -525,6 +658,7 @@
           </aside>
         </div>
       </main>
+
 
     </div>
 
