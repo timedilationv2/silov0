@@ -1,10 +1,11 @@
-const postsContainer = document.getElementById("posts")
+const postsGrid = document.getElementById("posts-grid")
 const tableBody = document.getElementById("post-rows")
 const emptyState = document.getElementById("empty-state")
 const emptyTable = document.getElementById("empty-table")
 const searchInput = document.getElementById("search")
 const tagFilter = document.getElementById("tag-filter")
-const resultCount = document.getElementById("result-count")
+const filterTags = document.getElementById("filter-tags")
+const filterCount = document.getElementById("filter-count")
 
 let allPosts = []
 let currentFiltered = []
@@ -21,9 +22,9 @@ function formatDate(dateString) {
 }
 
 function renderCards(filtered) {
-  if (!postsContainer) return
+  if (!postsGrid) return
 
-  postsContainer.innerHTML = ""
+  postsGrid.innerHTML = ""
 
   filtered.forEach((post) => {
     const card = document.createElement("article")
@@ -38,7 +39,7 @@ function renderCards(filtered) {
           : ""}
       </div>
     `
-    postsContainer.appendChild(card)
+    postsGrid.appendChild(card)
   })
 }
 
@@ -75,23 +76,25 @@ function updateEmptyStates(filtered) {
 }
 
 function updateResultCount(filtered) {
-  if (!resultCount) return
+  if (!filterCount) return
 
   if (!allPosts.length) {
-    resultCount.textContent = ""
+    filterCount.textContent = ""
     return
   }
 
   if (filtered.length === allPosts.length) {
-    resultCount.textContent = `${allPosts.length} posts`
+    filterCount.textContent = `${allPosts.length} posts`
   } else {
-    resultCount.textContent = `Showing ${filtered.length} of ${allPosts.length} posts`
+    filterCount.textContent = `Showing ${filtered.length} of ${allPosts.length} posts`
   }
 }
 
 function applyFilters() {
   const query = (searchInput?.value || "").trim().toLowerCase()
   const selectedTag = tagFilter?.value || ""
+
+  updateActiveTag(selectedTag)
 
   const filtered = allPosts.filter((post) => {
     const tags = Array.isArray(post.tags) ? post.tags : []
@@ -128,6 +131,21 @@ function buildTagFilterOptions() {
     tagFilter.remove(1)
   }
 
+  if (filterTags) {
+    filterTags.innerHTML = ""
+    const allButton = document.createElement("button")
+    allButton.type = "button"
+    allButton.className = "tag-chip active"
+    allButton.dataset.tag = ""
+    allButton.textContent = "All"
+    allButton.addEventListener("click", () => {
+      tagFilter.value = ""
+      updateActiveTag("")
+      applyFilters()
+    })
+    filterTags.appendChild(allButton)
+  }
+
   const sortedTags = [...tagCounts.keys()].sort()
 
   sortedTags.forEach((tag) => {
@@ -135,28 +153,45 @@ function buildTagFilterOptions() {
     option.value = tag
     option.textContent = `${tag} (${tagCounts.get(tag)})`
     tagFilter.appendChild(option)
+
+    if (filterTags) {
+      const btn = document.createElement("button")
+      btn.type = "button"
+      btn.className = "tag-chip"
+      btn.dataset.tag = tag
+      btn.textContent = `${tag} (${tagCounts.get(tag)})`
+      btn.addEventListener("click", () => {
+        tagFilter.value = tag
+        updateActiveTag(tag)
+        applyFilters()
+      })
+      filterTags.appendChild(btn)
+    }
   })
 }
 
-async function fetchPosts() {
-  try {
-    // For now: local JSON file. Later you can swap this to a remote CONTENT_URL.
-    const response = await fetch("./posts/posts.json")
+function updateActiveTag(selectedTag) {
+  if (!filterTags) return
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch posts: ${response.status}`)
-    }
+  const buttons = filterTags.querySelectorAll("button")
+  buttons.forEach((btn) => {
+    const matches = btn.dataset.tag === selectedTag
+    btn.classList.toggle("active", matches)
+  })
+}
 
-    const data = await response.json()
-    return Array.isArray(data) ? data : []
-  } catch (error) {
-    console.error("Unable to load posts", error)
-    if (emptyState) {
-      emptyState.textContent = "Unable to load posts from posts/posts.json."
-      emptyState.hidden = false
-    }
-    return []
-  }
+function fetchPosts() {
+  return fetch("posts/posts.json")
+    .then((response) => response.json())
+    .then((posts) => (Array.isArray(posts) ? posts : []))
+    .catch((error) => {
+      console.error("Unable to load posts", error)
+      if (emptyState) {
+        emptyState.textContent = "Unable to load posts from posts/posts.json."
+        emptyState.hidden = false
+      }
+      return []
+    })
 }
 
 function buildMarkdownDigest(posts) {
@@ -193,17 +228,17 @@ async function exportDigest() {
 
   try {
     await navigator.clipboard.writeText(markdown)
-    if (resultCount) {
+    if (filterCount) {
       const count = posts.length
-      resultCount.textContent =
+      filterCount.textContent =
         `Copied digest for ${count} post` +
         (count === 1 ? "" : "s") +
         " to clipboard."
     }
   } catch (err) {
     console.error("Clipboard write failed", err)
-    if (resultCount) {
-      resultCount.textContent =
+    if (filterCount) {
+      filterCount.textContent =
         "Could not copy digest – clipboard permissions denied."
     }
   }
