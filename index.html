@@ -131,6 +131,535 @@
           </ul>
         </section>
       </main>
+=======
+
+<!-- Docusaurus-style docs layout rewrite · 2024-06-11 -->
+=======
+<!-- Stripe-style API docs layout rewrite · 2024-05-08 -->
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>silov0 · API &amp; Docs</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+
+    <header class="site-header">
+      <div class="brand-stack">
+        <div class="logo-chip">s</div>
+        <div class="brand-text">
+          <span class="brand-name">silov0</span>
+          <span class="brand-tagline">AI news &amp; micro APIs</span>
+        </div>
+      </div>
+      <nav class="header-links">
+        <a href="#overview">Docs</a>
+        <a href="#endpoints">API</a>
+        <a href="#live-demo">Live demo</a>
+        <a href="https://github.com/timedilationv2/silov0" target="_blank" rel="noreferrer noopener">GitHub</a>
+      </nav>
+      <div class="header-meta">
+        <span class="pill">Docs</span>
+        <span class="muted">Last updated Jun 2024</span>
+      </div>
+    </header>
+
+    <div class="doc-layout">
+      <nav class="doc-sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-heading">Guide</div>
+          <a href="#overview">Overview</a>
+          <a href="#authentication">Authentication</a>
+          <a href="#filtering">Filtering</a>
+          <a href="#changelog">Changelog</a>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-heading">API</div>
+          <a href="#endpoints">Resources</a>
+          <a href="#endpoint-posts">GET /posts</a>
+          <a href="#endpoint-posts-id">GET /posts/{id}</a>
+          <a href="#endpoint-tags">GET /tags</a>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-heading">Hands-on</div>
+          <a href="#live-demo">Live demo</a>
+        </div>
+      </nav>
+
+      <main class="doc-main">
+        <article class="doc-article">
+          <div class="doc-hero">
+            <div>
+              <p class="eyebrow">Documentation</p>
+              <h1>silov0 API docs</h1>
+              <p class="lead">
+                An AI news feed delivered as structured JSON. These docs mirror a typical
+                Docusaurus layout so you can browse concepts, endpoints, and a live data
+                demo in one place.
+              </p>
+            </div>
+            <div class="hero-callout">
+              <p class="muted">Static HTML powered by <code>posts/posts.json</code>.</p>
+              <p class="muted">Swap in your own backend to ship it as a real API.</p>
+            </div>
+          </div>
+
+          <section id="overview" class="doc-section">
+            <div class="section-header">
+              <h2>Overview</h2>
+              <span class="section-anchor">#overview</span>
+            </div>
+            <p>
+              silov0 condenses AI release notes, product updates, and applied research
+              takeaways into concise posts. Each entry has a title, summary, date, and
+              optional link, making it easy to surface as a changelog or feed.
+            </p>
+            <p>
+              The static site doubles as an API façade: <code>posts/posts.json</code> is read
+              client-side and rendered into cards and tables. If you replace the JSON
+              source with a hosted endpoint, this layout becomes a production-ready docs
+              surface.
+            </p>
+          </section>
+
+          <section id="authentication" class="doc-section">
+            <div class="section-header">
+              <h2>Authentication</h2>
+              <span class="section-anchor">#authentication</span>
+            </div>
+            <p>
+              The bundled demo runs without auth because it fetches a local JSON file.
+              In a deployed service, requests would include an
+              <code>Authorization: Bearer &lt;api_key&gt;</code> header. Keys gate read access and
+              prevent unauthorized mutations.
+            </p>
+            <div class="callout">
+              <strong>Tip:</strong> Store API keys on the server when proxying requests. Client-side
+              keys should be limited to public, cacheable reads.
+            </div>
+          </section>
+
+          <section id="endpoints" class="doc-section">
+            <div class="section-header">
+              <h2>Resources &amp; endpoints</h2>
+              <span class="section-anchor">#endpoints</span>
+            </div>
+            <p>
+              silov0 exposes two core resources: <strong>posts</strong> (the news items) and
+              <strong>tags</strong> (topic labels). Use tags to cluster updates, or search across
+              titles and summaries to surface relevant items.
+            </p>
+            <div class="endpoint" id="endpoint-posts">
+              <h3>GET /posts</h3>
+              <p>Returns the full feed of posts with metadata and tag arrays.</p>
+              <ul>
+                <li><code>?tag=models</code> filters to posts that include the tag.</li>
+                <li><code>?q=latency</code> searches titles and summaries.</li>
+                <li><code>?limit=20</code> caps page size in a hosted deployment.</li>
+              </ul>
+            </div>
+            <div class="endpoint" id="endpoint-posts-id">
+              <h3>GET /posts/{id}</h3>
+              <p>Retrieves a single post by identifier, useful for deep links.</p>
+            </div>
+            <div class="endpoint" id="endpoint-tags">
+              <h3>GET /tags</h3>
+              <p>Lists all known tags and counts so you can build filters.</p>
+            </div>
+            <div class="code-slab">
+              <div class="code-slab-header">Example request</div>
+              <pre><code>curl "https://api.silov0.dev/posts?tag=models&amp;q=latency" \
+  -H "Authorization: Bearer sk_test_123"</code></pre>
+            </div>
+            <div class="code-slab">
+              <div class="code-slab-header">Sample response</div>
+              <pre><code>{
+  "posts": [
+    {
+      "id": "launch-42",
+      "title": "New model latency tuning",
+      "summary": "Cut median latency by 18% with better batching",
+      "date": "2024-04-18",
+      "tags": ["models", "latency"],
+      "url": "https://example.com/post"
+    }
+  ]
+}</code></pre>
+            </div>
+            <div class="code-slab">
+              <div class="code-slab-header">JavaScript fetch</div>
+              <pre><code>async function loadPosts() {
+  const res = await fetch('/posts?tag=evaluation');
+  const { posts } = await res.json();
+  return posts;
+}</code></pre>
+            </div>
+          </section>
+
+          <section id="filtering" class="doc-section">
+            <div class="section-header">
+              <h2>Filtering</h2>
+              <span class="section-anchor">#filtering</span>
+            </div>
+            <p>
+              Combine query parameters to slice the feed. For example,
+              <code>/posts?tag=models&amp;q=latency</code> surfaces latency-focused model updates.
+              The controls below mirror how a consumer app can pair text search with tag
+              selection.
+            </p>
+          </section>
+
+          <section id="live-demo" class="doc-section live-demo">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Live demo</p>
+                <h2>Explore posts in-page</h2>
+                <p class="muted">
+                  Search and filter directly against <code>posts/posts.json</code> to see how the
+                  payload renders as cards and tables.
+                </p>
+              </div>
+              <button id="export-markdown" class="btn">Copy digest as Markdown</button>
+            </div>
+
+            <div class="controls">
+              <label class="search-label">
+                <span>Search</span>
+                <input
+                  id="search"
+                  type="search"
+                  placeholder="Search titles, summaries, tags…"
+                  autocomplete="off"
+                />
+              </label>
+
+              <label class="filter-label">
+                <span>Tag</span>
+                <select id="tag-filter">
+                  <option value="">All topics</option>
+                </select>
+              </label>
+
+              <span id="result-count" class="result-count"></span>
+            </div>
+
+            <section id="cards" class="view-section">
+              <header class="section-header">
+                <h3>Card view</h3>
+                <p class="muted">Lift on hover. Fallback text appears if no posts load.</p>
+              </header>
+
+              <p id="empty-state" class="empty-state">
+                No posts yet. Add entries in <code>posts/posts.json</code> and refresh.
+              </p>
+
+              <div id="posts" class="post-grid"></div>
+            </section>
+
+            <section id="table" class="view-section">
+              <header class="section-header">
+                <h3>Table view</h3>
+                <p class="muted">Rows condense the feed for quick scanning.</p>
+              </header>
+
+              <p id="empty-table" class="empty-state">
+                Nothing to show. Add posts to populate the table.
+              </p>
+
+              <div class="table-wrapper">
+                <table class="posts-table">
+                  <thead>
+                    <tr>
+                      <th>Title</th>
+                      <th>Date</th>
+                      <th>Tags</th>
+                      <th>Summary</th>
+                    </tr>
+                  </thead>
+                  <tbody id="post-rows"></tbody>
+                </table>
+              </div>
+            </section>
+          </section>
+
+          <section id="changelog" class="doc-section">
+            <div class="section-header">
+              <h2>Changelog</h2>
+              <span class="section-anchor">#changelog</span>
+            </div>
+            <ul class="timeline">
+              <li>
+                <strong>June 2024</strong> — Restyled the docs shell to mirror a Docusaurus
+                experience with a sticky sidebar and right-hand TOC.
+              </li>
+              <li>
+                <strong>May 2024</strong> — Added code samples and live demo embed for the feed.
+              </li>
+              <li>
+                <strong>April 2024</strong> — Introduced Markdown digest export and table view.
+              </li>
+            </ul>
+          </section>
+        </article>
+      </main>
+
+      <aside class="doc-toc">
+        <div class="toc-title">On this page</div>
+        <a href="#overview">Overview</a>
+        <a href="#authentication">Authentication</a>
+        <a href="#endpoints">Resources &amp; endpoints</a>
+        <a href="#filtering">Filtering</a>
+        <a href="#live-demo">Live demo</a>
+        <a href="#changelog">Changelog</a>
+      </aside>
+=======
+    <div class="docs-shell">
+      <aside class="docs-sidebar">
+        <div class="sidebar-brand">
+          <div class="sidebar-mark">s</div>
+          <div>
+            <div class="sidebar-title">silov0</div>
+            <div class="sidebar-subtitle">AI news &amp; micro APIs</div>
+          </div>
+        </div>
+        <nav class="sidebar-nav">
+          <div class="nav-group">
+            <div class="nav-label">Guide</div>
+            <a href="#overview">Overview</a>
+            <a href="#authentication">Authentication</a>
+            <a href="#filtering">Filtering</a>
+            <a href="#changelog">Changelog</a>
+          </div>
+          <div class="nav-group">
+            <div class="nav-label">Concepts</div>
+            <a href="#endpoints">Resources</a>
+            <a href="#live-demo">Live demo</a>
+          </div>
+          <div class="nav-group">
+            <div class="nav-label">Endpoints</div>
+            <a href="#endpoint-posts">GET /posts</a>
+            <a href="#endpoint-posts-id">GET /posts/{id}</a>
+            <a href="#endpoint-tags">GET /tags</a>
+          </div>
+        </nav>
+        <div class="sidebar-footer">
+          <a
+            href="https://github.com/timedilationv2/silov0"
+            target="_blank"
+            rel="noopener noreferrer"
+            >GitHub repo</a
+          >
+          <span class="sidebar-note">Static site as API facade</span>
+        </div>
+      </aside>
+
+      <main class="docs-main">
+        <header class="docs-header">
+          <div>
+            <p class="eyebrow">API reference</p>
+            <h1>silov0 API docs</h1>
+            <p class="muted">Structured AI news feed exposed as JSON-like resources.</p>
+          </div>
+          <div class="header-meta">
+            <span class="muted">Last updated May 2024</span>
+          </div>
+        </header>
+
+        <div class="docs-columns">
+          <div class="docs-content">
+            <section id="overview" class="docs-section">
+              <h2>Overview</h2>
+              <p>
+                silov0 packages quick AI news drops, release notes, and applied takeaways
+                into a structured stream. This static site stands in for the API surface
+                that would normally power a client feed.
+              </p>
+              <p>
+                Everything is stored in <code>posts/posts.json</code>, rendered as cards and
+                tables. Think of it as a developer-friendly mirror of a lightweight
+                publishing backend.
+              </p>
+            </section>
+
+            <section id="authentication" class="docs-section">
+              <h2>Authentication</h2>
+              <p>
+                The live demo is unauthenticated because it reads local JSON. In a hosted
+                setup, requests would include an <code>Authorization: Bearer &lt;api_key&gt;</code>
+                header. Keys scope access to read-only news feeds and prevent mutation
+                outside trusted publishers.
+              </p>
+              <p>
+                Rotate keys regularly and keep them server-side when proxying requests.
+                Client-side usage should be limited to public, cacheable endpoints.
+              </p>
+            </section>
+
+            <section id="endpoints" class="docs-section">
+              <h2>Resources &amp; endpoints</h2>
+              <p>
+                silov0 models two primary resources: <strong>posts</strong> and
+                <strong>tags</strong>. Posts contain titles, summaries, dates, and optional
+                URLs. Tags cluster posts by topic, letting clients filter or prefetch by
+                theme.
+              </p>
+              <div class="endpoint" id="endpoint-posts">
+                <h3>GET /posts</h3>
+                <p>Returns the full feed of posts with metadata and tag arrays.</p>
+                <ul>
+                  <li><code>?tag=models</code> filters to posts that include the tag.</li>
+                  <li><code>?q=latency</code> performs a case-insensitive search over title and summary.</li>
+                  <li><code>?limit=20</code> constrains page size in a hosted variant.</li>
+                </ul>
+              </div>
+              <div class="endpoint" id="endpoint-posts-id">
+                <h3>GET /posts/{id}</h3>
+                <p>Retrieves a single post by identifier, useful for detail pages.</p>
+              </div>
+              <div class="endpoint" id="endpoint-tags">
+                <h3>GET /tags</h3>
+                <p>Lists known tags and counts, allowing clients to populate filters.</p>
+              </div>
+            </section>
+
+            <section id="filtering" class="docs-section">
+              <h2>Filtering</h2>
+              <p>
+                Combine text search with tag filters to slice the feed. Queries like
+                <code>/posts?tag=models&amp;q=latency</code> surface latency-focused model updates.
+                The UI below mirrors how a consumer app might expose these controls.
+              </p>
+            </section>
+
+            <section id="live-demo" class="docs-section live-demo">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Live demo</p>
+                  <h2>Explore posts in-page</h2>
+                  <p class="muted">
+                    Search and filter directly against <code>posts/posts.json</code> to see how the
+                    API payloads render as cards and tables.
+                  </p>
+                </div>
+                <button id="export-markdown" class="btn">Copy digest as Markdown</button>
+              </div>
+
+              <div class="controls">
+                <label class="search-label">
+                  <span>Search</span>
+                  <input
+                    id="search"
+                    type="search"
+                    placeholder="Search titles, summaries, tags…"
+                    autocomplete="off"
+                  />
+                </label>
+
+                <label class="filter-label">
+                  <span>Tag</span>
+                  <select id="tag-filter">
+                    <option value="">All topics</option>
+                  </select>
+                </label>
+
+                <span id="result-count" class="result-count"></span>
+              </div>
+
+              <section id="cards" class="view-section">
+                <header class="section-header">
+                  <h3>Card view</h3>
+                  <p class="muted">Lift on hover. Fallback text appears if no posts load.</p>
+                </header>
+
+                <p id="empty-state" class="empty-state">
+                  No posts yet. Add entries in <code>posts/posts.json</code> and refresh.
+                </p>
+
+                <div id="posts" class="post-grid"></div>
+              </section>
+
+              <section id="table" class="view-section">
+                <header class="section-header">
+                  <h3>Table view</h3>
+                  <p class="muted">Rows condense the feed for quick scanning.</p>
+                </header>
+
+                <p id="empty-table" class="empty-state">
+                  Nothing to show. Add posts to populate the table.
+                </p>
+
+                <div class="table-wrapper">
+                  <table class="posts-table">
+                    <thead>
+                      <tr>
+                        <th>Title</th>
+                        <th>Date</th>
+                        <th>Tags</th>
+                        <th>Summary</th>
+                      </tr>
+                    </thead>
+                    <tbody id="post-rows"></tbody>
+                  </table>
+                </div>
+              </section>
+            </section>
+
+            <section id="changelog" class="docs-section">
+              <h2>Changelog</h2>
+              <ul class="timeline">
+                <li>
+                  <strong>May 2024</strong> — Rebuilt the surface as Stripe-style docs with a live
+                  embedded feed.
+                </li>
+                <li>
+                  <strong>April 2024</strong> — Added Markdown digest export for filtered posts.
+                </li>
+                <li>
+                  <strong>March 2024</strong> — Introduced tag filtering and table view.
+                </li>
+              </ul>
+            </section>
+          </div>
+
+          <aside class="code-panel">
+            <div class="code-block">
+              <div class="code-title">cURL</div>
+              <pre><code>curl "https://api.silov0.dev/posts?tag=models&amp;q=latency" \
+  -H "Authorization: Bearer sk_test_123"</code></pre>
+            </div>
+            <div class="code-block">
+              <div class="code-title">Sample response</div>
+<pre><code>{
+  "posts": [
+    {
+      "id": "launch-42",
+      "title": "New model latency tuning",
+      "summary": "Cut median latency by 18% with better batching",
+      "date": "2024-04-18",
+      "tags": ["models", "latency"],
+      "url": "https://example.com/post"
+    }
+  ]
+}</code></pre>
+            </div>
+            <div class="code-block">
+              <div class="code-title">JavaScript fetch</div>
+<pre><code>async function loadPosts() {
+  const res = await fetch('/posts?tag=evaluation');
+  const { posts } = await res.json();
+  return posts;
+}</code></pre>
+            </div>
+          </aside>
+        </div>
+      </main>
+
+
     </div>
 
     <script src="scripts/app.js"></script>
