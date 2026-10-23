@@ -1,16 +1,18 @@
 """Browser regression check; serve the repository over HTTP first."""
 import sys
+import os
 from playwright.sync_api import expect, sync_playwright
 
 with sync_playwright() as playwright:
-    browser = playwright.chromium.launch()
+    browser = playwright.chromium.launch(executable_path=os.environ.get("SILOV_CHROMIUM_EXECUTABLE"))
     page = browser.new_page()
     errors, requests = [], []
     page.on('pageerror', lambda error: errors.append(str(error)))
     page.on('request', lambda request: requests.append(request.url))
     # Exercise the export button without depending on OS clipboard permissions.
     page.add_init_script("Object.defineProperty(navigator, 'clipboard', {value: {writeText: async text => {window.copiedDigest = text}}})")
-    page.goto(sys.argv[1] if len(sys.argv) > 1 else 'http://localhost:8000/')
+    base = sys.argv[1] if len(sys.argv) > 1 else 'http://localhost:8000/'
+    page.goto(base.rstrip('/') + '/documentation.html')
     cards = page.locator('#posts-grid .post-card')
     rows = page.locator('#post-rows tr')
     expect(cards).to_have_count(4)
@@ -21,8 +23,7 @@ with sync_playwright() as playwright:
     assert any('/posts/posts.json' in url for url in requests)
     assert not any('/api/' in url for url in requests), requests
 
-    for target in ['overview', 'live-demo', 'samples', 'architecture', 'case-study', 'api-reference']:
-        expect(page.locator('#' + target)).to_have_count(1)
+    page.locator('.table-details summary').click()
     page.locator('#search').fill('no matching sample')
     expect(cards).to_have_count(0)
     expect(rows).to_have_count(0)
@@ -58,10 +59,6 @@ with sync_playwright() as playwright:
         page.set_viewport_size({'width': width, 'height': 844})
         assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), width
     page.set_viewport_size({'width': 390, 'height': 844})
-    expect(page.locator('.desktop-nav')).to_be_hidden()
-    page.locator('.mobile-navigation summary').click()
-    page.get_by_role('navigation', name='Mobile navigation').get_by_text('Interactive Demo', exact=True).click()
-    expect(page.locator('#demo-title')).to_be_in_viewport()
     assert page.locator('.table-wrapper').evaluate('el => el.scrollWidth > el.clientWidth')
 
     # Sample links are safe relative links and point to real writing, not placeholders.
@@ -75,4 +72,4 @@ with sync_playwright() as playwright:
         assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), width
     assert not errors, errors
     browser.close()
-    print('Portfolio browser checks passed: navigation, JSON-only reads, both views, filters, exports, sample links, and responsive layouts.')
+    print('Documentation example checks passed: navigation, JSON-only reads, both views, filters, exports, sample links, and responsive layouts.')

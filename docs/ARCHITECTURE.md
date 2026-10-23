@@ -10,22 +10,47 @@ scripts/workspace/app.mjs (UI controller)
   ├── model.mjs        document schema, limits, backup validation, recovery copies
   ├── storage.mjs      IndexedDB repository, transactions, revision checks
   ├── templates.mjs    editable content scaffolds
+  ├── example.mjs      completed checklist, copied only by explicit action
   ├── markdown.mjs     Marked → DOMPurify → safe DOM fragment / HTML export
   └── quality.mjs      pure deterministic review(document) → finding[]
 
 IndexedDB: silov0-workspace / documents
   { id, title, content, collection, createdAt, updatedAt, revision }
 
-Separate legacy learning path:
-index.html (also learn.html) → scripts/app.js → posts/posts.json
-                           ↕ local-only Express API (not used by workspace)
+Documentation examples:
+documentation.html (also learn.html) → scripts/app.js → posts/posts.json
+                                                          │ metadata + links
+                                                          ▼
+                                                     samples.html
+posts/posts.json ↔ local-only Express API (not used by workspace)
+
+Overview: index.html
+Operating guides: using-workspace.html, running.html, api.html
+Optional background: history.html
 ```
 
 No authored content travels along a network edge. Dependencies are vendored;
-root CSP blocks connections, images, frames, objects and form submissions. The
+workspace CSP blocks connections, images, frames, objects and form submissions. The
 workspace has no fetch, analytics, backend adapter, API key, or service worker.
 Theme, view preference, and last selected ID use optional localStorage; document
-content only uses IndexedDB. The old Learn demo fetches public example JSON.
+content only uses IndexedDB. The documentation search fetches public example JSON. The JSON contains metadata and links; full prose stays in samples.html. API writes do not create articles or publish changes.
+
+## Navigation and compatibility
+
+All pages use Overview, Workspace, Documentation, and GitHub navigation, the shared
+styles.css foundation, and the existing silov0-theme preference. The workspace
+continues to manage its own theme control; other pages use scripts/site.js.
+The stable workspace.html URL, database version, object store, document schema,
+and preference keys are unchanged. Old landing-page section fragments route to
+the corresponding documentation, API, and history pages. learn.html retains a
+functional documentation/search alias, and all four samples.html fragments remain.
+
+New document opens a native dialog containing the template selector. The empty
+state and new-document dialog offer explicit example-copy actions. Both use the
+same flush, capacity check, unique title, random ID, and store.save path as normal
+creation; initialization never inserts examples. Collection management, imports,
+backup, and restore remain available in secondary menus. Review is collapsed until
+requested. No storage migration or background example seeding takes place.
 
 ## Save semantics
 

@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="Documentation — SiloV writing workspace and documentation."
+    />
+    <title>Documentation — SiloV</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="scripts/site.js" defer></script>
+    <script src="scripts/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <a class="site-brand" href="index.html">SiloV</a>
+      <nav aria-label="Main navigation">
+        <a href="index.html">Overview</a><a href="workspace.html">Workspace</a
+        ><a href="documentation.html" aria-current="page">Documentation</a
+        ><a href="https://github.com/timedilationv2/silov0">GitHub</a>
+      </nav>
+      <button id="theme" type="button" aria-label="Switch theme">Theme</button>
+    </header>
+    <main id="main" class="content" tabindex="-1">
+      <h1>Documentation</h1>
+      <p class="lead">
+        Use the writing workspace, read finished examples, or explore the
+        repository.
+      </p>
+      <div class="doc-sections">
+        <section>
+          <h2>Using the workspace</h2>
+          <ul>
+            <li>
+              <a href="using-workspace.html#create"
+                >Create and edit documents</a
+              >
+            </li>
+            <li>
+              <a href="using-workspace.html#review"
+                >Understand review findings</a
+              >
+            </li>
+            <li>
+              <a href="using-workspace.html#backups"
+                >Export, back up, and restore</a
+              >
+            </li>
+          </ul>
+        </section>
+        <section>
+          <h2>Writing examples</h2>
+          <p>
+            These are writing samples about this repository, separate from the
+            workspace user guide.
+          </p>
+          <ul>
+            <li>
+              <a href="samples.html#local-preview"
+                >Tutorial: preview the documentation library</a
+              >
+            </li>
+            <li>
+              <a href="samples.html#filter-posts"
+                >API reference sample: find posts</a
+              >
+            </li>
+            <li>
+              <a href="samples.html#unauthorized-write"
+                >Troubleshooting: an unauthorized write</a
+              >
+            </li>
+            <li>
+              <a href="samples.html#markdown-export"
+                >How-to: export a reading list</a
+              >
+            </li>
+          </ul>
+          <a href="#live-demo">Search the examples</a>
+        </section>
+        <section>
+          <h2>Running the repository</h2>
+          <ul>
+            <li><a href="running.html#setup">Setup</a></li>
+            <li><a href="running.html#structure">Repository structure</a></li>
+            <li>
+              <a href="running.html#storage">Architecture and data storage</a>
+            </li>
+          </ul>
+        </section>
+        <section>
+          <h2>Local API</h2>
+          <ul>
+            <li><a href="api.html#setup">Purpose and setup</a></li>
+            <li><a href="api.html#endpoints">Endpoints</a></li>
+            <li>
+              <a href="api.html#authentication">Authentication and errors</a>
+            </li>
+          </ul>
+        </section>
+      </div>
+      <p>
+        The examples’ titles, summaries, tags, dates, and links come from
+        <code>posts/posts.json</code>; full prose lives in
+        <code>samples.html</code>. The optional API updates JSON entries
+        locally. Publishing prose or metadata requires a separate source change
+        and Pages deployment. Workspace documents stay in your browser.
+      </p>
+      <section
+        id="live-demo"
+        class="section-wrap content-section"
+        aria-labelledby="demo-title"
+      >
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Writing examples</p>
+            <h2 id="demo-title">Search the writing examples</h2>
+          </div>
+          <p>
+            Search a task, choose a topic, then copy your selection as a
+            Markdown reading list.
+          </p>
+        </div>
+        <div class="demo-panel">
+          <div class="demo-topline">
+            <span class="badge">Bundled examples</span>
+            <p>
+              Reads a bundled content file. No account or API connection needed.
+            </p>
+          </div>
+          <div class="controls">
+            <label class="search-label"
+              ><span>Search samples</span
+              ><input
+                id="search"
+                type="search"
+                placeholder="Try “authentication” or “Markdown”"
+                autocomplete="off" /></label
+            ><label class="filter-label"
+              ><span>Filter by topic</span
+              ><select id="tag-filter">
+                <option value="">All topics</option>
+              </select></label
+            ><button
+              id="export-markdown"
+              class="button secondary"
+              type="button"
+            >
+              Copy digest as Markdown
+            </button>
+          </div>
+          <div class="demo-status">
+            <span id="filter-count" role="status" aria-live="polite"></span
+            ><span>Titles and summaries from posts/posts.json.</span>
+          </div>
+          <section
+            class="view-section"
+            id="cards"
+            aria-labelledby="cards-title"
+          >
+            <h3 id="cards-title">Summary view</h3>
+            <p id="empty-state" class="empty-state" hidden>
+              No samples match. Try another search or choose “All topics”.
+            </p>
+            <div id="posts-grid" class="post-grid"></div>
+          </section>
+          <details class="table-details">
+            <summary>Compare examples in a table</summary>
+            <section
+              class="view-section"
+              id="table"
+              aria-labelledby="table-title"
+            >
+              <div class="table-heading">
+                <h3 id="table-title">Table view</h3>
+                <p class="muted">
+                  Compare titles, topics, and summaries at a glance.
+                </p>
+              </div>
+              <p id="empty-table" class="empty-state" hidden>
+                No samples match. Your filters apply to both views.
+              </p>
+              <p id="table-scroll-hint" class="mobile-table-hint">
+                Swipe across the table to see all columns.
+              </p>
+              <div
+                class="table-wrapper"
+                tabindex="0"
+                role="region"
+                aria-label="Documentation samples table"
+                aria-describedby="table-scroll-hint"
+              >
+                <table class="posts-table">
+                  <caption class="visually-hidden">
+                    Documentation sample titles, revision dates, topics, and
+                    summaries
+                  </caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">Sample</th>
+                      <th scope="col">Updated</th>
+                      <th scope="col">Topics</th>
+                      <th scope="col">Summary</th>
+                    </tr>
+                  </thead>
+                  <tbody id="post-rows"></tbody>
+                </table>
+              </div>
+            </section>
+          </details>
+          <noscript
+            ><p>
+              This demo needs JavaScript for search and export. You can still
+              <a href="samples.html">read all documentation samples</a>.
+            </p></noscript
+          >
+        </div>
+      </section>
+
+      <p>
+        Optional background: <a href="history.html">development history</a>.
+      </p>
+    </main>
+    <footer class="site-footer">
+      <span>SiloV · Writing workspace and documentation</span
+      ><a href="https://github.com/timedilationv2/silov0">Source on GitHub</a>
+    </footer>
+  </body>
+</html>

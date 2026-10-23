@@ -1,82 +1,38 @@
-# Verification and release notes
+# Verification notes
 
-## Executed checks
+## Current restructuring
 
-The implementation was exercised locally on Node 24 and Chromium, including at
-GitHub Pages' `/silov0/` project prefix. Test documents are synthetic and use
-isolated temporary profiles and storage, never a user's existing browser profile.
+Local validation uses Node 24, Python 3.12, Playwright 1.62, and system Chromium 154. The browser suites also support Playwright's downloaded Chromium by omitting `SILOV_CHROMIUM_EXECUTABLE`.
 
-| Check | Result / scope |
-| --- | --- |
-| Root `npm test` | 5 model/template/quality tests: schema/size/date validation, backup copies, all template structures, deterministic findings, and anchors/code exclusions |
-| `cd backend && npm test` | 26 existing tests: API behavior, authentication, startup failures, validation, limits, CORS, headers, file failure/concurrency, and sample accuracy |
-| `python3 tests/workspace_browser.py` | 15 browser scenarios including entry-point compatibility |
-| `tests/demo_smoke.py <base>/` | Preserved sample library, both views, filters, exports, navigation, sample links, responsive layout |
-| `tests/security_browser.py <base>/` | Existing sample-content XSS regression |
-| `npm audit --omit=dev` | Zero known vulnerabilities in root dependencies at verification time |
+```sh
+npm test
+(cd backend && npm test)
+SILOV_CHROMIUM_EXECUTABLE=/usr/bin/chromium python3 tests/workspace_browser.py
+# With python3 -m http.server 8000 --bind 127.0.0.1 running:
+SILOV_CHROMIUM_EXECUTABLE=/usr/bin/chromium python3 tests/demo_smoke.py http://localhost:8000/
+SILOV_CHROMIUM_EXECUTABLE=/usr/bin/chromium python3 tests/security_browser.py http://localhost:8000/
+SILOV_CHROMIUM_EXECUTABLE=/usr/bin/chromium python3 tests/site_browser.py http://localhost:8000/
+```
 
-Workspace browser scenarios:
+| Suite                        | Coverage                                                                                                                                                  |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Root Node tests (5)          | Document/backup validation, template structure, deterministic review findings and anchors                                                                 |
+| Backend tests (26)           | API behavior, authentication, validation, CORS, rate limits, concurrent writes, storage failures, CLI and checked-in reference accuracy                   |
+| Workspace browser tests (17) | Editing, persistence, templates, example copies, review, exports, backup/restore, recovery, conflicts, storage compatibility, responsive behavior and XSS |
+| Documentation example smoke  | Bundled JSON reads, summary/table views, filters, digest copying, empty selections, sample links, responsive layout                                       |
+| Sample security regression   | Hostile titles/summaries/tags remain text; unsafe source URLs are omitted                                                                                 |
+| Site browser regression      | Nine pages, internal links/fragments, old URLs, shared navigation and theme, keyboard skip link, four viewport widths, screenshots                        |
 
-1. All five templates create real editable documents with rendered headings.
-2. Saved data reopens after closing and relaunching a persistent browser profile.
-3. Stale saves in another tab are rejected and Save a copy preserves both drafts.
-4. Create, rename, collection assignment/filtering, search, immediate switching,
-   delete cancellation and confirmed deletion.
-5. Markdown import, HTML export, JSON backup, cancelled restore, conflict-safe
-   restored copies and plain-text import.
-6. Initial IndexedDB failure is visible and disables creation.
-7. Malformed/unsupported backups and wrong-type/oversized imports leave data intact.
-8. GFM headings, lists, code, links, tables and emphasis; view controls; keyboard
-   formatting/save; clipboard API success and permission-denied fallback (stubbed).
-9. Mobile document navigation, theme persistence, no horizontal page overflow at
-   320/390/640/768/1024/1440 pixels, Tab indentation and Shift+Tab escape.
-10. Quality findings show errors/warnings and navigate to title/source lines.
-11. A simulated failure during the second restore insert rolls back the whole batch.
-12. SOP creation → rename/edit → live preview → autosave → refresh → Markdown
-    download → create another document → reopen the SOP.
-13. Simulated quota failure retains the editor, blocks destructive switching,
-    exports recovery Markdown, backs up both stored/draft versions, and recovers
-    after retry without losing work.
-14. Malicious imported Markdown/title/URLs do not create scripts/images/SVG or
-    execute code; rendered HTML downloads are inert; editing/importing makes no
-    content-bearing or remote-image network requests.
+The workspace suite serves its own loopback HTTP server beneath `/silov0/`. It uses isolated synthetic documents and browser profiles. It checks browser-restart persistence, the former homepage entry point, and a record seeded directly into the unchanged database with a known ID, timestamps, collection, and revision. Navigating through the new pages must preserve that record exactly.
 
-15. A document saved under the former homepage entry point reopens at the additional
-    workspace URL with the same title and content, without migration.
+New-document tests check cancellation, all five content templates, a realistic example copy, deliberate creation of a second copy with existing work preserved, and no extra documents on reload. Review, import, export, JSON validation, restore rollback, concurrent-tab conflicts, quota failure, and recovery checks remain in place. A storage-unavailable case checks that creation stays disabled.
 
-Desktop, mobile, dark and light screenshots were inspected locally. Backend
-implementation and bearer-token configuration are unchanged. Clipboard tests
-verify application behavior with a browser stub, not a guarantee that every OS
-will grant clipboard permission.
+The site suite checks actual link destinations and fragments, including redirects for former landing-page sections and the `learn.html` alias. Screenshots go outside the checkout to `/tmp/silov-screenshots` by default; `SILOV_SCREENSHOTS` overrides that location. Desktop, mobile, and dark-theme renders support visual inspection. Tests select a system browser through Playwright's supported `executable_path` option, without changing browser security settings.
 
-## Deployment status and limitations
+## Limits and deployment
 
-GitHub Pages is configured on `main:/`. The workspace implementation was merged
-and the public build at `ca97d62952aeb4541b9932dccdf68d6f378242fa` was verified,
-including a live SOP create/edit/save/refresh/export/reopen check. This subsequent
-correction restores the portfolio homepage and serves the workspace as an additive
-feature at `workspace.html`. Its same-origin IndexedDB data is unchanged.
-The local browser suite also verifies that documents saved from the former homepage
-entry point reopen at `/silov0/workspace.html`. No writable API is deployed.
+Only Chromium is covered here. Firefox, Safari, assistive technologies, touch hardware, browser eviction, and disk/power-loss scenarios need separate validation. Clipboard checks use browser stubs for success and rejection; they do not establish OS permission behavior. IndexedDB commit completion is tested, but forced close before commit can lose edits.
 
-Only Chromium was executed here. Firefox, Safari, touch-device hardware,
-assistive-technology testing and OS-level disk/power failures need separate
-coverage. Browser eviction/private-session retention differs by browser. IndexedDB
-commit completion was tested; forced close before that point is not a durability
-guarantee. A native leave warning is best effort, and loaded assets are needed to
-reopen the app (there is no offline service worker).
+Review findings check structure, not factual accuracy, external-link reachability, or completeness. Source lines are approximate for nested Markdown. There is no service worker or guaranteed offline reopening. Downloads and browser storage are not encrypted.
 
-Quality checks find deterministic structure issues, not factual accuracy, external
-link reachability, style-guide compliance or an authoritative quality score.
-Nested-block line locations are approximate. Inline HTML is intentionally literal;
-images are intentionally not loaded. Content is plaintext local storage and shares
-the GitHub Pages origin with other projects on that hostname. Read README and
-SECURITY.md before keeping sensitive material in the workspace.
-
-
-## Additive navigation correction
-
-The portfolio remains at the root URL with its original six-section structure;
-the workspace is linked as an additional feature at `workspace.html`. The workspace
-suite targets `/silov0/workspace.html`. Browser storage stays on the same origin
-and uses the same database, so earlier workspace documents do not need migration.
+This restructuring is implemented and validated locally. It has not been deployed or verified on the live Pages site. GitHub Pages serves static files from `main:/` after deployment; no writable API is hosted. Publishing and checking the live routes remain separate steps.

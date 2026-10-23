@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="Using the workspace — SiloV writing workspace and documentation."
+    />
+    <title>Using the workspace — SiloV</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="scripts/site.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <a class="site-brand" href="index.html">SiloV</a>
+      <nav aria-label="Main navigation">
+        <a href="index.html">Overview</a><a href="workspace.html">Workspace</a
+        ><a href="documentation.html" aria-current="page">Documentation</a
+        ><a href="https://github.com/timedilationv2/silov0">GitHub</a>
+      </nav>
+      <button id="theme" type="button" aria-label="Switch theme">Theme</button>
+    </header>
+    <main id="main" class="content" tabindex="-1">
+      <p class="breadcrumb">
+        <a href="documentation.html">Documentation</a> / Using the workspace
+      </p>
+      <h1>Using the workspace</h1>
+      <p>
+        Write Markdown at <a href="workspace.html">workspace.html</a>. Your
+        documents belong to this browser profile and site address; the editor
+        does not send them to the API or GitHub.
+      </p>
+      <nav class="page-index" aria-label="On this page">
+        <a href="#create">Create and edit</a
+        ><a href="#review">Review findings</a
+        ><a href="#backups">Export and backups</a>
+      </nav>
+      <section id="create">
+        <h2>Create and edit documents</h2>
+        <ol>
+          <li>
+            Choose <strong>New document</strong> in the documents sidebar, or
+            <strong>Create a document</strong> in an empty workspace. On a small
+            screen, open <strong>Documents</strong> first.
+          </li>
+          <li>
+            Choose a blank document or a template, then
+            <strong>Create document</strong>. Templates provide editable
+            guidance, not finished instructions.
+          </li>
+          <li>
+            Change <strong>Document title</strong> to rename it. Write Markdown
+            in the editor. Use Editor, Split, or Preview to change the view.
+          </li>
+          <li>
+            Wait for <strong>Saved locally</strong> before leaving. Reloading
+            reopens your last selected document.
+          </li>
+        </ol>
+        <p>
+          <strong>Open a realistic example</strong> creates a new editable copy
+          of a completed checklist only when you choose that action. Reloading
+          never adds a copy. Changes to that copy do not change published
+          samples.
+        </p>
+        <p>
+          Use <strong>Document options</strong> to assign a collection, copy
+          Markdown, export HTML, or delete the active document. Search saved
+          titles in the sidebar; <strong>Library options</strong> contains the
+          collection filter and import/backup controls. Imports of .md or .txt
+          files create new documents.
+        </p>
+        <p>
+          Formatting shortcuts: Ctrl/Cmd+B for bold, I for italic, K for links,
+          and S to save. Tab inserts two spaces; Shift+Tab moves focus out of
+          the editor. The Formatting menu offers headings, lists, code, and
+          tables.
+        </p>
+      </section>
+      <section id="review">
+        <h2>Understand review findings</h2>
+        <p>
+          Choose <strong>Review</strong> to show structural checks. Findings
+          cover missing titles, empty or duplicate headings, skipped heading
+          levels, broken heading links, empty code blocks, missing image alt
+          text, placeholders, and long paragraphs. Select a finding to focus the
+          title or its approximate source line.
+        </p>
+        <p>
+          Checks are deterministic; there is no AI. A warning is a prompt for
+          judgment, not proof that writing is wrong. No findings does not verify
+          facts, completeness, accessibility, or external links.
+        </p>
+        <p>
+          Preview renders Markdown safely. Raw HTML remains literal; images are
+          omitted to avoid remote requests. Exported HTML follows the same
+          restrictions.
+        </p>
+      </section>
+      <section id="backups">
+        <h2>Export, back up, and restore</h2>
+        <ul>
+          <li>
+            <strong>Download .md</strong> keeps the current document as portable
+            source, including unsaved editor text.
+          </li>
+          <li>
+            <strong>Document options → Export HTML</strong> downloads a
+            standalone sanitized reading copy.
+          </li>
+          <li>
+            <strong>Library options → Download JSON backup</strong> saves the
+            whole document library. Keep this file somewhere outside browser
+            storage.
+          </li>
+          <li>
+            <strong>Library options → Restore backup</strong> validates a SiloV
+            version 1 JSON backup and asks for confirmation. It creates new
+            copies with new IDs and adds suffixes to colliding titles; existing
+            documents are preserved.
+          </li>
+        </ul>
+        <p>
+          There is no automatic backup, synchronization, encryption, or
+          publishing. Clearing site data, private browsing, storage eviction, or
+          losing the device can remove documents. Different browsers, profiles,
+          hostnames, and ports have separate libraries. Protect downloads: they
+          contain complete document text.
+        </p>
+        <p>
+          Limits: 500 documents; 200 title characters; 80 collection characters;
+          1,000,000 content characters per document; 2 MB per imported file; 10
+          MB per JSON backup/restore. Split a library into individual Markdown
+          exports if its backup exceeds the limit.
+        </p>
+        <h3>If saving fails</h3>
+        <p>
+          Keep the tab open and download the current Markdown. Retry after
+          resolving browser storage permissions or capacity. A conflict means
+          another tab saved a newer version: use <strong>Save a copy</strong> to
+          keep both drafts. Refresh to see another tab’s changes; there is no
+          live collaboration. Backup after a failed save includes the stored
+          version and an unsaved recovery copy when capacity permits. Forced
+          closing before a save completes can lose recent edits.
+        </p>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <span>SiloV · Writing workspace and documentation</span
+      ><a href="https://github.com/timedilationv2/silov0">Source on GitHub</a>
+    </footer>
+  </body>
+</html>

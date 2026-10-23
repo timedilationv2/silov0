@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="Local API — SiloV writing workspace and documentation."
+    />
+    <title>Local API — SiloV</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="scripts/site.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <a class="site-brand" href="index.html">SiloV</a>
+      <nav aria-label="Main navigation">
+        <a href="index.html">Overview</a><a href="workspace.html">Workspace</a
+        ><a href="documentation.html" aria-current="page">Documentation</a
+        ><a href="https://github.com/timedilationv2/silov0">GitHub</a>
+      </nav>
+      <button id="theme" type="button" aria-label="Switch theme">Theme</button>
+    </header>
+    <main id="main" class="content" tabindex="-1">
+      <p class="breadcrumb">
+        <a href="documentation.html">Documentation</a> / Local API
+      </p>
+      <h1>Local API</h1>
+      <p class="lead">
+        An optional Express service for reading and adding sample metadata in a
+        local checkout.
+      </p>
+      <nav class="page-index" aria-label="On this page">
+        <a href="#setup">Setup</a><a href="#endpoints">Endpoints</a
+        ><a href="#authentication">Authentication and errors</a>
+      </nav>
+      <section id="setup">
+        <h2>Purpose and setup</h2>
+        <p>
+          The API reads and updates <code>posts/posts.json</code>, not browser
+          workspace documents. It adds metadata and links; it does not create
+          the article prose in <code>samples.html</code>. It does not publish
+          files. GitHub Pages hosts only the static site.
+        </p>
+        <p>
+          With Node 18+ installed, run these commands from the repository root:
+        </p>
+        <pre><code>cd backend
+npm ci
+export API_TOKEN="$(node -e &quot;console.log(require('node:crypto').randomBytes(32).toString('hex'))&quot;)"
+export CORS_ORIGINS=http://localhost:8000
+npm run dev</code></pre>
+        <p>
+          The server binds to <code>127.0.0.1:3001</code>. Set
+          <code>PORT</code> to change its port. Keep the token in the server
+          environment and trusted local clients; never put it in a browser
+          bundle, URL, log, screenshot, or Git.
+          <code>.env.example</code> documents settings but is not loaded
+          automatically. <code>CORS_ORIGINS</code> is a comma-separated list of
+          exact HTTP(S) origins; it does not replace authentication.
+        </p>
+        <pre><code>curl http://localhost:3001/health
+# {"ok":true}
+curl 'http://localhost:3001/api/posts/filter?tag=reference&amp;q=filter'</code></pre>
+      </section>
+      <section id="endpoints">
+        <h2>Endpoints</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Request</th>
+              <th>Result</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>GET /health</code></td>
+              <td>200 with <code>{"ok":true}</code>.</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/posts</code></td>
+              <td>
+                All entries, newest date first; query parameters are ignored.
+              </td>
+            </tr>
+            <tr>
+              <td><code>GET /api/posts/filter</code></td>
+              <td>
+                Optional <code>tag</code>: exact, case-sensitive match. Optional
+                <code>q</code>: case-insensitive substring over titles,
+                summaries, and tags. Both conditions must match. No match
+                returns <code>[]</code>; repeated values return 400.
+              </td>
+            </tr>
+            <tr>
+              <td><code>POST /api/posts</code></td>
+              <td>
+                Authenticated create. Returns 201 with the full updated array.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          No single-entry update/delete, pagination, tag-list, or token-issuance
+          endpoints exist. Successful post-list responses are plain arrays, not
+          wrapped objects.
+        </p>
+        <h3>Create an entry</h3>
+        <p>
+          This changes your local JSON file. First write the full sample article
+          and choose its URL; adding a link does not create the article.
+        </p>
+        <pre><code>curl -i http://localhost:3001/api/posts \
+  -H "Authorization: Bearer $API_TOKEN" \
+  -H 'Content-Type: application/json' \
+  --data '{"id":"local-note","title":"A local note","date":"2026-10-23","summary":"A local example.","tags":["docs"],"url":"samples.html#local-note"}'</code></pre>
+        <p>
+          Required: a nonempty string <code>title</code> and a real calendar
+          date in <code>YYYY-MM-DD</code> format. Optional: nonempty
+          <code>id</code>, string <code>summary</code>, string <code>url</code>,
+          and an array of nonempty string <code>tags</code>. An omitted ID is
+          generated from date and title. Summary defaults to an empty string and
+          tags to an empty array. Strings are trimmed and tags deduplicated.
+        </p>
+        <p>
+          Limits in characters: title 300, summary 10,000, ID 320, URL 2,048; at
+          most 20 tags of 64 characters. URLs must be HTTP(S) or relative,
+          without embedded credentials or control characters. Review local file
+          changes before committing. Restart the service after manual JSON edits
+          to refresh its cache.
+        </p>
+      </section>
+      <section id="authentication">
+        <h2>Authentication and errors</h2>
+        <p>
+          Startup requires a non-placeholder bearer token of at least 32
+          accepted bearer-token characters, even for read-only use. GET requests
+          are public. Writes require
+          <code>Authorization: Bearer &lt;API_TOKEN&gt;</code>. Rotate the token
+          by changing the environment and restarting.
+        </p>
+        <p>
+          Errors are JSON objects with an <code>error</code> string. Status
+          codes: 400 invalid input or malformed JSON; 401 unauthorized write;
+          404 unknown route; 409 duplicate ID; 413 request body over 32 KiB; 415
+          unsupported encoding; 429 rate limit; 500 storage/internal failure
+          with details hidden.
+        </p>
+        <p>
+          Defaults are 300 API requests per minute per IP and 20 writes per
+          minute per IP, including unauthorized attempts. Helmet, exact CORS
+          origins, locked writes, and atomic file replacement protect the local
+          service. These protections do not supply headers for the separate
+          static site.
+        </p>
+        <p>
+          Related writing samples:
+          <a href="samples.html#filter-posts">filter reference</a> and
+          <a href="samples.html#unauthorized-write"
+            >authentication troubleshooting</a
+          >.
+        </p>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <span>SiloV · Writing workspace and documentation</span
+      ><a href="https://github.com/timedilationv2/silov0">Source on GitHub</a>
+    </footer>
+  </body>
+</html>

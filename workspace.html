@@ -1,49 +1,258 @@
 <!doctype html>
 <html lang="en" data-theme="dark">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Write, preview, review, and export technical documentation. A browser-local workspace with no account or API key.">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'none'; img-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'">
-  <meta name="referrer" content="no-referrer">
-  <title>SiloV0 — Documentation workspace</title>
-  <link rel="stylesheet" href="workspace.css">
-  <script type="module" src="scripts/workspace/app.mjs"></script>
-</head>
-<body>
-<a class="skip-link" href="#workspace">Skip to workspace</a>
-<header class="app-header">
-  <div class="brand"><button id="toggle-nav" class="mobile-only" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle documents">☰</button><a href="workspace.html"><span class="brand-icon">S</span> SiloV0</a><span class="brand-caption">Documentation workspace</span></div>
-  <nav aria-label="Workspace resources"><a href="index.html">Portfolio / Learn ↗</a><button id="theme" aria-label="Switch to light theme">Light theme</button></nav>
-</header>
-<div class="privacy-note"><span class="local-dot" aria-hidden="true"></span><strong>Local to this browser.</strong> Documents are not synced or backed up automatically. Export backups regularly. No account, backend, or AI service is used.</div>
-<div id="notice" class="notice" role="status" aria-live="polite"></div>
-<div id="error" class="error-banner" role="alert" hidden><span id="error-text"></span><div><button id="retry">Retry save</button><button id="save-copy">Save a copy</button><button id="recover-md">Download current Markdown</button></div></div>
-<div class="app-layout">
-  <aside id="sidebar" class="sidebar" aria-label="Document navigation">
-    <div class="sidebar-heading"><h1>Your documents</h1><span id="document-count">0</span></div>
-    <label for="template">Start with a template</label><select id="template" disabled></select><button id="create" class="primary" disabled>＋ Create document</button>
-    <label for="search-docs">Search by title</label><input id="search-docs" type="search" placeholder="Find a document…" autocomplete="off">
-    <label for="collection-filter">Collection</label><select id="collection-filter"><option value="">All collections</option></select>
-    <div id="document-list" class="document-list" aria-label="Documents"><p>Opening local storage…</p></div>
-    <div class="sidebar-tools"><button id="import">Import .md / .txt</button><button id="backup">Download JSON backup</button><button id="restore">Restore backup…</button></div>
-    <p class="sidebar-footnote">Stored in IndexedDB on this origin and browser profile. Clearing site data or private-mode sessions can remove documents.</p>
-  </aside>
-  <main id="workspace" tabindex="-1" class="workspace" data-view="split">
-    <section id="welcome" class="welcome"><span class="eyebrow">A practical place to write</span><h2>From a blank page<br>to a useful document.</h2><p>Create a document from the sidebar, choose a structured template, or import Markdown. Your work stays on this device.</p><ol><li><strong>Write</strong><span>Edit Markdown with simple formatting shortcuts.</span></li><li><strong>Review</strong><span>See a live preview and check the structure.</span></li><li><strong>Keep a copy</strong><span>Export a document or back up the whole library.</span></li></ol><a href="index.html">Explore documentation examples →</a></section>
-    <section id="document-area" hidden aria-label="Active document">
-      <div class="document-header"><label class="title-label" for="doc-title">Document title <input id="doc-title" spellcheck="false" autocorrect="off" maxlength="200" placeholder="Untitled document" autocomplete="off"></label><div class="save-meta"><span id="save-status" role="status" aria-live="polite">Saved locally</span><span id="timestamps"></span></div></div>
-      <div class="document-toolbar"><label for="doc-collection">Collection <input id="doc-collection" spellcheck="false" autocorrect="off" list="collections" maxlength="80" placeholder="e.g. Operations"><datalist id="collections"></datalist></label><div class="view-switch" role="group" aria-label="Editor view"><button data-view="editor" aria-pressed="false">Editor</button><button data-view="split" aria-pressed="true">Split</button><button data-view="preview" aria-pressed="false">Preview</button></div><button id="delete" class="danger">Delete…</button></div>
-      <div class="action-toolbar"><div class="format-tools" role="group" aria-label="Markdown formatting"><button data-format="heading" title="Insert heading">H2</button><button data-format="bold" title="Bold (Ctrl/Cmd+B)"><strong>B</strong></button><button data-format="italic" title="Italic (Ctrl/Cmd+I)"><em>I</em></button><button data-format="link" title="Link (Ctrl/Cmd+K)">Link</button><button data-format="list">List</button><button data-format="code">Code</button><button data-format="table">Table</button></div><div class="export-tools"><button id="copy">Copy Markdown</button><button id="export-md">Export .md</button><button id="export-html">Export HTML</button></div></div>
-      <div class="editor-panes"><section class="editor-pane" aria-label="Markdown source"><div class="pane-title"><label for="editor">Markdown</label><span id="cursor">Line 1</span></div><textarea id="editor" spellcheck="false" autocorrect="off" placeholder="# Start writing…" aria-describedby="editor-help" maxlength="1000000"></textarea></section><section class="preview-pane" aria-label="Rendered preview"><div class="pane-title"><h2>Live preview</h2><span>Sanitized · no remote images</span></div><article id="preview" class="markdown-body" tabindex="0"></article></section></div>
-      <div class="editor-footer"><p id="editor-help">Ctrl/Cmd+B bold · I italic · K link · S save · Tab indent. On mobile, Split stacks the preview below the editor.</p><span id="word-count"></span></div>
-      <details id="review-panel" class="review-panel" open><summary>Document review <span id="review-count"></span></summary><p class="review-intro">Deterministic checks, not AI. Warnings are prompts for review, not definitive writing mistakes. Select a finding to jump to its approximate source line.</p><div id="findings"></div></details>
-    </section>
-  </main>
-</div>
-<input id="import-file" type="file" accept=".md,.txt,text/plain,text/markdown" hidden>
-<input id="restore-file" type="file" accept=".json,application/json" hidden>
-<dialog id="confirm-dialog"><form method="dialog"><h2 id="dialog-title"></h2><p id="dialog-message"></p><div><button value="cancel">Cancel</button><button id="dialog-confirm" value="confirm" class="primary">Confirm</button></div></form></dialog>
-<noscript><p class="notice">JavaScript is required for the workspace. <a href="samples.html">Read the documentation samples</a> without it.</p></noscript>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="Write, preview, review, and export technical documentation. A browser-local workspace with no account or API key."
+    />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'none'; img-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <meta name="referrer" content="no-referrer" />
+    <title>Workspace — SiloV</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="workspace.css" />
+    <script type="module" src="scripts/workspace/app.mjs"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#workspace">Skip to content</a>
+    <header class="site-header">
+      <button
+        id="toggle-nav"
+        class="mobile-only"
+        aria-controls="sidebar"
+        aria-expanded="false"
+      >
+        Documents</button
+      ><a class="site-brand" href="index.html">SiloV</a>
+      <nav aria-label="Main navigation">
+        <a href="index.html">Overview</a
+        ><a href="workspace.html" aria-current="page">Workspace</a
+        ><a href="documentation.html">Documentation</a
+        ><a href="https://github.com/timedilationv2/silov0">GitHub</a>
+      </nav>
+      <button id="theme" type="button" aria-label="Switch theme">Theme</button>
+    </header>
+    <div class="privacy-note">
+      <span class="local-dot" aria-hidden="true"></span
+      ><strong>Local to this browser.</strong> Documents are not synced or
+      backed up automatically. Download backups regularly.
+    </div>
+    <div id="notice" class="notice" role="status" aria-live="polite"></div>
+    <div id="error" class="error-banner" role="alert" hidden>
+      <span id="error-text"></span>
+      <div>
+        <button id="retry">Retry save</button
+        ><button id="save-copy">Save a copy</button
+        ><button id="recover-md">Download current Markdown</button>
+      </div>
+    </div>
+    <div class="app-layout">
+      <aside id="sidebar" class="sidebar" aria-label="Document navigation">
+        <div class="sidebar-heading">
+          <h2>Your documents</h2>
+          <span id="document-count">0</span>
+        </div>
+        <button id="new-document" class="primary" disabled>New document</button>
+        <label for="search-docs">Search by title</label
+        ><input
+          id="search-docs"
+          type="search"
+          placeholder="Find a document…"
+          autocomplete="off"
+        />
+        <div id="document-list" class="document-list" aria-label="Documents">
+          <p>Opening local storage…</p>
+        </div>
+        <details id="library-menu" class="secondary-menu">
+          <summary>Library options</summary>
+          <label for="collection-filter">Collection</label
+          ><select id="collection-filter">
+            <option value="">All collections</option>
+          </select>
+          <div class="sidebar-tools">
+            <button id="import">Import .md / .txt</button
+            ><button id="backup">Download JSON backup</button
+            ><button id="restore">Restore backup…</button>
+          </div>
+        </details>
+        <p class="sidebar-footnote">
+          Clearing browser data can remove documents.
+          <a href="using-workspace.html#backups">Storage and backup help</a>
+        </p>
+      </aside>
+      <main id="workspace" tabindex="-1" class="workspace" data-view="split">
+        <section id="welcome" class="welcome">
+          <h1>Your writing workspace</h1>
+          <p>
+            Create a document to start writing, or open a completed checklist as
+            an editable copy.
+          </p>
+          <div class="actions">
+            <button id="welcome-create" class="primary" disabled>
+              Create a document</button
+            ><button id="open-example" disabled>
+              Open a realistic example
+            </button>
+          </div>
+          <p>Saved only in this browser. Nothing is published automatically.</p>
+          <a href="using-workspace.html">Read the workspace guide</a>
+        </section>
+        <section id="document-area" hidden aria-label="Active document">
+          <div class="document-header">
+            <label class="title-label" for="doc-title"
+              >Document title
+              <input
+                id="doc-title"
+                spellcheck="false"
+                autocorrect="off"
+                maxlength="200"
+                placeholder="Untitled document"
+                autocomplete="off"
+            /></label>
+            <div class="save-meta">
+              <span id="save-status" role="status" aria-live="polite"
+                >Saved locally</span
+              ><span id="timestamps"></span>
+            </div>
+          </div>
+          <div class="document-toolbar">
+            <div class="view-switch" role="group" aria-label="Editor view">
+              <button data-view="editor" aria-pressed="false">Editor</button
+              ><button data-view="split" aria-pressed="true">Split</button
+              ><button data-view="preview" aria-pressed="false">Preview</button>
+            </div>
+            <button
+              id="review-toggle"
+              aria-controls="review-panel"
+              aria-expanded="false"
+            >
+              Review</button
+            ><button id="export-md">Download .md</button>
+            <details id="document-menu" class="secondary-menu">
+              <summary>Document options</summary>
+              <label for="doc-collection"
+                >Collection
+                <input
+                  id="doc-collection"
+                  list="collections"
+                  maxlength="80"
+                  placeholder="e.g. Operations" /><datalist
+                  id="collections"
+                ></datalist></label
+              ><button id="copy">Copy Markdown</button
+              ><button id="export-html">Export HTML</button
+              ><button id="delete" class="danger">Delete document…</button>
+            </details>
+          </div>
+          <details class="format-menu">
+            <summary>Formatting</summary>
+            <div
+              class="format-tools"
+              role="group"
+              aria-label="Markdown formatting"
+            >
+              <button data-format="heading">Heading</button
+              ><button data-format="bold" title="Bold (Ctrl/Cmd+B)">
+                <strong>B</strong></button
+              ><button data-format="italic" title="Italic (Ctrl/Cmd+I)">
+                <em>I</em></button
+              ><button data-format="link">Link</button
+              ><button data-format="list">List</button
+              ><button data-format="code">Code</button
+              ><button data-format="table">Table</button>
+            </div>
+          </details>
+          <div class="editor-panes">
+            <section class="editor-pane" aria-label="Markdown source">
+              <div class="pane-title">
+                <label for="editor">Markdown</label
+                ><span id="cursor">Line 1</span>
+              </div>
+              <textarea
+                id="editor"
+                spellcheck="false"
+                autocorrect="off"
+                placeholder="# Start writing…"
+                aria-describedby="editor-help"
+                maxlength="1000000"
+              ></textarea>
+            </section>
+            <section class="preview-pane" aria-label="Rendered preview">
+              <div class="pane-title">
+                <h2>Live preview</h2>
+                <span>Images omitted</span>
+              </div>
+              <article
+                id="preview"
+                class="markdown-body"
+                tabindex="0"
+              ></article>
+            </section>
+          </div>
+          <div class="editor-footer">
+            <p id="editor-help">
+              Ctrl/Cmd+B bold · I italic · K link · S save · Tab indent. On
+              mobile, Split stacks the preview below the editor.
+            </p>
+            <span id="word-count"></span>
+          </div>
+          <details id="review-panel" class="review-panel">
+            <summary>Document review <span id="review-count"></span></summary>
+            <p class="review-intro">
+              Deterministic checks, not AI. Warnings are prompts for review, not
+              definitive writing mistakes. Select a finding to jump to its
+              approximate source line.
+            </p>
+            <div id="findings"></div>
+          </details>
+        </section>
+      </main>
+    </div>
+    <dialog id="new-dialog" aria-labelledby="new-title">
+      <h2 id="new-title">New document</h2>
+      <p>Choose a starting point. All templates are editable.</p>
+      <button id="new-example" disabled>Use example checklist</button>
+      <p>Or start from a template:</p>
+      <label for="template">Template</label
+      ><select id="template" disabled></select>
+      <div class="dialog-actions">
+        <button id="cancel-new">Cancel</button
+        ><button id="create" class="primary" disabled>Create document</button>
+      </div>
+    </dialog>
+    <input
+      id="import-file"
+      type="file"
+      accept=".md,.txt,text/plain,text/markdown"
+      hidden
+    />
+    <input
+      id="restore-file"
+      type="file"
+      accept=".json,application/json"
+      hidden
+    />
+    <dialog id="confirm-dialog">
+      <form method="dialog">
+        <h2 id="dialog-title"></h2>
+        <p id="dialog-message"></p>
+        <div>
+          <button value="cancel">Cancel</button
+          ><button id="dialog-confirm" value="confirm" class="primary">
+            Confirm
+          </button>
+        </div>
+      </form>
+    </dialog>
+    <noscript
+      ><p class="notice">
+        JavaScript is required for the workspace.
+        <a href="samples.html">Read the documentation samples</a> without it.
+      </p></noscript
+    >
+  </body>
 </html>

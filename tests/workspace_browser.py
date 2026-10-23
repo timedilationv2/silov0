@@ -26,7 +26,7 @@ class WorkspaceTests(unittest.TestCase):
         threading.Thread(target=cls.server.serve_forever, daemon=True).start()
         cls.base = f'http://127.0.0.1:{cls.server.server_address[1]}/silov0/workspace.html'
         cls.playwright = sync_playwright().start()
-        cls.browser = cls.playwright.chromium.launch()
+        cls.browser = cls.playwright.chromium.launch(executable_path=os.environ.get("SILOV_CHROMIUM_EXECUTABLE"))
     @classmethod
     def tearDownClass(cls):
         cls.browser.close(); cls.playwright.stop(); cls.server.shutdown(); cls.server.server_close()
@@ -41,6 +41,8 @@ class WorkspaceTests(unittest.TestCase):
         self.assertEqual(self.errors, [])
         self.context.close()
     def create(self, template='blank'):
+        if not self.page.locator('#new-document').is_visible(): self.page.click('#toggle-nav')
+        self.page.click('#new-document')
         self.page.select_option('#template', template)
         self.page.click('#create')
         expect(self.page.locator('#create')).to_be_enabled()
@@ -48,6 +50,8 @@ class WorkspaceTests(unittest.TestCase):
         expect(self.page.locator('#save-status')).to_have_text('Saved locally')
     def saved(self): expect(self.page.locator('#save-status')).to_have_text('Saved locally', timeout=10000)
     def download(self, selector):
+        if selector in ['#export-html', '#copy']: self.page.locator('#document-menu').evaluate('el => el.open = true')
+        if selector == '#backup': self.page.locator('#library-menu').evaluate('el => el.open = true')
         with self.page.expect_download() as info: self.page.click(selector)
         return info.value, Path(info.value.path()).read_text()
 
@@ -68,13 +72,13 @@ class WorkspaceTests(unittest.TestCase):
         expect(self.page.locator('#editor')).to_have_value(content)
 
     def test_create_rename_switch_search_collection_delete_confirmation(self):
-        self.create(); self.page.fill('#doc-title','Alpha'); self.page.fill('#doc-collection','Operations')
+        self.create(); self.page.locator('#document-menu summary').click(); self.page.fill('#doc-title','Alpha'); self.page.fill('#doc-collection','Operations')
         self.page.fill('#editor','# Alpha\n\nFirst draft')
         # Switch immediately; the application must flush pending edits.
         self.create('user-guide'); self.page.fill('#doc-title','Beta'); self.saved()
         self.page.fill('#search-docs','Alpha'); expect(self.page.locator('.document-item')).to_have_count(1)
         self.page.locator('.document-item').click(); expect(self.page.locator('#editor')).to_have_value('# Alpha\n\nFirst draft')
-        self.page.fill('#search-docs',''); self.page.select_option('#collection-filter','Operations')
+        self.page.locator('#library-menu summary').click(); self.page.fill('#search-docs',''); self.page.select_option('#collection-filter','Operations')
         expect(self.page.locator('.document-item')).to_have_count(1)
         self.page.click('#delete'); expect(self.page.locator('#confirm-dialog')).to_be_visible()
         self.page.get_by_role('button',name='Cancel',exact=True).click()
@@ -99,9 +103,11 @@ class WorkspaceTests(unittest.TestCase):
         self.page.keyboard.press('Control+b'); expect(self.page.locator('#editor')).to_have_value('**word**')
         self.page.keyboard.press('Control+s'); self.saved()
         self.page.evaluate("Object.defineProperty(navigator,'clipboard',{value:{writeText:async text=>window.copied=text},configurable:true})")
+        self.page.locator('#document-menu').evaluate('el => el.open = true')
         self.page.click('#copy'); expect(self.page.locator('#notice')).to_have_text('Markdown copied to clipboard.')
         self.assertEqual(self.page.evaluate('window.copied'),'**word**')
         self.page.evaluate("Object.defineProperty(navigator,'clipboard',{value:{writeText:async()=>{throw Error('denied')}},configurable:true})")
+        self.page.locator('#document-menu').evaluate('el => el.open = true')
         self.page.click('#copy'); expect(self.page.locator('#error')).to_contain_text('Clipboard access was denied')
 
     def test_import_html_export_backup_restore_no_overwrite(self):
@@ -159,6 +165,7 @@ class WorkspaceTests(unittest.TestCase):
     def test_quality_findings_jump_to_editor(self):
         self.create(); self.page.fill('#doc-title','')
         self.page.fill('#editor','#\n\n### Jump\n\n## Same\n\n## Same\n\n[broken](#missing)\n\n```\n\n```\n\n![](https://example.invalid/x)\n\nTODO write this')
+        self.page.click('#review-toggle')
         expect(self.page.locator('#findings')).to_contain_text('Missing document title')
         for text in ['Empty heading','Duplicate heading','Heading level skips','Empty code block','Image has no alt text','Unresolved heading link','Unresolved placeholder']:
             expect(self.page.locator('#findings')).to_contain_text(text)
@@ -193,7 +200,8 @@ class WorkspaceTests(unittest.TestCase):
         _, content=self.download('#recover-md'); self.assertEqual(content,'# Unsaved recovery draft')
         _, backup=self.download('#backup')
         self.assertEqual({d['content'] for d in json.loads(backup)['documents']},{'# Saved','# Unsaved recovery draft'})
-        self.page.click('#create'); expect(self.page.locator('#editor')).to_have_value('# Unsaved recovery draft')
+        self.page.click('#new-document'); self.page.click('#create'); expect(self.page.locator('#editor')).to_have_value('# Unsaved recovery draft')
+        self.page.click('#cancel-new')
         self.page.evaluate('()=>{IDBDatabase.prototype.transaction=window.originalTransaction}')
         self.page.click('#retry'); self.saved(); self.page.reload()
         expect(self.page.locator('#editor')).to_have_value('# Unsaved recovery draft')
@@ -248,7 +256,7 @@ class WorkspaceTests(unittest.TestCase):
         root=self.base.removesuffix('workspace.html')
         old.route(root,lambda route:route.fulfill(content_type='text/html',body=(ROOT/'workspace.html').read_text()))
         old.goto(root);expect(old.locator('#create')).to_be_enabled()
-        old.select_option('#template','sop');old.click('#create')
+        old.click('#new-document');old.select_option('#template','sop');old.click('#create')
         old.fill('#doc-title','Existing homepage document');old.fill('#editor','# Keep my existing work')
         expect(old.locator('#save-status')).to_have_text('Saved locally')
         old.close();self.page.reload()
@@ -257,12 +265,69 @@ class WorkspaceTests(unittest.TestCase):
 
     def test_browser_restart_persistence(self):
         with tempfile.TemporaryDirectory() as profile:
-            context=self.playwright.chromium.launch_persistent_context(profile)
+            context=self.playwright.chromium.launch_persistent_context(profile, executable_path=os.environ.get("SILOV_CHROMIUM_EXECUTABLE"))
             page=context.new_page();page.goto(self.base);expect(page.locator('#create')).to_be_enabled()
-            page.select_option('#template','sop');page.click('#create');page.fill('#editor','# Persist across restart')
+            page.click('#new-document');page.select_option('#template','sop');page.click('#create');page.fill('#editor','# Persist across restart')
             expect(page.locator('#save-status')).to_have_text('Saved locally');context.close()
-            context=self.playwright.chromium.launch_persistent_context(profile)
+            context=self.playwright.chromium.launch_persistent_context(profile, executable_path=os.environ.get("SILOV_CHROMIUM_EXECUTABLE"))
             page=context.new_page();page.goto(self.base)
             expect(page.locator('#editor')).to_have_value('# Persist across restart');context.close()
+
+
+    def test_new_document_dialog_and_explicit_example_copy(self):
+        expect(self.page.locator('.document-item')).to_have_count(0)
+        self.page.reload()
+        expect(self.page.locator('.document-item')).to_have_count(0)
+        self.page.click('#welcome-create')
+        expect(self.page.locator('#new-dialog')).to_be_visible()
+        self.page.select_option('#template', 'sop')
+        self.page.click('#cancel-new')
+        expect(self.page.locator('.document-item')).to_have_count(0)
+        self.page.click('#open-example')
+        expect(self.page.locator('#doc-title')).to_have_value('Documentation release checklist')
+        expect(self.page.locator('#preview h1')).to_have_text('Documentation release checklist')
+        self.page.fill('#editor', '# My edited checklist')
+        self.saved()
+        self.page.reload()
+        expect(self.page.locator('#editor')).to_have_value('# My edited checklist')
+        expect(self.page.locator('.document-item')).to_have_count(1)
+        self.create('blank')
+        self.page.fill('#editor', '# Keep this too'); self.saved()
+        # The example action can be invoked again explicitly, never by initialization.
+        self.page.click('#new-document')
+        self.page.click('#new-example')
+        expect(self.page.locator('.document-item')).to_have_count(3)
+        docs = self.page.evaluate("async()=>{const {openStore}=await import('./scripts/workspace/storage.mjs');const s=await openStore();const d=await s.list();s.close();return d}")
+        self.assertIn('# My edited checklist', [d['content'] for d in docs])
+        self.assertIn('# Keep this too', [d['content'] for d in docs])
+        self.page.reload()
+        expect(self.page.locator('.document-item')).to_have_count(3)
+
+
+    def test_preexisting_record_and_preferences_survive_navigation(self):
+        legacy = {'id':'existing-document-2024', 'title':'Existing field notes',
+                  'content':'# Existing notes\n\nKeep the original text.', 'collection':'Operations',
+                  'createdAt':'2024-01-02T03:04:05.000Z', 'updatedAt':'2024-01-03T03:04:05.000Z', 'revision':7}
+        self.page.evaluate("""async doc => {
+            const db = await new Promise((resolve, reject) => {
+                const r = indexedDB.open('silov0-workspace', 1);
+                r.onsuccess = () => resolve(r.result); r.onerror = () => reject(r.error);
+            });
+            await new Promise((resolve, reject) => {
+                const tx = db.transaction('documents', 'readwrite'); tx.objectStore('documents').put(doc);
+                tx.oncomplete = resolve; tx.onerror = () => reject(tx.error);
+            });
+            db.close(); localStorage.setItem('silov0-active', doc.id); localStorage.setItem('silov0-theme','light');
+        }""", legacy)
+        self.page.reload()
+        expect(self.page.locator('#editor')).to_have_value(legacy['content'])
+        expect(self.page.locator('#doc-title')).to_have_value(legacy['title'])
+        self.page.get_by_role('navigation', name='Main navigation').get_by_text('Documentation',exact=True).click()
+        self.page.get_by_role('navigation', name='Main navigation').get_by_text('Overview',exact=True).click()
+        self.page.get_by_role('navigation', name='Main navigation').get_by_text('Workspace',exact=True).click()
+        expect(self.page.locator('#editor')).to_have_value(legacy['content'])
+        expect(self.page.locator('html')).to_have_attribute('data-theme','light')
+        docs = self.page.evaluate("async()=>{const {openStore}=await import('./scripts/workspace/storage.mjs');const s=await openStore();const d=await s.list();s.close();return d}")
+        self.assertEqual(docs, [legacy], 'Opening pages must not rewrite stored records or revisions')
 
 if __name__=='__main__': unittest.main(verbosity=2)

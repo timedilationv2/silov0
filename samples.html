@@ -1,9 +1,130 @@
-<!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Four original SiloV0 documentation portfolio samples: a tutorial, API reference, troubleshooting guide, and Markdown export how-to."><title>Documentation samples — SiloV0</title><link rel="stylesheet" href="styles.css"></head>
-<body><a class="skip-link" href="#samples-main">Skip to samples</a><header class="site-header"><a class="brand" href="index.html">SiloV0 <span class="brand-note">/ back to the case study</span></a></header><main class="section-wrap sample-document" id="samples-main"><header><p class="eyebrow">Documentation Samples / Original portfolio work</p><h1>Instructions you can put to the test.</h1><p>These samples document SiloV0 itself. They demonstrate four writing formats, not work for a fictional customer. Dates in the demo mark sample revisions, not product releases.</p><nav class="sample-index" aria-label="Writing samples"><a href="#local-preview">Tutorial</a><a href="#filter-posts">Reference</a><a href="#unauthorized-write">Troubleshooting</a><a href="#markdown-export">How-to</a></nav></header>
-<article id="local-preview"><p class="eyebrow">Sample 01 / Tutorial</p><h2>Preview the documentation library locally</h2><p class="audience">Audience: a contributor opening the project for the first time.</p><p>Open the Examples / Learn area on your computer to review the writing and try its sample-search controls. You do not need to start the Express API.</p><h3>Before you begin</h3><p>Install Python 3 and Git. These commands assume a terminal with Git available and a free local port 8000.</p><ol><li>Clone the repository and enter its directory.<pre><code>git clone https://github.com/timedilationv2/silov0.git
-cd silov0</code></pre></li><li>Start a local-only static server from the repository root.<pre><code>python3 -m http.server 8000 --bind 127.0.0.1</code></pre></li><li>Open <code>http://localhost:8000/</code> in your browser. Confirm that four samples appear in both the card and table views.</li><li>Search for <code>authentication</code>. You should see “Resolve an unauthorized write” in both views.</li></ol><h3>Check your result</h3><p>The page shows one matching sample and “Showing 1 of 4 samples”. Clear the search to restore all four samples. Stop the server with Ctrl+C when finished.</p><h3>If the content does not load</h3><p>Use the HTTP address, rather than opening the HTML file directly. Check that you started the server in the directory containing <code>index.html</code> and <code>posts/</code>. If port 8000 is busy, use another port and update the browser address. Keep real secret files outside the served directory.</p></article>
-<article id="filter-posts"><p class="eyebrow">Sample 02 / API Reference</p><h2>Find posts with the local API</h2><p class="audience">Audience: a developer integrating with the local content service.</p><p><code>GET /api/posts/filter</code> returns posts matching a topic, a text query, or both. First start the local API using the repository’s <a href="https://github.com/timedilationv2/silov0/blob/main/README.md#quickstart">secure setup instructions</a>. A token must be configured on the server even though this read request does not require authentication.</p><h3>Query parameters</h3><ul><li><code>tag</code> (optional string): exact, case-sensitive topic match. <code>reference</code> matches; <code>Reference</code> does not.</li><li><code>q</code> (optional string): case-insensitive substring search across the title, summary, and tags.</li></ul><h3>Example request</h3><pre><code>curl 'http://localhost:3001/api/posts/filter?tag=reference&amp;q=filter'</code></pre><h3>Expected response with the checked-in sample data</h3><pre><code>[
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="Writing examples — SiloV writing workspace and documentation."
+    />
+    <title>Writing examples — SiloV</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="scripts/site.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <a class="site-brand" href="index.html">SiloV</a>
+      <nav aria-label="Main navigation">
+        <a href="index.html">Overview</a><a href="workspace.html">Workspace</a
+        ><a href="documentation.html" aria-current="page">Documentation</a
+        ><a href="https://github.com/timedilationv2/silov0">GitHub</a>
+      </nav>
+      <button id="theme" type="button" aria-label="Switch theme">Theme</button>
+    </header>
+    <main id="main" class="content" tabindex="-1">
+      <p class="breadcrumb">
+        <a href="documentation.html">Documentation</a> / Writing examples
+      </p>
+      <h1>Writing examples</h1>
+      <p class="lead">
+        Four finished samples about this repository, demonstrating a tutorial,
+        API reference, troubleshooting guide, and how-to.
+      </p>
+      <p>
+        These are writing samples, not instructions for using the editor. For
+        that, read <a href="using-workspace.html">Using the workspace</a>. Dates
+        mark sample revisions, not product releases. The searchable collection
+        stores summaries and links in <code>posts/posts.json</code>; the full
+        articles below live in <code>samples.html</code>.
+      </p>
+      <nav class="page-index" aria-label="Writing examples">
+        <a href="#local-preview">Tutorial</a
+        ><a href="#filter-posts">API reference</a
+        ><a href="#unauthorized-write">Troubleshooting</a
+        ><a href="#markdown-export">How-to</a>
+      </nav>
+      <article id="local-preview">
+        <p class="eyebrow">Writing sample · Tutorial</p>
+        <h2>Preview the documentation library locally</h2>
+        <p class="audience">
+          Audience: a contributor opening the project for the first time.
+        </p>
+        <p>
+          Open the Documentation examples on your computer to review the writing
+          and try its sample-search controls. You do not need to start the
+          Express API.
+        </p>
+        <h3>Before you begin</h3>
+        <p>
+          Install Python 3 and Git. These commands assume a terminal with Git
+          available and a free local port 8000.
+        </p>
+        <ol>
+          <li>
+            Clone the repository and enter its directory.
+            <pre><code>git clone https://github.com/timedilationv2/silov0.git
+cd silov0</code></pre>
+          </li>
+          <li>
+            Start a local-only static server from the repository root.
+            <pre><code>python3 -m http.server 8000 --bind 127.0.0.1</code></pre>
+          </li>
+          <li>
+            Open
+            <code>http://localhost:8000/documentation.html#live-demo</code> in
+            your browser. Confirm that four samples appear in both the summary
+            and table views.
+          </li>
+          <li>
+            Search for <code>authentication</code>. You should see “Resolve an
+            unauthorized write” in both views.
+          </li>
+        </ol>
+        <h3>Check your result</h3>
+        <p>
+          The page shows one matching sample and “Showing 1 of 4 samples”. Clear
+          the search to restore all four samples. Stop the server with Ctrl+C
+          when finished.
+        </p>
+        <h3>If the content does not load</h3>
+        <p>
+          Use the HTTP address, rather than opening the HTML file directly.
+          Check that you started the server in the directory containing
+          <code>index.html</code> and <code>posts/</code>. If port 8000 is busy,
+          use another port and update the browser address. Keep real secret
+          files outside the served directory.
+        </p>
+      </article>
+      <article id="filter-posts">
+        <p class="eyebrow">Writing sample · API Reference</p>
+        <h2>Find posts with the local API</h2>
+        <p class="audience">
+          Audience: a developer integrating with the local content service.
+        </p>
+        <p>
+          <code>GET /api/posts/filter</code> returns posts matching a topic, a
+          text query, or both. First start the local API using the repository’s
+          <a href="api.html#setup">secure setup instructions</a>. A token must
+          be configured on the server even though this read request does not
+          require authentication.
+        </p>
+        <h3>Query parameters</h3>
+        <ul>
+          <li>
+            <code>tag</code> (optional string): exact, case-sensitive topic
+            match. <code>reference</code> matches; <code>Reference</code> does
+            not.
+          </li>
+          <li>
+            <code>q</code> (optional string): case-insensitive substring search
+            across the title, summary, and tags.
+          </li>
+        </ul>
+        <h3>Example request</h3>
+        <pre><code>curl 'http://localhost:3001/api/posts/filter?tag=reference&amp;q=filter'</code></pre>
+        <h3>Expected response with the checked-in sample data</h3>
+        <pre><code>[
   {
     "id": "filter-posts",
     "title": "Find posts with the local API",
@@ -12,10 +133,128 @@ cd silov0</code></pre></li><li>Start a local-only static server from the reposit
     "tags": ["api", "reference"],
     "url": "samples.html#filter-posts"
   }
-]</code></pre><h3>Behavior and errors</h3><p>Both supplied conditions must match. No match returns HTTP 200 with <code>[]</code>. Omitting both parameters returns all posts, newest date first. Repeating a parameter, such as <code>?q=a&amp;q=b</code>, returns 400 with a JSON error string. <code>GET /api/posts</code> ignores query parameters; use the filter route for searching.</p><p>The public portfolio does not send this request. Its search runs in the browser over <code>posts/posts.json</code>.</p></article>
-<article id="unauthorized-write"><p class="eyebrow">Sample 03 / Troubleshooting</p><h2>Resolve an unauthorized write</h2><p class="audience">Audience: a contributor adding content through a local API client.</p><h3>Symptom</h3><p>A <code>POST /api/posts</code> request returns HTTP 401 and <code>{"error":"Unauthorized"}</code>.</p><h3>Cause</h3><p>The request has no valid bearer token matching the server’s <code>API_TOKEN</code>. This is an authentication failure, so changing the post title or date will not fix it.</p><h3>Resolve it</h3><ol><li>Confirm the API is running locally and that you followed the <a href="https://github.com/timedilationv2/silov0/blob/main/README.md#quickstart">secure setup guide</a>. If startup rejects the token, generate a new random token, set it in the server environment, and restart.</li><li>In a trusted local client, use the same token as the running server. Send <code>Authorization: Bearer &lt;API_TOKEN&gt;</code>. Do not include angle brackets around the actual token or put it in a URL, screenshot, browser script, or repository file.</li><li>Send a valid post to the local server. This example assumes <code>API_TOKEN</code> is already set in your terminal and changes your local <code>posts/posts.json</code>.<pre><code>curl -i http://localhost:3001/api/posts \
+]</code></pre>
+        <h3>Behavior and errors</h3>
+        <p>
+          Both supplied conditions must match. No match returns HTTP 200 with
+          <code>[]</code>. Omitting both parameters returns all posts, newest
+          date first. Repeating a parameter, such as <code>?q=a&amp;q=b</code>,
+          returns 400 with a JSON error string.
+          <code>GET /api/posts</code> ignores query parameters; use the filter
+          route for searching.
+        </p>
+        <p>
+          The documentation example search does not send this request. Its
+          search runs in the browser over <code>posts/posts.json</code>.
+        </p>
+      </article>
+      <article id="unauthorized-write">
+        <p class="eyebrow">Writing sample · Troubleshooting</p>
+        <h2>Resolve an unauthorized write</h2>
+        <p class="audience">
+          Audience: a contributor adding content through a local API client.
+        </p>
+        <h3>Symptom</h3>
+        <p>
+          A <code>POST /api/posts</code> request returns HTTP 401 and
+          <code>{"error":"Unauthorized"}</code>.
+        </p>
+        <h3>Cause</h3>
+        <p>
+          The request has no valid bearer token matching the server’s
+          <code>API_TOKEN</code>. This is an authentication failure, so changing
+          the post title or date will not fix it.
+        </p>
+        <h3>Resolve it</h3>
+        <ol>
+          <li>
+            Confirm the API is running locally and that you followed the
+            <a href="api.html#setup">secure setup guide</a>. If startup rejects
+            the token, generate a new random token, set it in the server
+            environment, and restart.
+          </li>
+          <li>
+            In a trusted local client, use the same token as the running server.
+            Send <code>Authorization: Bearer &lt;API_TOKEN&gt;</code>. Do not
+            include angle brackets around the actual token or put it in a URL,
+            screenshot, browser script, or repository file.
+          </li>
+          <li>
+            Send a valid post to the local server. This example assumes
+            <code>API_TOKEN</code> is already set in your terminal and changes
+            your local <code>posts/posts.json</code>.
+            <pre><code>curl -i http://localhost:3001/api/posts \
   -H "Authorization: Bearer $API_TOKEN" \
   -H 'Content-Type: application/json' \
-  --data '{"id":"local-writing-note","title":"A local writing note","date":"2026-10-23","summary":"Local test entry.","tags":["docs"]}'</code></pre></li></ol><h3>Verify the fix</h3><p>HTTP 201 with the updated array means the write succeeded. A 400 now means the body needs correction; a 409 means the ID already exists. Use a new ID for a new post. If you repeat failed attempts too quickly, 429 indicates a rate limit; wait for the retry interval.</p><p>Remove the local test entry after stopping the server and restart the API after manual edits. Do not commit the test entry. GitHub Pages does not host this writable API.</p></article>
-<article id="markdown-export"><p class="eyebrow">Sample 04 / How-to</p><h2>Export a Markdown reading list</h2><p class="audience">Audience: a reviewer collecting relevant writing samples.</p><p>Use the demo to make a reading list containing only the samples you want to review.</p><ol><li>Open the <a href="index.html#live-demo">interactive demo</a>.</li><li>Select <strong>how-to</strong> under “Filter by topic”. The card and table views show the same single sample.</li><li>Choose <strong>Copy digest as Markdown</strong>. A status message confirms that one sample was copied.</li><li>Paste into a text editor or a Markdown document. The digest includes the title, revision date, topics, summary, and a source link.</li></ol><h3>What to expect</h3><p>The export contains the summaries currently selected, not the full sample articles. Source links such as <code>samples.html#markdown-export</code> are relative to this site; use the site’s full address when sharing the digest elsewhere. Exporting an empty selection produces a “No posts match your filters” note.</p><h3>If copying fails</h3><p>Use localhost or HTTPS and allow clipboard access when prompted. If your browser still blocks copying, use the local command-line alternative below. It exports all posts, regardless of browser filters.</p><pre><code>node backend/bin/silov0-digest.js</code></pre><p>Post-supplied markup is escaped in the export. Unsafe source URL schemes are omitted by the browser.</p></article>
-<footer class="site-footer"><a href="index.html#case-study">← Back to the case study</a><a href="https://github.com/timedilationv2/silov0/blob/main/README.md">Project setup &amp; documentation ↗</a></footer></main></body></html>
+  --data '{"id":"local-writing-note","title":"A local writing note","date":"2026-10-23","summary":"Local test entry.","tags":["docs"]}'</code></pre>
+          </li>
+        </ol>
+        <h3>Verify the fix</h3>
+        <p>
+          HTTP 201 with the updated array means the write succeeded. A 400 now
+          means the body needs correction; a 409 means the ID already exists.
+          Use a new ID for a new post. If you repeat failed attempts too
+          quickly, 429 indicates a rate limit; wait for the retry interval.
+        </p>
+        <p>
+          Remove the local test entry after stopping the server and restart the
+          API after manual edits. Do not commit the test entry. GitHub Pages
+          does not host this writable API.
+        </p>
+      </article>
+      <article id="markdown-export">
+        <p class="eyebrow">Writing sample · How-to</p>
+        <h2>Export a Markdown reading list</h2>
+        <p class="audience">
+          Audience: a reviewer collecting relevant writing samples.
+        </p>
+        <p>
+          Use the example search to make a reading list containing only the
+          samples you want to review.
+        </p>
+        <ol>
+          <li>
+            Open the <a href="documentation.html#live-demo">example search</a>.
+          </li>
+          <li>
+            Select <strong>how-to</strong> under “Filter by topic”. The summary
+            and table views show the same single sample.
+          </li>
+          <li>
+            Choose <strong>Copy digest as Markdown</strong>. A status message
+            confirms that one sample was copied.
+          </li>
+          <li>
+            Paste into a text editor or a Markdown document. The digest includes
+            the title, revision date, topics, summary, and a source link.
+          </li>
+        </ol>
+        <h3>What to expect</h3>
+        <p>
+          The export contains the summaries currently selected, not the full
+          sample articles. Source links such as
+          <code>samples.html#markdown-export</code> are relative to this site;
+          use the site’s full address when sharing the digest elsewhere.
+          Exporting an empty selection produces a “No posts match your filters”
+          note.
+        </p>
+        <h3>If copying fails</h3>
+        <p>
+          Use localhost or HTTPS and allow clipboard access when prompted. If
+          your browser still blocks copying, use the local command-line
+          alternative below. It exports all posts, regardless of browser
+          filters.
+        </p>
+        <pre><code>node backend/bin/silov0-digest.js</code></pre>
+        <p>
+          Post-supplied markup is escaped in the export. Unsafe source URL
+          schemes are omitted by the browser.
+        </p>
+      </article>
+    </main>
+    <footer class="site-footer">
+      <span>SiloV · Writing workspace and documentation</span
+      ><a href="https://github.com/timedilationv2/silov0">Source on GitHub</a>
+    </footer>
+  </body>
+</html>

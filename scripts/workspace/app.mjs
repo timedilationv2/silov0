@@ -2,6 +2,7 @@ import { openStore } from './storage.mjs'
 import { makeDocument, validateDocument, backupJSON, parseBackup, restoredCopies, fileName,
   MAX_CONTENT, MAX_FILE_BYTES, MAX_BACKUP_BYTES, MAX_DOCUMENTS } from './model.mjs'
 import { templates } from './templates.mjs'
+import { exampleDocument } from './example.mjs'
 import { renderMarkdown, exportHTML } from './markdown.mjs'
 import { reviewDocument } from './quality.mjs'
 
@@ -48,7 +49,7 @@ function renderNavigation() {
     button.addEventListener('click', () => operation(() => openDocument(doc.id)))
     fragment.append(button)
   }
-  if (!matches.length) fragment.append(node('p', all.length ? 'No matching documents. Clear the search or collection filter.' : 'No documents yet. Choose a template and create your first one.'))
+  if (!matches.length) fragment.append(node('p', all.length ? 'No matching documents. Clear the search or collection filter.' : 'No documents yet. Choose New document to begin.'))
   $('document-list').replaceChildren(fragment)
   $('document-count').textContent = all.length
   const collections = [...new Set(all.map(d => d.collection).filter(Boolean))].sort()
@@ -161,9 +162,13 @@ async function flush() {
 async function operation(task) {
   if (busy) return
   busy = true
-  $('create').disabled = true; $('delete').disabled = true
+  for (const id of ['create', 'new-document', 'welcome-create', 'open-example', 'new-example', 'delete']) $(id).disabled = true
   try { await task() } catch (error) { showError(error) }
-  finally { busy = false; $('create').disabled = !store; $('delete').disabled = false }
+  finally {
+    busy = false
+    for (const id of ['create', 'new-document', 'welcome-create', 'open-example', 'new-example']) $(id).disabled = !store
+    $('delete').disabled = false
+  }
 }
 function closeMobileNav() {
   $('sidebar').classList.remove('is-open')
@@ -178,14 +183,15 @@ async function openDocument(id) {
   if (!selected) { notice('That document no longer exists in local storage.'); renderNavigation(); return }
   setActive(selected); closeMobileNav()
 }
-async function createDocument() {
+async function createDocument(source = null) {
   if (!await flush()) return
   documents = await store.list()
   if (documents.length >= MAX_DOCUMENTS) throw new Error('This workspace supports up to 500 documents. Back up and remove unused documents first.')
-  const template = templates.find(t => t.id === $('template').value) || templates[0]
+  const template = source || templates.find(t => t.id === $('template').value) || templates[0]
   const title = uniqueTitle(template.title)
   const saved = await store.save(makeDocument(title, template.content))
   documents.push(saved); setActive(saved); closeMobileNav()
+  $('new-dialog').close()
   $('doc-title').focus(); $('doc-title').select()
   notice('Created locally. Rename the title above; changes save automatically.')
 }
@@ -294,7 +300,8 @@ function format(kind) {
 async function init() {
   try {
     store = await openStore(); documents = await store.list()
-    $('template').disabled = false; $('create').disabled = false
+    $('template').disabled = false
+    for (const id of ['create', 'new-document', 'welcome-create', 'open-example', 'new-example']) $(id).disabled = false
     const last = preferences.get('active')
     setActive(documents.find(d => d.id === last) || documents[0] || null)
     clearError()
@@ -305,7 +312,19 @@ async function init() {
 }
 
 for (const template of templates) $('template').append(new Option(template.name, template.id))
-$('create').addEventListener('click', () => operation(createDocument))
+$('create').addEventListener('click', () => operation(() => createDocument()))
+for (const id of ['new-document', 'welcome-create']) $(id).addEventListener('click', () => {
+  if (!store || busy) return
+  $('new-dialog').showModal()
+  $('template').focus()
+})
+$('cancel-new').addEventListener('click', () => $('new-dialog').close())
+for (const id of ['open-example', 'new-example']) $(id).addEventListener('click', () => operation(() => createDocument(exampleDocument)))
+$('review-toggle').addEventListener('click', () => {
+  $('review-panel').open = !$('review-panel').open
+  if ($('review-panel').open) $('review-panel').scrollIntoView({ block: 'nearest' })
+})
+$('review-panel').addEventListener('toggle', () => $('review-toggle').setAttribute('aria-expanded', String($('review-panel').open)))
 $('delete').addEventListener('click', () => operation(deleteDocument))
 for (const id of ['doc-title', 'doc-collection', 'editor']) $(id).addEventListener('input', edit)
 $('editor').addEventListener('click', cursorPosition)

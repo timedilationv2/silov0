@@ -1,88 +1,231 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="description" content="SiloV0: a technical writing portfolio case study connecting clear instructions, structured content, and a working documentation demo.">
-  <title>SiloV0 — Technical writing, demonstrated</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <a class="skip-link" href="#main">Skip to content</a>
-  <header class="site-header">
-    <a class="brand" href="#overview" aria-label="SiloV0 overview"><span class="brand-mark">S</span> SiloV0 <span class="brand-note">/ writing &amp; systems</span></a>
-    <nav class="desktop-nav" aria-label="Main navigation">
-      <a href="#overview">Overview</a><a href="#live-demo">Interactive Demo</a><a href="#samples">Documentation Samples</a><a href="#architecture">Architecture &amp; Workflow</a><a href="#case-study">Case Study</a><a href="#api-reference">API Reference</a><a href="workspace.html">Workspace ↗</a>
-    </nav>
-    <details class="mobile-navigation"><summary>Explore the project</summary><nav aria-label="Mobile navigation">
-      <a href="#overview">Overview</a><a href="#live-demo">Interactive Demo</a><a href="#samples">Documentation Samples</a><a href="#architecture">Architecture &amp; Workflow</a><a href="#case-study">Case Study</a><a href="#api-reference">API Reference</a><a href="workspace.html">Workspace ↗</a>
-    </nav></details>
-  </header>
-  <main id="main">
-    <section class="hero section-wrap" id="overview" aria-labelledby="hero-title">
-      <div class="hero-copy">
-        <p class="eyebrow"><span class="status-dot"></span> Technical writing portfolio · Independent project</p>
-        <h1 id="hero-title">Good documentation.<br><span>A working example.</span></h1>
-        <p class="hero-lead">SiloV0 is a small documentation library you can search, browse, and export. It shows how clear writing and thoughtful content structure can make technical information easier to use.</p>
-        <p class="hero-context">Built to connect the explanation with the implementation: task-based guides, a working reader experience, and a documented local publishing tool.</p>
-        <div class="hero-actions"><a class="button primary" href="#live-demo">Try the demo <span aria-hidden="true">↗</span></a><a class="button secondary" href="samples.html">Read the writing samples <span aria-hidden="true">→</span></a></div>
-        <p class="scope-note">Portfolio work, not a customer project. Examples describe this repository; no user outcomes or business results are claimed.</p>
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="Documentation — SiloV writing workspace and documentation."
+    />
+    <title>Documentation — SiloV</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="scripts/site.js" defer></script>
+    <script src="scripts/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <a class="site-brand" href="index.html">SiloV</a>
+      <nav aria-label="Main navigation">
+        <a href="index.html">Overview</a><a href="workspace.html">Workspace</a
+        ><a href="documentation.html" aria-current="page">Documentation</a
+        ><a href="https://github.com/timedilationv2/silov0">GitHub</a>
+      </nav>
+      <button id="theme" type="button" aria-label="Switch theme">Theme</button>
+    </header>
+    <main id="main" class="content" tabindex="-1">
+      <h1>Documentation</h1>
+      <p class="lead">
+        Use the writing workspace, read finished examples, or explore the
+        repository.
+      </p>
+      <div class="doc-sections">
+        <section>
+          <h2>Using the workspace</h2>
+          <ul>
+            <li>
+              <a href="using-workspace.html#create"
+                >Create and edit documents</a
+              >
+            </li>
+            <li>
+              <a href="using-workspace.html#review"
+                >Understand review findings</a
+              >
+            </li>
+            <li>
+              <a href="using-workspace.html#backups"
+                >Export, back up, and restore</a
+              >
+            </li>
+          </ul>
+        </section>
+        <section>
+          <h2>Writing examples</h2>
+          <p>
+            These are writing samples about this repository, separate from the
+            workspace user guide.
+          </p>
+          <ul>
+            <li>
+              <a href="samples.html#local-preview"
+                >Tutorial: preview the documentation library</a
+              >
+            </li>
+            <li>
+              <a href="samples.html#filter-posts"
+                >API reference sample: find posts</a
+              >
+            </li>
+            <li>
+              <a href="samples.html#unauthorized-write"
+                >Troubleshooting: an unauthorized write</a
+              >
+            </li>
+            <li>
+              <a href="samples.html#markdown-export"
+                >How-to: export a reading list</a
+              >
+            </li>
+          </ul>
+          <a href="#live-demo">Search the examples</a>
+        </section>
+        <section>
+          <h2>Running the repository</h2>
+          <ul>
+            <li><a href="running.html#setup">Setup</a></li>
+            <li><a href="running.html#structure">Repository structure</a></li>
+            <li>
+              <a href="running.html#storage">Architecture and data storage</a>
+            </li>
+          </ul>
+        </section>
+        <section>
+          <h2>Local API</h2>
+          <ul>
+            <li><a href="api.html#setup">Purpose and setup</a></li>
+            <li><a href="api.html#endpoints">Endpoints</a></li>
+            <li>
+              <a href="api.html#authentication">Authentication and errors</a>
+            </li>
+          </ul>
+        </section>
       </div>
-      <aside class="project-note" aria-labelledby="project-note-title">
-        <p class="eyebrow">Inside the project</p><h2 id="project-note-title">Writing that connects the dots.</h2>
-        <ol class="evidence-list"><li><span>01</span><div><strong>Explain the task</strong><p>Give readers a starting point, steps, and a way to check their work.</p></div></li><li><span>02</span><div><strong>Structure the content</strong><p>Use consistent titles, summaries, and topics across two reading views.</p></div></li><li><span>03</span><div><strong>Verify the details</strong><p>Keep examples aligned with the code and test the reader experience.</p></div></li></ol>
-        <a class="text-link" href="https://github.com/timedilationv2/silov0">Explore the source <span aria-hidden="true">↗</span></a>
-      </aside>
-    </section>
-    <div class="skills-strip section-wrap" aria-label="Skills demonstrated"><span>What this demonstrates</span><ul><li>Information architecture</li><li>Task-based writing</li><li>API documentation</li><li>Docs as code</li></ul></div>
+      <p>
+        The examples’ titles, summaries, tags, dates, and links come from
+        <code>posts/posts.json</code>; full prose lives in
+        <code>samples.html</code>. The optional API updates JSON entries
+        locally. Publishing prose or metadata requires a separate source change
+        and Pages deployment. Workspace documents stay in your browser.
+      </p>
+      <section
+        id="live-demo"
+        class="section-wrap content-section"
+        aria-labelledby="demo-title"
+      >
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Writing examples</p>
+            <h2 id="demo-title">Search the writing examples</h2>
+          </div>
+          <p>
+            Search a task, choose a topic, then copy your selection as a
+            Markdown reading list.
+          </p>
+        </div>
+        <div class="demo-panel">
+          <div class="demo-topline">
+            <span class="badge">Bundled examples</span>
+            <p>
+              Reads a bundled content file. No account or API connection needed.
+            </p>
+          </div>
+          <div class="controls">
+            <label class="search-label"
+              ><span>Search samples</span
+              ><input
+                id="search"
+                type="search"
+                placeholder="Try “authentication” or “Markdown”"
+                autocomplete="off" /></label
+            ><label class="filter-label"
+              ><span>Filter by topic</span
+              ><select id="tag-filter">
+                <option value="">All topics</option>
+              </select></label
+            ><button
+              id="export-markdown"
+              class="button secondary"
+              type="button"
+            >
+              Copy digest as Markdown
+            </button>
+          </div>
+          <div class="demo-status">
+            <span id="filter-count" role="status" aria-live="polite"></span
+            ><span>Titles and summaries from posts/posts.json.</span>
+          </div>
+          <section
+            class="view-section"
+            id="cards"
+            aria-labelledby="cards-title"
+          >
+            <h3 id="cards-title">Summary view</h3>
+            <p id="empty-state" class="empty-state" hidden>
+              No samples match. Try another search or choose “All topics”.
+            </p>
+            <div id="posts-grid" class="post-grid"></div>
+          </section>
+          <details class="table-details">
+            <summary>Compare examples in a table</summary>
+            <section
+              class="view-section"
+              id="table"
+              aria-labelledby="table-title"
+            >
+              <div class="table-heading">
+                <h3 id="table-title">Table view</h3>
+                <p class="muted">
+                  Compare titles, topics, and summaries at a glance.
+                </p>
+              </div>
+              <p id="empty-table" class="empty-state" hidden>
+                No samples match. Your filters apply to both views.
+              </p>
+              <p id="table-scroll-hint" class="mobile-table-hint">
+                Swipe across the table to see all columns.
+              </p>
+              <div
+                class="table-wrapper"
+                tabindex="0"
+                role="region"
+                aria-label="Documentation samples table"
+                aria-describedby="table-scroll-hint"
+              >
+                <table class="posts-table">
+                  <caption class="visually-hidden">
+                    Documentation sample titles, revision dates, topics, and
+                    summaries
+                  </caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">Sample</th>
+                      <th scope="col">Updated</th>
+                      <th scope="col">Topics</th>
+                      <th scope="col">Summary</th>
+                    </tr>
+                  </thead>
+                  <tbody id="post-rows"></tbody>
+                </table>
+              </div>
+            </section>
+          </details>
+          <noscript
+            ><p>
+              This demo needs JavaScript for search and export. You can still
+              <a href="samples.html">read all documentation samples</a>.
+            </p></noscript
+          >
+        </div>
+      </section>
 
-    <section id="live-demo" class="section-wrap content-section" aria-labelledby="demo-title">
-      <div class="section-heading"><div><p class="eyebrow">01 / Interactive Demo</p><h2 id="demo-title">Find a useful starting point.</h2></div><p>Search a task, choose a topic, then copy your selection as a Markdown reading list.</p></div>
-      <div class="demo-panel">
-        <div class="demo-topline"><span class="badge">Portfolio samples</span><p>Reads a bundled content file. No account or API connection needed.</p></div>
-        <div class="controls"><label class="search-label"><span>Search samples</span><input id="search" type="search" placeholder="Try “authentication” or “Markdown”" autocomplete="off"></label><label class="filter-label"><span>Filter by topic</span><select id="tag-filter"><option value="">All topics</option></select></label><button id="export-markdown" class="button secondary" type="button">Copy digest as Markdown</button></div>
-        <div class="demo-status"><span id="filter-count" role="status" aria-live="polite"></span><span>Same content. Two ways to browse.</span></div>
-        <section class="view-section" id="cards" aria-labelledby="cards-title"><h3 id="cards-title">Card view</h3><p id="empty-state" class="empty-state" hidden>No samples match. Try another search or choose “All topics”.</p><div id="posts-grid" class="post-grid"></div></section>
-        <section class="view-section" id="table" aria-labelledby="table-title"><div class="table-heading"><h3 id="table-title">Table view</h3><p class="muted">Compare titles, topics, and summaries at a glance.</p></div><p id="empty-table" class="empty-state" hidden>No samples match. Your filters apply to both views.</p><p id="table-scroll-hint" class="mobile-table-hint">Swipe across the table to see all columns.</p><div class="table-wrapper" tabindex="0" role="region" aria-label="Documentation samples table" aria-describedby="table-scroll-hint"><table class="posts-table"><caption class="visually-hidden">Documentation sample titles, revision dates, topics, and summaries</caption><thead><tr><th scope="col">Sample</th><th scope="col">Updated</th><th scope="col">Topics</th><th scope="col">Summary</th></tr></thead><tbody id="post-rows"></tbody></table></div></section>
-        <noscript><p>This demo needs JavaScript for search and export. You can still <a href="samples.html">read all documentation samples</a>.</p></noscript>
-      </div>
-    </section>
-
-    <section id="samples" class="section-wrap content-section" aria-labelledby="samples-title">
-      <div class="section-heading"><div><p class="eyebrow">02 / Documentation Samples</p><h2 id="samples-title">Read the work behind the demo.</h2></div><p>Original portfolio samples for SiloV0. Each has a defined audience, a concrete task, and a checkable outcome.</p></div>
-      <div class="sample-grid">
-        <article class="sample-card"><p class="eyebrow">Tutorial / Getting started</p><h3>Preview the documentation library</h3><p>Help a contributor open the site locally and confirm it loaded correctly, without setting up the API.</p><p class="sample-skill">Shows: prerequisites, ordered steps, verification.</p><a href="samples.html#local-preview" class="text-link">Read the tutorial →</a></article>
-        <article class="sample-card"><p class="eyebrow">Reference / Content discovery</p><h3>Find posts with the local API</h3><p>Explain exact topic matching, text search, and combined filters with a reproducible request.</p><p class="sample-skill">Shows: request syntax, response examples, edge cases.</p><a href="samples.html#filter-posts" class="text-link">Read the reference →</a></article>
-        <article class="sample-card"><p class="eyebrow">Troubleshooting / Authentication</p><h3>Resolve an unauthorized write</h3><p>Separate a missing token from a validation error, then show how to verify access safely.</p><p class="sample-skill">Shows: symptoms, cause, recovery, safe handling.</p><a href="samples.html#unauthorized-write" class="text-link">Read the troubleshooting guide →</a></article>
-        <article class="sample-card"><p class="eyebrow">How-to / Content reuse</p><h3>Export a Markdown reading list</h3><p>Turn a filtered selection into a portable digest, with a fallback for clipboard permissions.</p><p class="sample-skill">Shows: focused instructions, expected output, limitations.</p><a href="samples.html#markdown-export" class="text-link">Read the how-to →</a></article>
-      </div>
-    </section>
-
-    <section id="architecture" class="section-wrap content-section" aria-labelledby="architecture-title">
-      <div class="section-heading"><div><p class="eyebrow">03 / Architecture &amp; Workflow</p><h2 id="architecture-title">One content format. Separate reading and writing paths.</h2></div><p>The public frontend fetches JSON directly. The optional Express API runs locally and reads and writes the same file in the checkout.</p></div>
-      <figure class="architecture-diagram"><div class="flow-lane"><span class="lane-label">Public site · Read only</span><div class="flow-path"><div class="flow-node"><span class="node-label">Content source</span><strong>posts/posts.json</strong><p>Titles, dates, summaries, tags, source URLs.</p></div><div class="flow-arrow"><span aria-hidden="true">→</span><small>fetch()</small></div><div class="flow-node"><span class="node-label">Browser</span><strong>HTML + CSS + JavaScript</strong><p>Search, tag filters, cards, table, Markdown export.</p></div></div></div><div class="flow-lane local-lane"><span class="lane-label">Local development only · Authenticated writes</span><div class="flow-path"><div class="flow-node"><span class="node-label">Contributor</span><strong>Local client → Express API</strong><p>Bearer token required for POST. Public GET routes need no token.</p></div><div class="flow-arrow"><span aria-hidden="true">→</span><small>validate + save</small></div><div class="flow-node"><span class="node-label">Local storage</span><strong>The same JSON format</strong><p>Locked writes and atomic replacement protect the file.</p></div></div></div><figcaption>The browser does not call Express. Local changes reach GitHub Pages only after review and publication from main; reloading the public site does not upload local edits.</figcaption></figure>
-      <ol class="workflow"><li><strong>Write</strong><p>Draft a task-focused sample and its summary.</p></li><li><strong>Structure</strong><p>Add consistent fields and topics to the JSON file.</p></li><li><strong>Review &amp; test</strong><p>Check the prose, examples, filters, export, and security regressions.</p></li><li><strong>Publish static files</strong><p>Review and merge changes; GitHub Pages builds the read-only site.</p></li></ol>
-      <p class="resource-links"><a href="https://github.com/timedilationv2/silov0/blob/main/posts/posts.json">Content model ↗</a><a href="https://github.com/timedilationv2/silov0/tree/main/backend/src">Backend implementation ↗</a><a href="https://github.com/timedilationv2/silov0/blob/main/SECURITY.md">Security notes ↗</a></p>
-    </section>
-
-    <section id="case-study" class="section-wrap content-section" aria-labelledby="case-title">
-      <div class="section-heading"><div><p class="eyebrow">04 / Case Study</p><h2 id="case-title">Make the project explain itself.</h2></div><p>A writing and implementation exercise: turn an endpoint-first demo into a portfolio a reviewer can understand before reading the code.</p></div>
-      <div class="case-grid"><article><span class="case-number">01</span><h3>The problem</h3><p>The original page opened with API details and generic feed entries. It demonstrated mechanics, but gave a reviewer little context about the writing decisions or the work to evaluate.</p></article><article><span class="case-number">02</span><h3>The approach</h3><p>Start with the purpose. Let readers try the experience, inspect complete writing samples, and follow the content workflow before introducing endpoint details.</p></article><article><span class="case-number">03</span><h3>The implementation</h3><p>Reorganize the existing static site, replace placeholders with task-based documentation, and link each summary to a full sample. Keep the small content model and existing security protections.</p></article><article><span class="case-number">04</span><h3>The deliverables</h3><p>A portfolio landing page, four complete writing samples, a searchable library with export, a workflow diagram, and a local API reference. The repository also contains setup guidance and automated browser and security checks.</p></article></div>
-      <div class="reflection"><div><p class="eyebrow">Tradeoffs &amp; next steps</p><h3>Small enough to inspect.</h3></div><p>Plain HTML, CSS, and JavaScript keep the project easy to run and compatible with GitHub Pages. A flat content file suits this small collection; it does not provide editorial roles or a publishing dashboard. Reader research and usability testing would be the next steps before claiming the structure works for a wider audience.</p></div>
-    </section>
-
-    <section id="api-reference" class="section-wrap content-section" aria-labelledby="api-title">
-      <div class="section-heading"><div><p class="eyebrow">05 / API Reference</p><h2 id="api-title">For a closer technical look.</h2></div><p>This reference describes the optional local Express server at <code>http://localhost:3001</code>. These routes are not hosted by GitHub Pages.</p></div>
-      <div class="api-panel"><p><span class="badge">Local development only</span> Follow the <a href="https://github.com/timedilationv2/silov0/blob/main/README.md#quickstart">secure setup instructions</a> first. Startup requires a server-side <code>API_TOKEN</code>. Never put the token in the website.</p>
-        <div class="endpoint"><h3><span class="method">GET</span> /api/posts</h3><p>Returns all posts as an array, newest date first. Query parameters on this route are ignored. No token required.</p></div>
-        <div class="endpoint"><h3><span class="method">GET</span> /api/posts/filter</h3><p><code>tag</code> matches exactly and is case-sensitive. <code>q</code> searches titles, summaries, and tags without case sensitivity. Both conditions must match; no matches returns <code>[]</code>. Repeated query values return 400.</p><pre><code>curl 'http://localhost:3001/api/posts/filter?tag=reference&amp;q=filter'</code></pre></div>
-        <div class="endpoint"><h3><span class="method write">POST</span> /api/posts</h3><p>Requires <code>Authorization: Bearer &lt;API_TOKEN&gt;</code> and a JSON object with <code>title</code> and a real <code>YYYY-MM-DD</code> date. Optional fields: <code>id</code>, <code>summary</code>, <code>tags</code>, and <code>url</code>. An omitted ID is generated from the date and title. Returns 201 with the complete updated array.</p><p>Limits: title 300 characters, summary 10,000, ID 320, URL 2,048; up to 20 tags of 64 characters. Only HTTP(S) or relative URLs without embedded credentials are allowed.</p></div>
-        <div class="endpoint"><h3><span class="method">GET</span> /health</h3><p>Returns <code>{"ok":true}</code>. No token required.</p></div>
-        <details class="api-details"><summary>Errors &amp; request protections</summary><p>Errors have the shape <code>{"error":"message"}</code>. Status codes: 400 invalid input or JSON; 401 unauthorized write; 404 unknown route; 409 duplicate ID; 413 body over 32 KiB; 415 unsupported encoding; 429 rate limit; 500 internal failure with details hidden.</p><p>Exact configured CORS origins, Helmet headers, and per-IP limits protect the API: 300 requests/minute and 20 writes/minute. Writes require authentication; the server binds to loopback. Those Express protections do not supply headers for the separate static site.</p></details>
-      </div>
-    </section>
-  </main>
-  <footer class="site-footer section-wrap"><div><a class="brand" href="#overview">SiloV0</a><p>Technical writing, content structure, and working code.</p></div><nav aria-label="Project resources"><a href="https://github.com/timedilationv2/silov0">GitHub source ↗</a><a href="https://github.com/timedilationv2/silov0/blob/main/README.md">Project documentation ↗</a><a href="samples.html">Writing samples →</a></nav></footer>
-  <script src="scripts/app.js" defer></script>
-</body>
+      <p>
+        Optional background: <a href="history.html">development history</a>.
+      </p>
+    </main>
+    <footer class="site-footer">
+      <span>SiloV · Writing workspace and documentation</span
+      ><a href="https://github.com/timedilationv2/silov0">Source on GitHub</a>
+    </footer>
+  </body>
 </html>

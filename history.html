@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="Development history — SiloV writing workspace and documentation."
+    />
+    <title>Development history — SiloV</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="scripts/site.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <a class="site-brand" href="index.html">SiloV</a>
+      <nav aria-label="Main navigation">
+        <a href="index.html">Overview</a><a href="workspace.html">Workspace</a
+        ><a href="documentation.html" aria-current="page">Documentation</a
+        ><a href="https://github.com/timedilationv2/silov0">GitHub</a>
+      </nav>
+      <button id="theme" type="button" aria-label="Switch theme">Theme</button>
+    </header>
+    <main id="main" class="content" tabindex="-1">
+      <p class="breadcrumb">
+        <a href="documentation.html">Documentation</a> / Background
+      </p>
+      <h1>Development history</h1>
+      <p>
+        This repository began as a small content-feed and local API exercise. A
+        later portfolio page added four task-based writing examples, browser
+        search, and a digest export. The browser-local Markdown workspace
+        introduced a separate document library with preview, review, and
+        backups.
+      </p>
+      <p>
+        The current structure gives each component a clear entry point: Overview
+        explains the project, Workspace supports writing, and Documentation
+        separates operating guides from finished writing samples. The editor
+        continues to use its existing storage schema and stable URL.
+      </p>
+      <h2>Tradeoffs</h2>
+      <p>
+        Plain HTML, CSS, and JavaScript keep the site inspectable and compatible
+        with GitHub Pages. Browser-local storage avoids a hosted account service
+        but provides no synchronization or automatic backup. A flat JSON
+        collection suits a small library; it supplies neither editorial roles
+        nor automatic publication. Review findings check structure, not factual
+        correctness. No user-research or business-outcome claims are made.
+      </p>
+    </main>
+    <footer class="site-footer">
+      <span>SiloV · Writing workspace and documentation</span
+      ><a href="https://github.com/timedilationv2/silov0">Source on GitHub</a>
+    </footer>
+  </body>
+</html>

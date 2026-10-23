@@ -124,7 +124,7 @@ Added: `.env.example`, `SECURITY.md`, `backend/test/security.test.js`,
 
 The additional workspace.html feature stores authored documents only in IndexedDB. No API adapter,
 telemetry, CDN asset, or AI service receives them. The old static demonstration
-and API documentation are retained at index.html (with learn.html as a compatibility alias); the Express implementation and
+and API documentation are available through documentation.html, samples.html, and api.html (with learn.html as a documentation alias); the Express implementation and
 its authentication, CORS, headers, limits and locked atomic writes are unchanged.
 
 Workspace protections:
