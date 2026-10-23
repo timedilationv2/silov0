@@ -15,24 +15,45 @@ export function createSlug(title = "", date = "") {
   return [date, safeTitle].filter(Boolean).join("-").replace(/--+/g, "-")
 }
 
-export function normalizePost(post) {
-  if (!post || typeof post !== "object") {
-    throw new Error("Post must be an object")
+export class PostError extends Error {
+  constructor(message, status = 400) {
+    super(message)
+    this.status = status
   }
+}
 
-  const normalized = {
-    id: post.id || createSlug(post.title, post.date),
-    title: post.title?.trim() || "Untitled",
+export function normalizePost(post) {
+  if (!post || typeof post !== "object" || Array.isArray(post)) {
+    throw new PostError("Post must be an object")
+  }
+  if (typeof post.title !== "string" || !post.title.trim()) {
+    throw new PostError("title must be a non-empty string")
+  }
+  if (typeof post.date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(post.date) ||
+      !Number.isFinite(Date.parse(post.date)) ||
+      new Date(post.date).toISOString().slice(0, 10) !== post.date) {
+    throw new PostError("date must be a valid calendar date (YYYY-MM-DD)")
+  }
+  for (const field of ["id", "summary", "url"]) {
+    if (post[field] !== undefined && typeof post[field] !== "string") {
+      throw new PostError(`${field} must be a string`)
+    }
+  }
+  if (post.id !== undefined && !post.id.trim()) {
+    throw new PostError("id must be a non-empty string")
+  }
+  if (post.tags !== undefined && (!Array.isArray(post.tags) ||
+      post.tags.some(tag => typeof tag !== "string" || !tag.trim()))) {
+    throw new PostError("tags must be an array of non-empty strings")
+  }
+  return {
+    id: post.id?.trim() || createSlug(post.title.trim(), post.date),
+    title: post.title.trim(),
     date: post.date,
     summary: post.summary?.trim() || "",
-    tags: Array.isArray(post.tags) ? post.tags : [],
+    tags: [...new Set((post.tags || []).map(tag => tag.trim()))],
+    ...(post.url !== undefined ? { url: post.url.trim() } : {}),
   }
-
-  if (!normalized.date) {
-    throw new Error("Post is missing a date")
-  }
-
-  return normalized
 }
 
 export function sortPosts(posts) {
@@ -43,9 +64,14 @@ export async function loadPosts(postsPath = DEFAULT_POSTS_PATH) {
   const raw = await fs.readFile(postsPath, "utf8")
   const parsed = JSON.parse(raw)
 
-  if (!Array.isArray(parsed)) return []
+  if (!Array.isArray(parsed)) throw new Error("Posts file must contain an array")
 
-  return sortPosts(parsed.map(normalizePost))
+  try {
+    return sortPosts(parsed.map(normalizePost))
+  } catch (error) {
+    // Invalid stored data is a server failure, not a bad HTTP request.
+    throw new Error("Invalid post data in storage", { cause: error })
+  }
 }
 
 export async function savePosts(posts, postsPath = DEFAULT_POSTS_PATH) {
@@ -58,7 +84,7 @@ export function addPost(existingPosts, postInput) {
   const ids = new Set(existingPosts.map((p) => p.id))
 
   if (ids.has(normalized.id)) {
-    throw new Error(`Post with id ${normalized.id} already exists`)
+    throw new PostError(`Post with id ${normalized.id} already exists`, 409)
   }
 
   return sortPosts([...existingPosts, normalized])

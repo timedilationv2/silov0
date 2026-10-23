@@ -38,9 +38,9 @@
 
           <div class="nav-group">
             <div class="nav-label">Endpoints</div>
-            <a href="#endpoint-posts">GET /posts</a>
-            <a href="#endpoint-posts-id">GET /posts/{id}</a>
-            <a href="#endpoint-tags">GET /tags</a>
+            <a href="#endpoint-posts">GET /api/posts</a>
+            <a href="#endpoint-filter">GET /api/posts/filter</a>
+            <a href="#endpoint-add">POST /api/posts</a>
           </div>
         </nav>
 
@@ -67,7 +67,7 @@
             </p>
           </div>
           <div class="header-meta">
-            <span class="muted">Last updated Jun 2024</span>
+            <span class="muted">Sample project · local API + static demo</span>
           </div>
         </header>
 
@@ -90,61 +90,43 @@
 
             <section id="authentication" class="docs-section">
               <h2>Authentication</h2>
-              <p>
-                The live demo is unauthenticated because it reads local JSON. In a hosted
-                setup, requests would include an
-                <code>Authorization: Bearer &lt;api_key&gt;</code> header. Keys scope access
-                to read-only news feeds and prevent mutation outside trusted publishers.
-              </p>
-              <p>
-                Rotate keys regularly and keep them server-side when proxying requests.
-                Client-side usage should be limited to public, cacheable endpoints.
-              </p>
+              <p>The static demo and local API have no authentication. Run the API locally;
+                it permits writes and is not configured as a public publishing service.</p>
             </section>
 
             <section id="endpoints" class="docs-section">
               <h2>Resources &amp; endpoints</h2>
-              <p>
-                silov0 models two primary resources: <strong>posts</strong> and
-                <strong>tags</strong>. Posts contain titles, summaries, dates, and optional
-                URLs. Tags cluster posts by topic, letting clients filter or prefetch by
-                theme.
-              </p>
-
+              <p>The demo reads <code>posts/posts.json</code>. Run the separate API with
+                <code>cd backend &amp;&amp; npm ci &amp;&amp; npm run dev</code> (Node 18+).</p>
               <div class="endpoint" id="endpoint-posts">
-                <h3>GET /posts</h3>
-                <p>Returns the full feed of posts with metadata and tag arrays.</p>
-                <ul>
-                  <li><code>?tag=models</code> filters to posts that include the tag.</li>
-                  <li>
-                    <code>?q=latency</code> performs a case-insensitive search over title
-                    and summary.
-                  </li>
-                  <li>
-                    <code>?limit=20</code> constrains page size in a hosted variant.
-                  </li>
-                </ul>
+                <h3>GET /api/posts</h3>
+                <p>Returns a JSON array of all posts, newest first. Query parameters on this
+                  route do not filter results.</p>
               </div>
-
-              <div class="endpoint" id="endpoint-posts-id">
-                <h3>GET /posts/{id}</h3>
-                <p>Retrieves a single post by identifier, useful for detail pages.</p>
+              <div class="endpoint" id="endpoint-filter">
+                <h3>GET /api/posts/filter</h3>
+                <p>Use <code>?tag=ai&amp;q=digest</code>. The tag match is exact and case-sensitive;
+                  text search is case-insensitive across title, summary, and tags.
+                  Both conditions must match. No results returns <code>[]</code>.</p>
               </div>
-
-              <div class="endpoint" id="endpoint-tags">
-                <h3>GET /tags</h3>
-                <p>Lists known tags and counts, allowing clients to populate filters.</p>
+              <div class="endpoint" id="endpoint-add">
+                <h3>POST /api/posts</h3>
+                <p>Send a JSON object with a non-empty title and a real date in
+                  <code>YYYY-MM-DD</code> format. Optional fields: id, summary, url (strings),
+                  and tags (an array of non-empty strings). An omitted id is generated from
+                  the date and title. Returns status 201 and the full updated array.</p>
+                <p>Errors use <code>{"error":"message"}</code>: 400 for invalid input or JSON,
+                  409 for duplicate IDs, 404 for unknown routes, and 500 for server failures.
+                  <code>GET /health</code> returns <code>{"ok":true}</code>.</p>
               </div>
             </section>
 
             <section id="filtering" class="docs-section">
               <h2>Filtering</h2>
-              <p>
-                Combine text search with tag filters to slice the feed. Queries like
-                <code>/posts?tag=models&amp;q=latency</code> surface latency-focused model
-                updates. The UI below mirrors how a consumer app might expose these
-                controls.
-              </p>
+              <p>The browser filters the static JSON in memory. Try searching for
+                <code>digest</code> or selecting <code>web</code>. The local API equivalent is
+                <code>/api/posts/filter?tag=ai&amp;q=digest</code>. There is no pagination,
+                single-post route, or tags endpoint.</p>
             </section>
 
             <!-- Live demo wired to scripts/app.js -->
@@ -181,7 +163,7 @@
                   </select>
                 </label>
 
-                <span id="result-count" class="result-count"></span>
+                <span id="filter-count" class="result-count" aria-live="polite"></span>
               </div>
 
               <section id="cards" class="view-section">
@@ -198,7 +180,7 @@
                 </p>
 
                 <!-- JS expects this id -->
-                <div id="posts" class="post-grid"></div>
+                <div id="posts-grid" class="post-grid"></div>
               </section>
 
               <section id="table" class="view-section">
@@ -233,17 +215,9 @@
             <section id="changelog" class="docs-section">
               <h2>Changelog</h2>
               <ul class="timeline">
-                <li>
-                  <strong>June 2024</strong> — Rebuilt the surface as Stripe-style docs with
-                  a live embedded feed.
-                </li>
-                <li>
-                  <strong>May 2024</strong> — Added Markdown digest export for filtered
-                  posts.
-                </li>
-                <li>
-                  <strong>April 2024</strong> — Introduced tag filtering and table view.
-                </li>
+                <li>Repaired the page and connected cards, table, counts, and filters.</li>
+                <li>Made the static demo independent of a local API server.</li>
+                <li>Corrected API examples and repaired CLI export and validation.</li>
               </ul>
             </section>
           </div>
@@ -252,18 +226,25 @@
           <aside class="code-panel">
             <div class="code-block">
               <div class="code-title">cURL</div>
-              <pre><code>curl "https://api.silov0.dev/posts?tag=models&amp;q=latency" \
-  -H "Authorization: Bearer sk_test_123"</code></pre>
+              <pre><code>curl "http://localhost:3001/api/posts/filter?tag=ai&amp;q=digest"</code></pre>
             </div>
 
             <div class="code-block">
               <div class="code-title">Sample response</div>
-<pre><code>{
-  "posts": [
-    {
-      "id": "launch-42",
-      "title": "New model latency tuning",
-      "summary": "Cut median latency by 18% with better batching",
-      "date": "2024-04-18",
-      "tags": ["models", "latency"],
-      "url":
+<pre><code>[
+  {
+    "id": "digest-demo",
+    "title": "Exporting a Markdown digest",
+    "date": "2024-01-02",
+    "summary": "Collect filtered AI notes into a Markdown reading list.",
+    "tags": ["ai", "docs"]
+  }
+]</code></pre>
+            </div>
+          </aside>
+        </div>
+      </main>
+    </div>
+    <script src="scripts/app.js" defer></script>
+  </body>
+</html>

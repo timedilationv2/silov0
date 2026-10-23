@@ -1,6 +1,7 @@
 
 import {
   addPost,
+  PostError,
   buildTagIndex,
   filterPosts,
   getArchiveBuckets,
@@ -29,8 +30,9 @@ export function createContentService({ storagePath = DEFAULT_POSTS_PATH } = {}) 
     },
     async add(postInput) {
       const current = await ensureCache()
-      cache = addPost(current, postInput)
-      await savePosts(cache, storagePath)
+      const updated = addPost(current, postInput)
+      await savePosts(updated, storagePath)
+      cache = updated
       return cache
     },
     async filter(params) {
@@ -48,12 +50,21 @@ export function createContentService({ storagePath = DEFAULT_POSTS_PATH } = {}) 
 
 export function createApiAdapter(service) {
   return {
-    async list(req, res) {
-      const data = await service.all()
-      res.json(data)
+    async list(req, res, next) {
+      try {
+        const data = await service.all()
+        res.json(data)
+      } catch (error) {
+        next(error)
+      }
     },
     async filter(req, res, next) {
       try {
+        for (const key of ["tag", "q"]) {
+          if (req.query[key] !== undefined && typeof req.query[key] !== "string") {
+            throw new PostError(`${key} must be a single string`)
+          }
+        }
         const data = await service.filter({
           tag: req.query.tag,
           query: req.query.q,

@@ -8,9 +8,8 @@ const tagFilter = document.getElementById("tag-filter")
 const filterTags = document.getElementById("filter-tags")
 const filterCount = document.getElementById("filter-count")
 
-// Local backend API.
-// Do not publish this localhost URL to GitHub Pages.
-const API_BASE_URL = "http://localhost:3001"
+// Keep the public demo self-contained, including on GitHub Pages project paths.
+const POSTS_URL = "posts/posts.json"
 
 let allPosts = []
 let currentFiltered = []
@@ -212,29 +211,30 @@ function updateActiveTag(selectedTag) {
   })
 }
 
-// Fetch posts from the repaired Express backend.
+// The local Express API remains available separately at /api/posts.
 async function fetchPosts() {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/posts`)
+    const response = await fetch(POSTS_URL)
 
     if (!response.ok) {
-      throw new Error(`API request failed: HTTP ${response.status}`)
+      throw new Error(`Posts request failed: HTTP ${response.status}`)
     }
 
     const posts = await response.json()
 
     if (!Array.isArray(posts)) {
-      throw new Error("API response must be an array of posts")
+      throw new Error("Posts response must be an array of posts")
     }
 
     return posts
   } catch (error) {
-    console.error("Unable to load posts from backend API", error)
+    console.error("Unable to load posts from static JSON", error)
 
-    if (emptyState) {
-      emptyState.textContent =
-        "Unable to load posts from the backend API."
-      emptyState.hidden = false
+    for (const state of [emptyState, emptyTable]) {
+      if (state) {
+        state.textContent = "Unable to load posts/posts.json. Serve the site over HTTP and try again."
+        state.hidden = false
+      }
     }
 
     return []

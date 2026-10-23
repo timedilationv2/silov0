@@ -1,40 +1,25 @@
-
 # @timedilationv2/silov0-backend
 
-# silov0-backend
+Local Express API and reusable content helpers for silov0. Requires Node.js 18+.
 
-
-Backend helpers for the **silov0** AI news micro-blog.
-
-- Stores posts in `../posts/posts.json`
-- Provides pure functions for loading, filtering, and tagging
-- Exposes an optional Express server for `/api/posts`
-
-- Ships a small `silov0-digest` CLI to print a Markdown digest from `posts.json`
-
-
-
-
-
-```bash
-cd backend
-npm install
-npm run dev   # Starts Express on http://localhost:3001
+```sh
+npm ci
+npm test
+npm run dev
 ```
 
+The server listens on port 3001 (override with `PORT`) and uses
+`../posts/posts.json`. Routes: `GET /api/posts`, `GET /api/posts/filter?tag=ai&q=digest`,
+`POST /api/posts`, and `GET /health`. Successful post responses are arrays;
+POST returns the updated array with status 201. Errors use `{"error":"message"}`.
+No authentication is implemented; run the writable API locally.
 
-CLI:
+Print a digest from any working directory with:
 
-```bash
-cd backend
-npm install
-npx silov0-digest
+```sh
+node /path/to/silov0/backend/bin/silov0-digest.js
 ```
 
-
-Routes:
-- GET /api/posts – full list
-- GET /api/posts/filter?tag=models&q=latency – filtered view
-- POST /api/posts – add a new post (JSON body)
-
-That's enough backend to look like a real, reusable package.
+The CLI resolves the repository data relative to its module, not the working directory.
+Source URLs are included in Markdown output. See the [main README](../README.md)
+for verified requests, validation rules, responses, demo setup, and troubleshooting.

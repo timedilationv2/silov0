@@ -1,74 +1,129 @@
 # silov0
 
-Experimental personal blog-style feed for AI news, notes, and quick posts. This repo tracks the early setup, content ideas, and deployment experiments.
+A small portfolio sample: a static, filterable feed and a locally runnable Express
+API sharing one JSON post format. Sample entries are illustrative, not news reports.
 
-## What this is
-- Lightweight news stream for AI updates, personal takes, and link curation.
-- Minimal chrome: fast list view, simple post detail, and tags for topics (models, infra, safety, policy).
-- Goal: easy publishing over polish; good typography and fast loads.
+## Quickstart
 
-## Working plan
-- Backend: simple JSON/markdown posts first; evaluate a tiny API or static generation later.
-- Frontend: lean React or static site generator with markdown ingestion; keep dark/light toggle optional.
-- Hosting: start with static deploy (GitHub Pages/Netlify) and upgrade only if needed.
-- Content: short posts (150–400 words), tagging by topic, weekly rollups.
+Requires Python 3 for the static server and Node.js 18+ with npm for the API.
+From the repository root:
 
-## Path to a non-static version
-- Start with a tiny Node.js + Express API that serves posts from an array or SQLite file.
-- Expose `GET /api/posts` and `GET /api/posts/:id` first; add `POST/PUT` later behind auth for an admin-only editor.
-- Deploy the API to a lightweight host (Render/Railway/Fly) and point the frontend fetch call to the hosted URL.
-- Keep the existing HTML/CSS/JS; just swap the data source from `posts/posts.json` to the API endpoint when ready.
-
-## Structure
-- `index.html` — static entrypoint with search + tag filter, tag cloud, and archive helpers.
-- `styles.css` — dark, minimal styling tuned for cards and browse helpers.
-- `scripts/app.js` — fetches `posts/posts.json` and renders cards with search/filter, tag counts, and month archive filtering.
-- `posts/posts.json` — editable list of entries (title, date, summary, tags).
-- `backend/` — publishable Node package with helpers for ingesting, validating, filtering, and exporting posts. The service wrapper keeps storage pluggable so the same logic can back a future API, CLI, or shared library.
-
-## Backend package
-The `backend` directory is a tiny, publishable package meant to keep post operations reusable across multiple repos (API service, static site generator, or a shared client library).
-
-- Install dependencies and run tests: `cd backend && npm test` (Node 18+).
-- Library entrypoint: `import { createContentService } from "silov0-backend"`.
-- Example Express wiring:
-  ```js
-  import express from "express"
-  import bodyParser from "body-parser"
-  import { createContentService, createApiAdapter } from "silov0-backend"
-
-  const app = express()
-  const service = createContentService()
-  const api = createApiAdapter(service)
-  app.use(bodyParser.json())
-  app.get("/api/posts", api.list)
-  app.get("/api/posts/filter", api.filter)
-  app.post("/api/posts", api.add)
-  ```
-
-This keeps the content model consistent while making it trivial to lift the same logic into API, worker, or library contexts later.
-
-## How to add posts
-Posts live in `posts/posts.json`. Each entry should follow this shape:
-
-```json
-{
-  "id": "2024-05-20-new-model",
-  "title": "Concise headline",
-  "date": "2024-05-20",
-  "summary": "One to three sentences describing the update.",
-  "tags": ["models", "latency"],
-  "url": "https://example.com/source-link"
-}
+```sh
+python3 -m http.server 8000
 ```
 
-Guidelines:
-- `id` should be `YYYY-MM-DD-slug` so ordering is predictable.
-- Add new posts to the top of the array to show them first.
-- `tags` is optional but helps search and filtering.
-- `url` is optional; when present, it is linked in the Markdown digest.
+Open <http://localhost:8000/>. “First Demo Post” appears in both the card and table
+views. Search `digest` for one result; select `web` for one result or `ai` for two.
+Search and tag filters combine. Copy digest exports the currently displayed posts.
+The public demo fetches `posts/posts.json` using a relative URL, so GitHub Pages
+project hosting works without a backend. Serve this repository root as the site root.
 
-When editing the JSON, keep it as a valid array. Reload the site to see the cards and table update automatically from the file.
+In a separate terminal, start the optional API:
 
-## Log
-- 2024-12-24: Repo scaffolded; defined scope for AI news micro-blog; added static layout with search/tag filter and sample posts.***
+```sh
+cd backend
+npm ci
+npm test
+npm run dev
+```
+
+The API listens at <http://localhost:3001>; set `PORT` to change it. The browser
+continues to use static JSON. API writes update the same file; reload the page to
+see changes. The API caches data: restart it after manually editing JSON.
+There is no authentication. Keep this writable API local.
+
+## API examples
+
+```sh
+curl http://localhost:3001/health
+# {"ok":true}
+curl 'http://localhost:3001/api/posts/filter?tag=ai&q=digest'
+```
+
+Response (a plain array, with no wrapper):
+
+```json
+[
+  {
+    "id": "digest-demo",
+    "title": "Exporting a Markdown digest",
+    "date": "2024-01-02",
+    "summary": "Collect filtered AI notes into a Markdown reading list.",
+    "tags": ["ai", "docs"]
+  }
+]
+```
+
+| Route | Behavior |
+| --- | --- |
+| `GET /api/posts` | All posts, newest date first; ignores query parameters. |
+| `GET /api/posts/filter?tag=ai&q=digest` | Exact, case-sensitive tag and case-insensitive text search over title, summary, tags. Both must match; no match returns `[]`. |
+| `POST /api/posts` | Validates, persists, and returns the full updated array with status 201. |
+| `GET /health` | Returns `{"ok":true}`. |
+
+There are no single-post, tags, pagination, or bearer-authentication endpoints.
+
+To add a post (this changes `posts/posts.json`; remove the sample afterward if desired):
+
+```sh
+curl -i http://localhost:3001/api/posts \
+  -H 'Content-Type: application/json' \
+  --data '{"id":"quickstart-note","title":"A local note","date":"2024-01-04","summary":"Created through the API.","tags":["docs"],"url":"https://example.com/note"}'
+```
+
+The 201 response contains the new post plus existing posts. Repeating the request
+returns 409 with `{"error":"Post with id quickstart-note already exists"}`.
+
+A post requires a non-empty string `title` and a real calendar `date` formatted
+`YYYY-MM-DD`. Optional: non-empty string `id`, string `summary`, string `url`, and
+`tags` containing non-empty strings. Strings are trimmed and tags deduplicated.
+An omitted ID is generated from date and title; summary and tags default to `""`
+and `[]`. Source URLs are preserved; relative URLs are allowed.
+
+Errors are JSON objects with one `error` string: 400 for invalid bodies, dates,
+query types, or malformed JSON; 409 for duplicate IDs; 404 for unknown routes;
+413 for oversized bodies; 500 for internal/storage failures (details are hidden).
+
+## Digest and checks
+
+From the repository root, print a Markdown digest with source links:
+
+```sh
+node backend/bin/silov0-digest.js
+```
+
+Backend tests cover normalization, file persistence, CLI execution, real HTTP
+requests, filtering, and errors. They use temporary storage, leaving demo data intact.
+
+With the static server running, run the browser check:
+
+```sh
+python3 -m pip install playwright
+python3 -m playwright install chromium
+python3 tests/demo_smoke.py http://localhost:8000/
+```
+
+It checks both views, counts, empty states, search, tags, and script errors.
+
+## Troubleshooting
+
+- Blank demo or JSON fetch error: use HTTP instead of opening `index.html` as a
+  file. Ensure `posts/posts.json` is served with status 200 and contains a JSON array.
+- API connection refused: run `npm ci` then `npm run dev` in `backend`, and check
+  the port printed in the terminal. The static demo does not need this server.
+- POST fails: send `Content-Type: application/json`, a title, and a valid date.
+  Use a new ID for each post. Inspect the JSON error response.
+- Manual JSON edits do not appear in API responses: restart the API to clear its cache.
+- Clipboard copy fails: use localhost or HTTPS and allow clipboard access.
+
+## Files
+
+- `index.html`, `styles.css`, `scripts/app.js`: static documentation and demo.
+- `posts/posts.json`: sample feed shared by the demo, API, and CLI.
+- `backend/src/postsStore.js`: normalization, persistence, and filtering helpers.
+- `backend/src/service.js`: content service and HTTP adapters.
+- `backend/src/app.js`, `backend/src/server.js`: Express app and local server.
+- `backend/bin/silov0-digest.js`: Markdown export CLI.
+
+The backend package exports helpers from `@timedilationv2/silov0-backend` and the
+service from `@timedilationv2/silov0-backend/service` when installed as a package.
