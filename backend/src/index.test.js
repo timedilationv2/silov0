@@ -103,3 +103,24 @@ test("content service caches and updates", async () => {
   assert.equal(updated.length, 3)
   assert.equal(service.tagIndex().release, 3)
 })
+
+test("content service filters posts before any other request", async (t) => {
+  const dir = await fs.mkdtemp(path.join(tmpdir(), "silov0-filter-"));
+
+  t.after(async () => {
+    await fs.rm(dir, { recursive: true, force: true });
+  });
+
+  const target = path.join(dir, "posts.json");
+  await savePosts(samplePosts, target);
+
+  // Create a fresh service with an empty cache.
+  const service = createContentService({ storagePath: target });
+
+  // Filtering must work without calling service.all() first.
+  const results = await service.filter({ tag: "alpha" });
+
+  assert.equal(results.length, 1);
+  assert.equal(results[0].id, "alpha");
+});
+
