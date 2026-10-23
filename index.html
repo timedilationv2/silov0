@@ -21,7 +21,17 @@
           </div>
         </div>
 
-        <nav class="sidebar-nav">
+        <details class="mobile-navigation">
+          <summary>Browse docs</summary>
+          <nav aria-label="Mobile documentation">
+            <a href="#overview">Overview</a>
+            <a href="#endpoints">API reference</a>
+            <a href="#live-demo">Live demo</a>
+            <a href="#changelog">Changelog</a>
+          </nav>
+        </details>
+
+        <nav class="sidebar-nav" aria-label="Documentation">
           <div class="nav-group">
             <div class="nav-label">Guide</div>
             <a href="#overview">Overview</a>
@@ -195,7 +205,8 @@
                   Nothing to show. Add posts to populate the table.
                 </p>
 
-                <div class="table-wrapper">
+                <p class="mobile-table-hint" id="table-scroll-hint">Swipe across to see all columns.</p>
+                <div class="table-wrapper" tabindex="0" role="region" aria-label="Posts table" aria-describedby="table-scroll-hint">
                   <table class="posts-table">
                     <thead>
                       <tr>
