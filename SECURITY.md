@@ -122,9 +122,9 @@ Added: `.env.example`, `SECURITY.md`, `backend/test/security.test.js`,
 
 ## Browser-local workspace (separate from the example-post API)
 
-The product homepage stores authored documents only in IndexedDB. No API adapter,
+The additional workspace.html feature stores authored documents only in IndexedDB. No API adapter,
 telemetry, CDN asset, or AI service receives them. The old static demonstration
-and API documentation are retained at learn.html; the Express implementation and
+and API documentation are retained at index.html (with learn.html as a compatibility alias); the Express implementation and
 its authentication, CORS, headers, limits and locked atomic writes are unchanged.
 
 Workspace protections:

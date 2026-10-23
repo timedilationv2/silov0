@@ -3,7 +3,7 @@
 ## Boundaries
 
 ```text
-index.html + workspace.css
+workspace.html + workspace.css
         │
         ▼
 scripts/workspace/app.mjs (UI controller)
@@ -17,7 +17,7 @@ IndexedDB: silov0-workspace / documents
   { id, title, content, collection, createdAt, updatedAt, revision }
 
 Separate legacy learning path:
-learn.html → scripts/app.js → posts/posts.json
+index.html (also learn.html) → scripts/app.js → posts/posts.json
                            ↕ local-only Express API (not used by workspace)
 ```
 

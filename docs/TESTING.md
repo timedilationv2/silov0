@@ -10,9 +10,9 @@ isolated temporary profiles and storage, never a user's existing browser profile
 | --- | --- |
 | Root `npm test` | 5 model/template/quality tests: schema/size/date validation, backup copies, all template structures, deterministic findings, and anchors/code exclusions |
 | `cd backend && npm test` | 26 existing tests: API behavior, authentication, startup failures, validation, limits, CORS, headers, file failure/concurrency, and sample accuracy |
-| `python3 tests/workspace_browser.py` | 14 browser scenarios listed below |
-| `tests/demo_smoke.py <base>/learn.html` | Preserved sample library, both views, filters, exports, navigation, sample links, responsive layout |
-| `tests/security_browser.py <base>/learn.html` | Existing sample-content XSS regression |
+| `python3 tests/workspace_browser.py` | 15 browser scenarios including entry-point compatibility |
+| `tests/demo_smoke.py <base>/` | Preserved sample library, both views, filters, exports, navigation, sample links, responsive layout |
+| `tests/security_browser.py <base>/` | Existing sample-content XSS regression |
 | `npm audit --omit=dev` | Zero known vulnerabilities in root dependencies at verification time |
 
 Workspace browser scenarios:
@@ -41,6 +41,9 @@ Workspace browser scenarios:
     execute code; rendered HTML downloads are inert; editing/importing makes no
     content-bearing or remote-image network requests.
 
+15. A document saved under the former homepage entry point reopens at the additional
+    workspace URL with the same title and content, without migration.
+
 Desktop, mobile, dark and light screenshots were inspected locally. Backend
 implementation and bearer-token configuration are unchanged. Clipboard tests
 verify application behavior with a browser stub, not a guarantee that every OS
@@ -48,13 +51,13 @@ will grant clipboard permission.
 
 ## Deployment status and limitations
 
-GitHub Pages is configured on `main:/`. The public build was verified as successful
-at commit `4a98a7846ff81c58a5a9a1dd629ed40af3a81ade` before this workspace PR was
-submitted. That build contains the previous portfolio, not the new workspace.
-The workspace remains on its review branch until merge; no public acceptance-test
-claim is made for this unmerged branch. After merge, verify the new build and run
-the SOP flow at <https://timedilationv2.github.io/silov0/> with a fresh browser
-profile. The writable Express API must remain undeployed.
+GitHub Pages is configured on `main:/`. The workspace implementation was merged
+and the public build at `ca97d62952aeb4541b9932dccdf68d6f378242fa` was verified,
+including a live SOP create/edit/save/refresh/export/reopen check. This subsequent
+correction restores the portfolio homepage and serves the workspace as an additive
+feature at `workspace.html`. Its same-origin IndexedDB data is unchanged.
+The local browser suite also verifies that documents saved from the former homepage
+entry point reopen at `/silov0/workspace.html`. No writable API is deployed.
 
 Only Chromium was executed here. Firefox, Safari, touch-device hardware,
 assistive-technology testing and OS-level disk/power failures need separate
@@ -69,3 +72,11 @@ Nested-block line locations are approximate. Inline HTML is intentionally litera
 images are intentionally not loaded. Content is plaintext local storage and shares
 the GitHub Pages origin with other projects on that hostname. Read README and
 SECURITY.md before keeping sensitive material in the workspace.
+
+
+## Additive navigation correction
+
+The portfolio remains at the root URL with its original six-section structure;
+the workspace is linked as an additional feature at `workspace.html`. The workspace
+suite targets `/silov0/workspace.html`. Browser storage stays on the same origin
+and uses the same database, so earlier workspace documents do not need migration.
