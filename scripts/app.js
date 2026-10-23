@@ -48,6 +48,7 @@ function renderCards(filtered) {
     card.append(element("h3", "post-title", post.title),
       element("p", "post-meta", formatDate(post.date)),
       element("p", "post-summary", post.summary || ""), tags)
+    appendSourceLink(card, post)
     postsGrid.append(card)
   }
 }
@@ -59,6 +60,7 @@ function renderTable(filtered) {
     const row = element("tr")
     const title = element("td")
     title.append(element("strong", "", post.title))
+    appendSourceLink(title, post)
     const date = element("td", "", formatDate(post.date))
     date.style.whiteSpace = "nowrap"
     date.style.color = "var(--muted)"
@@ -79,6 +81,15 @@ function safeSourceUrl(value) {
     return ["http:", "https:"].includes(url.protocol) && !url.username && !url.password
       ? value.replace(/[()<>"\\]/g, c => encodeURIComponent(c).replace(/\(/g, "%28").replace(/\)/g, "%29")) : null
   } catch { return null }
+}
+
+function appendSourceLink(parent, post) {
+  const url = safeSourceUrl(post.url)
+  if (!url) return
+  const link = element("a", "sample-link", "Read sample →")
+  link.href = url
+  link.rel = "noopener noreferrer"
+  parent.append(link)
 }
 
 function markdownText(value) {
@@ -102,10 +113,10 @@ function updateResultCount(filtered) {
   }
 
   if (filtered.length === allPosts.length) {
-    filterCount.textContent = `${allPosts.length} posts`
+    filterCount.textContent = `${allPosts.length} samples`
   } else {
     filterCount.textContent =
-      `Showing ${filtered.length} of ${allPosts.length} posts`
+      `Showing ${filtered.length} of ${allPosts.length} samples`
   }
 }
 
@@ -295,7 +306,7 @@ async function exportDigest() {
       const count = posts.length
 
       filterCount.textContent =
-        `Copied digest for ${count} post` +
+        `Copied digest for ${count} sample` +
         (count === 1 ? "" : "s") +
         " to clipboard."
     }

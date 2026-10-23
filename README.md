@@ -1,7 +1,18 @@
 # silov0
 
-A small portfolio sample: a static, filterable feed and a locally runnable Express
-API sharing one JSON post format. Sample entries are illustrative, not news reports.
+A technical writing portfolio case study with a searchable documentation library.
+The public site reads structured JSON directly; a separate local Express API
+shares the content format. Four original writing samples document the repository
+itself: a tutorial, API reference, troubleshooting guide, and Markdown export how-to.
+They are portfolio examples, not customer deliverables or product release notes.
+
+## Portfolio structure
+
+The page moves from Overview and Interactive Demo to Documentation Samples,
+Architecture & Workflow, Case Study, and API Reference. Full samples live in
+[samples.html](samples.html). The workflow diagram distinguishes static browser
+reads from authenticated local API writes. The case study describes actual
+implementation choices and deliverables, without claiming reader or business results.
 
 ## Quickstart
 
@@ -12,8 +23,8 @@ From the repository root:
 python3 -m http.server 8000 --bind 127.0.0.1
 ```
 
-Open <http://localhost:8000/>. “First Demo Post” appears in both the card and table
-views. Search `digest` for one result; select `web` for one result or `ai` for two.
+Open <http://localhost:8000/>. Four documentation samples appear in both views.
+Search `authentication` for one result; select `api` for two results or `how-to` for one.
 Search and tag filters combine. Copy digest exports the currently displayed posts.
 The public demo fetches `posts/posts.json` using a relative URL, so GitHub Pages
 project hosting works without a backend. Serve this repository root as the site root.
@@ -45,7 +56,7 @@ unset means no cross-origin browser access. Public GET endpoints require no toke
 ```sh
 curl http://localhost:3001/health
 # {"ok":true}
-curl 'http://localhost:3001/api/posts/filter?tag=ai&q=digest'
+curl 'http://localhost:3001/api/posts/filter?tag=reference&q=filter'
 ```
 
 Response (a plain array, with no wrapper):
@@ -53,11 +64,12 @@ Response (a plain array, with no wrapper):
 ```json
 [
   {
-    "id": "digest-demo",
-    "title": "Exporting a Markdown digest",
-    "date": "2024-01-02",
-    "summary": "Collect filtered AI notes into a Markdown reading list.",
-    "tags": ["ai", "docs"]
+    "id": "filter-posts",
+    "title": "Find posts with the local API",
+    "date": "2026-10-23",
+    "summary": "Reference: combine an exact topic match with text search to filter local content. Includes parameters, an example response, and empty-result behavior.",
+    "tags": ["api", "reference"],
+    "url": "samples.html#filter-posts"
   }
 ]
 ```
@@ -65,7 +77,7 @@ Response (a plain array, with no wrapper):
 | Route | Behavior |
 | --- | --- |
 | `GET /api/posts` | All posts, newest date first; ignores query parameters. |
-| `GET /api/posts/filter?tag=ai&q=digest` | Exact, case-sensitive tag and case-insensitive text search over title, summary, tags. Both must match; no match returns `[]`. |
+| `GET /api/posts/filter?tag=reference&q=filter` | Exact, case-sensitive tag and case-insensitive text search over title, summary, tags. Both must match; no match returns `[]`. |
 | `POST /api/posts` | Validates, persists, and returns the full updated array with status 201. |
 | `GET /health` | Returns `{"ok":true}`. |
 
@@ -133,8 +145,8 @@ It checks both views, counts, empty states, search, tags, and script errors.
 
 ## Files
 
-- `index.html`, `styles.css`, `scripts/app.js`: static documentation and demo.
-- `posts/posts.json`: sample feed shared by the demo, API, and CLI.
+- `index.html`, `samples.html`, `styles.css`, `scripts/app.js`: portfolio, full writing samples, and interactive demo.
+- `posts/posts.json`: documentation sample summaries shared by the demo, API, and CLI. Revision dates are sample dates, not releases.
 - `backend/src/postsStore.js`: normalization, persistence, and filtering helpers.
 - `backend/src/service.js`: content service and HTTP adapters.
 - `backend/src/app.js`, `backend/src/server.js`: Express app and local server.

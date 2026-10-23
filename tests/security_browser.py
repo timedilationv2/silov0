@@ -14,6 +14,7 @@ with sync_playwright() as p:
         expect(page.locator(selector)).to_have_text(payload)
     assert page.locator('#posts-grid img, #posts-grid script, #posts-grid svg, #post-rows img, #post-rows script, #post-rows svg').count() == 0
     assert page.evaluate('window.pwned') is None
+    assert page.locator('#posts-grid a, #post-rows a').count() == 0
     assert '[Source]' not in page.evaluate('buildMarkdownDigest(' + json.dumps(posts) + ')')
     page.locator('#search').fill('no-match')
     expect(page.locator('.post-card')).to_have_count(0)

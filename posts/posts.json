@@ -1,34 +1,46 @@
 [
   {
-    "id": "post-1",
-    "title": "First Demo Post",
+    "id": "local-preview",
+    "title": "Preview the documentation library locally",
+    "date": "2026-10-23",
+    "summary": "Tutorial: open the static site, check that samples load, and try a search without starting the local API.",
     "tags": [
-      "ai",
-      "agent"
+      "getting-started",
+      "tutorial"
     ],
-    "summary": "Testing filtering works.",
-    "url": "https://example.com/first-demo",
-    "date": "2024-01-01"
+    "url": "samples.html#local-preview"
   },
   {
-    "id": "static-demo",
-    "title": "Serving a static portfolio demo",
-    "date": "2024-01-03",
-    "summary": "Serve checked-in JSON over HTTP for a reproducible public demo.",
+    "id": "filter-posts",
+    "title": "Find posts with the local API",
+    "date": "2026-10-23",
+    "summary": "Reference: combine an exact topic match with text search to filter local content. Includes parameters, an example response, and empty-result behavior.",
     "tags": [
-      "web",
-      "docs"
+      "api",
+      "reference"
     ],
-    "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Howto/Tools_and_setup/set_up_a_local_testing_server"
+    "url": "samples.html#filter-posts"
   },
   {
-    "id": "digest-demo",
-    "title": "Exporting a Markdown digest",
-    "date": "2024-01-02",
-    "summary": "Collect filtered AI notes into a Markdown reading list.",
+    "id": "unauthorized-write",
+    "title": "Resolve an unauthorized write",
+    "date": "2026-10-23",
+    "summary": "Troubleshooting: diagnose authentication failures, supply a bearer token safely, and distinguish a 401 from validation or duplicate-ID errors.",
     "tags": [
-      "ai",
-      "docs"
-    ]
+      "api",
+      "troubleshooting"
+    ],
+    "url": "samples.html#unauthorized-write"
+  },
+  {
+    "id": "markdown-export",
+    "title": "Export a Markdown reading list",
+    "date": "2026-10-23",
+    "summary": "How-to: select documentation samples, copy a filtered digest, and recover when clipboard permissions prevent export.",
+    "tags": [
+      "docs",
+      "how-to"
+    ],
+    "url": "samples.html#markdown-export"
   }
 ]

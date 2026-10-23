@@ -82,6 +82,15 @@ test("CLI exports sample posts and source links from another working directory",
   const cli = fileURLToPath(new URL("../bin/silov0-digest.js", import.meta.url))
   const output = execFileSync(process.execPath, [cli], { cwd: tmpdir(), encoding: "utf8" })
   assert.match(output, /# silov0 digest/)
-  assert.match(output, /## First Demo Post/)
-  assert.match(output, /\[Source\]\(https:\/\/example.com\/first-demo\)/)
+  assert.match(output, /## Preview the documentation library locally/)
+  assert.match(output, /\[Source\]\(samples\.html#local-preview\)/)
+})
+
+
+test("published reference example matches the checked-in documentation samples", async () => {
+  const document = await readFile(new URL("../../samples.html", import.meta.url), "utf8")
+  const example = document.match(/Expected response with the checked-in sample data[\s\S]*?<pre><code>([\s\S]*?)<\/code>/)
+  assert.ok(example, "Reference includes a response example")
+  const actual = await createContentService().filter({ tag: "reference", query: "filter" })
+  assert.deepEqual(JSON.parse(example[1]), actual)
 })
