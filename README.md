@@ -1,55 +1,151 @@
-# silov0
+# SiloV0 documentation workspace
 
-A technical writing portfolio case study with a searchable documentation library.
-The public site reads structured JSON directly; a separate local Express API
-shares the content format. Four original writing samples document the repository
-itself: a tutorial, API reference, troubleshooting guide, and Markdown export how-to.
-They are portfolio examples, not customer deliverables or product release notes.
+A working browser-local Markdown workspace for technical documentation. Create,
+edit, organize, preview, review, reopen, and export documents without an account,
+backend server, paid API, or AI key. The workspace does not transmit document
+content. It uses IndexedDB on the current browser origin, not the GitHub repository.
 
-## Portfolio structure
+## Start using it
 
-The page moves from Overview and Interactive Demo to Documentation Samples,
-Architecture & Workflow, Case Study, and API Reference. Full samples live in
-[samples.html](samples.html). The workflow diagram distinguishes static browser
-reads from authenticated local API writes. The case study describes actual
-implementation choices and deliverables, without claiming reader or business results.
+The configured GitHub Pages address is <https://timedilationv2.github.io/silov0/>.
+A workspace change reaches that address only after its PR is reviewed and merged
+into `main` and the Pages build completes. Development branches are not published.
 
-## Quickstart
-
-Requires Python 3 for the static server and Node.js 18+ with npm for the API.
-From the repository root:
+To run this branch locally, from the repository root:
 
 ```sh
 python3 -m http.server 8000 --bind 127.0.0.1
 ```
 
-Open <http://localhost:8000/>. Four documentation samples appear in both views.
-Search `authentication` for one result; select `api` for two results or `how-to` for one.
-Search and tag filters combine. Copy digest exports the currently displayed posts.
-The public demo fetches `posts/posts.json` using a relative URL, so GitHub Pages
-project hosting works without a backend. Serve this repository root as the site root.
+Open <http://localhost:8000/>. No npm installation or build is required to use the
+site: its two browser libraries are bundled locally in `assets/vendor/`. Use HTTP or
+HTTPS, not a `file://` URL. Keep real credentials outside the served directory.
 
-In a separate terminal, start the optional API:
+1. Choose **Standard Operating Procedure (SOP)**, then **Create document**.
+2. Rename it in **Document title** and replace the template guidance in the editor.
+3. Watch the live preview. Wait for **Saved locally** before closing or refreshing.
+4. Refresh: the document reopens. Choose it in the sidebar to reopen it later.
+5. Select **Export .md** to keep a portable copy. Use **Download JSON backup** to
+   keep the whole library in a restorable format.
+
+On a small screen, use the documents menu in the header to create or switch files.
+
+## What works
+
+- Multiple documents with titles, creation/modification timestamps, and optional
+  collections. Search titles and filter by collection. Deletion requires confirmation.
+- Native multiline Markdown editor with headings, lists, links, code blocks,
+  tables, and inline formatting. Native undo/redo, formatting buttons, Ctrl/Cmd+B,
+  I, K and S, and Tab indentation. Shift+Tab leaves the editor for keyboard users.
+- Live sanitized preview; editor-only, preview-only, or split views. Split stacks
+  vertically on mobile. Dark/light theme and last selected document are remembered.
+- SOP, API Reference, Troubleshooting Guide, User Guide, and Release Notes templates.
+- Autosave after a short pause. Switching documents flushes pending changes;
+  storage failures leave the draft in the editor, with retry and recovery export.
+- `.md` / `.txt` import, Markdown and standalone sanitized HTML downloads, and
+  clipboard copying with an export fallback when permission is denied.
+- Validated, versioned JSON backups. Restore asks for confirmation and creates new
+  copies with fresh IDs. Matching titles get a suffix; existing content is never replaced.
+- Deterministic quality checks for missing titles, empty/duplicate headings,
+  heading hierarchy, broken heading links, empty code blocks, missing image alt
+  text, drafting placeholders, and long paragraphs. Findings explain their severity
+  and jump to an approximate source line. Warnings are review prompts, not objective
+  writing judgments. There is no AI assistant or source-grounded Q&A yet.
+
+## Your data and its limits
+
+Documents live only in this browser profile on this origin. Other browsers,
+profiles, devices, and local-server ports have separate libraries. Browser data
+clearing, private browsing, eviction, or device loss can remove documents. Local
+storage is **not synchronization, encryption, or a backup service**. Export backups
+regularly and protect downloaded files: they contain complete document text.
+
+Wait for **Saved locally** before leaving. A pending save triggers a browser leave
+warning where supported, but a forced process kill can still lose the latest
+unsaved keystrokes. A failed save does not replace the saved copy. If another tab
+changed a document, the stale save is rejected; use **Save a copy** to keep the
+current draft without overwriting the other tab's version. Refresh to load another
+tab's saved changes; live collaborative editing is not provided.
+
+Limits: 500 documents; title 200 characters; collection 80; content 1,000,000
+characters per document; imported file 2 MB; backup/restore 10 MB. If a combined
+backup is too large, export individual Markdown documents or reduce the library
+before creating a restorable JSON backup. Restoring copies counts toward the
+500-document limit. A backup after a failed save includes the stored version and
+an additional unsaved-draft copy when capacity permits; it never silently replaces
+one with the other.
+
+Raw HTML is displayed literally; scripts, forms, SVG and active content do not run.
+Images are represented by alt-text placeholders and are not fetched, preventing
+tracking-image requests. Safe links open only when selected; external links use
+`noopener noreferrer`. HTML export also blocks scripts and remote images. Markdown
+exports remain raw source and should be rendered safely by other applications.
+
+GitHub Pages project sites under `timedilationv2.github.io` share an origin.
+JavaScript from another trusted-or-untrusted project on that same origin could
+access browser storage. Avoid storing secrets or highly sensitive material on a
+shared origin; an isolated custom domain is a future deployment option.
+
+## Examples / Learn
+
+[learn.html](learn.html) preserves the previous portfolio, searchable sample demo,
+architecture explanation, API reference, and case study. [samples.html](samples.html)
+contains all four original writing samples. The Learn demo still reads
+`posts/posts.json` directly; those checked-in examples are separate from authored
+workspace documents. The workspace never writes to that file or calls Express.
+
+## Development and tests
+
+Python 3 serves the static files. Node 20+ is needed only for root dependency
+maintenance and model tests; the separate backend retains its Node 18+ requirement.
+
+```sh
+npm ci
+npm test
+npm run vendor  # only needed when updating browser libraries
+cd backend
+npm ci
+npm test
+```
+
+Browser checks (Playwright and Chromium required):
+
+```sh
+python3 -m pip install playwright
+python3 -m playwright install chromium
+python3 tests/workspace_browser.py
+# With the static server running:
+python3 tests/demo_smoke.py http://localhost:8000/learn.html
+python3 tests/security_browser.py http://localhost:8000/learn.html
+```
+
+The workspace suite starts its own loopback HTTP server and tests under `/silov0/`,
+including a persistent-profile browser restart. It uses synthetic test documents,
+never an existing user profile. See [testing notes](docs/TESTING.md) for scope and
+limits, [architecture](docs/ARCHITECTURE.md) for module boundaries and future AI
+interfaces, and [SECURITY.md](SECURITY.md) for protections and remaining risks.
+
+## Quickstart
+
+This optional setup starts the local Express API. The workspace does not need it. The retained API reads/writes the public
+example post format, not the IndexedDB workspace library. It binds to loopback;
+keep it local and never deploy it as part of GitHub Pages.
 
 ```sh
 cd backend
 npm ci
-npm test
-# Generate a token in this terminal; do not copy it into browser code.
 export API_TOKEN="$(node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))")"
 export CORS_ORIGINS=http://localhost:8000
 npm run dev
 ```
 
-The API listens at <http://localhost:3001>; set `PORT` to change it. The browser
-continues to use static JSON. API writes update the same file; reload the page to
-see changes. The API caches data: restart it after manually editing JSON.
-The server binds only to 127.0.0.1 and refuses to start without a valid API_TOKEN
-(at least 32 bearer-token characters). Keep the writable API local; do not deploy it.
-`.env.example` documents configuration; `.env` files are ignored and are not loaded
-automatically. Never serve a directory containing real secrets with the static server.
-CORS_ORIGINS accepts exact comma-separated HTTP(S) origins, with no trailing slash;
-unset means no cross-origin browser access. Public GET endpoints require no token.
+Configure a random server-side token of at least 32 bearer-token characters;
+missing, short, or placeholder tokens prevent startup. `.env.example` documents
+configuration but is not automatically loaded. Never put a real token in browser
+code, static files, URLs, logs, or Git. Reads remain public; writes require
+`Authorization: Bearer <API_TOKEN>`. Exact configured CORS origins, Helmet,
+request-body limits, per-IP rate limits, input validation, locked writes, and
+atomic file replacement remain in place.
 
 ## API examples
 
@@ -110,66 +206,12 @@ Errors are JSON objects with one `error` string: 400 for invalid bodies, dates,
 query types, or malformed JSON; 409 for duplicate IDs; 404 for unknown routes;
 401 for unauthorized writes; 413 for bodies over 32 KiB; 429 for rate limits; 500 for internal/storage failures (details are hidden).
 
-## Digest and checks
 
-From the repository root, print a Markdown digest with source links:
+## GitHub Pages
 
-```sh
-node backend/bin/silov0-digest.js
-```
-
-Backend tests cover normalization, file persistence, CLI execution, real HTTP
-requests, filtering, and errors. They use temporary storage, leaving demo data intact.
-
-With the static server running, run the browser check:
-
-```sh
-python3 -m pip install playwright
-python3 -m playwright install chromium
-python3 tests/demo_smoke.py http://localhost:8000/
-python3 tests/security_browser.py http://localhost:8000/
-```
-
-It checks both views, counts, empty states, search, tags, and script errors.
-
-## Troubleshooting
-
-- Blank demo or JSON fetch error: use HTTP instead of opening `index.html` as a
-  file. Ensure `posts/posts.json` is served with status 200 and contains a JSON array.
-- API connection refused: run `npm ci` then `npm run dev` in `backend`, and check
-  the port printed in the terminal. The static demo does not need this server.
-- POST fails: send `Content-Type: application/json`, a title, and a valid date.
-  Use a new ID for each post and the Authorization bearer header. Inspect the JSON error response.
-- Manual JSON edits do not appear in API responses: restart the API to clear its cache.
-- Clipboard copy fails: use localhost or HTTPS and allow clipboard access.
-
-## Files
-
-- `index.html`, `samples.html`, `styles.css`, `scripts/app.js`: portfolio, full writing samples, and interactive demo.
-- `posts/posts.json`: documentation sample summaries shared by the demo, API, and CLI. Revision dates are sample dates, not releases.
-- `backend/src/postsStore.js`: normalization, persistence, and filtering helpers.
-- `backend/src/service.js`: content service and HTTP adapters.
-- `backend/src/app.js`, `backend/src/server.js`: Express app and local server.
-- `backend/bin/silov0-digest.js`: Markdown export CLI.
-
-The backend package exports helpers from `@timedilationv2/silov0-backend` and the
-service from `@timedilationv2/silov0-backend/service` when installed as a package.
-
-
-## Security
-
-See [SECURITY.md](SECURITY.md) for protections, verification, compatibility changes,
-and operational limits. API requests are limited per IP to 300/minute and writes
-to 20/minute (including unauthorized attempts); limit responses use HTTP 429.
-Helmet adds API security headers. The separate static host needs its own headers.
-The browser never receives the server token and continues reading static JSON.
-
-## GitHub Pages deployment
-
-GitHub Pages publishes the static site from `main:/`. `_config.yml` excludes
-backend code, tests and project documentation/configuration from Jekyll output.
-Keep Jekyll enabled (do not add `.nojekyll` to main), and never commit secrets.
-The public website is https://timedilationv2.github.io/silov0/; Express is not
-hosted there. Verify `/backend/src/app.js` and `/.env.example` return 404 after
-publication. The separate `gh-pages` branch contains a static-only snapshot;
-it is not the configured Pages source.
+Pages builds from `main:/`. Keep Jekyll enabled: `_config.yml` excludes backend,
+tests, dependency manifests, and configuration from the published output. Browser
+modules and local vendor files are static assets using relative paths that work
+under `/silov0/`. No writable server is deployed. There is no service worker or
+promised offline installation; saved documents survive restarts, but reopening
+the app itself requires its static assets to be available.
