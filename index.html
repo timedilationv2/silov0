@@ -100,8 +100,9 @@
 
             <section id="authentication" class="docs-section">
               <h2>Authentication</h2>
-              <p>The static demo and local API have no authentication. Run the API locally;
-                it permits writes and is not configured as a public publishing service.</p>
+              <p>Reads are public. API writes require an Authorization: Bearer header matching
+                the server-side API_TOKEN environment variable. Keep the API local and
+                never include the token in the static site. See the README for secure setup.</p>
             </section>
 
             <section id="endpoints" class="docs-section">
@@ -124,9 +125,10 @@
                 <p>Send a JSON object with a non-empty title and a real date in
                   <code>YYYY-MM-DD</code> format. Optional fields: id, summary, url (strings),
                   and tags (an array of non-empty strings). An omitted id is generated from
-                  the date and title. Returns status 201 and the full updated array.</p>
+                  the date and title. Requires the bearer token. Returns status 201 and the full updated array.</p>
                 <p>Errors use <code>{"error":"message"}</code>: 400 for invalid input or JSON,
-                  409 for duplicate IDs, 404 for unknown routes, and 500 for server failures.
+                  401 for unauthorized writes, 409 for duplicate IDs, 413 for oversized bodies,
+                  429 for rate limits, 404 for unknown routes, and 500 for server failures.
                   <code>GET /health</code> returns <code>{"ok":true}</code>.</p>
               </div>
             </section>
