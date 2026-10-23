@@ -1,3 +1,4 @@
+
 import {
   addPost,
   buildTagIndex,
@@ -32,8 +33,9 @@ export function createContentService({ storagePath = DEFAULT_POSTS_PATH } = {}) 
       await savePosts(cache, storagePath)
       return cache
     },
-    filter(params) {
-      return filterPosts(cache || [], params)
+    async filter(params) {
+      const posts = await ensureCache()
+      return filterPosts(posts, params)
     },
     tagIndex() {
       return buildTagIndex(cache || [])
@@ -50,12 +52,16 @@ export function createApiAdapter(service) {
       const data = await service.all()
       res.json(data)
     },
-    async filter(req, res) {
-      const data = service.filter({
-        tag: req.query.tag,
-        query: req.query.q,
-      })
-      res.json(data)
+    async filter(req, res, next) {
+      try {
+        const data = await service.filter({
+          tag: req.query.tag,
+          query: req.query.q,
+        })
+        res.json(data)
+      } catch (error) {
+        next(error)
+      }
     },
     async add(req, res, next) {
       try {
