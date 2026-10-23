@@ -1,0 +1,10 @@
+# GitHub Pages builds from main:/; publish the static site only.
+# Never place credentials or runtime data in this source tree.
+exclude:
+  - backend
+  - tests
+  - README.md
+  - SECURITY.md
+  - readme.txt
+  - .env.example
+  - .gitignore

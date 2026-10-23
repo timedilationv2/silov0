@@ -5,6 +5,9 @@ Local Express API and reusable content helpers for silov0. Requires Node.js 18+.
 ```sh
 npm ci
 npm test
+# In this same terminal:
+export API_TOKEN="$(node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))")"
+export CORS_ORIGINS=http://localhost:8000
 npm run dev
 ```
 
@@ -12,7 +15,9 @@ The server listens on port 3001 (override with `PORT`) and uses
 `../posts/posts.json`. Routes: `GET /api/posts`, `GET /api/posts/filter?tag=ai&q=digest`,
 `POST /api/posts`, and `GET /health`. Successful post responses are arrays;
 POST returns the updated array with status 201. Errors use `{"error":"message"}`.
-No authentication is implemented; run the writable API locally.
+Writes require an Authorization: Bearer token matching server-side API_TOKEN.
+Startup rejects missing, short, or placeholder tokens. The server binds 127.0.0.1;
+keep it local. See ../.env.example (not loaded automatically) and ../SECURITY.md.
 
 Print a digest from any working directory with:
 

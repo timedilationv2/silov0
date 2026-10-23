@@ -9,7 +9,7 @@ Requires Python 3 for the static server and Node.js 18+ with npm for the API.
 From the repository root:
 
 ```sh
-python3 -m http.server 8000
+python3 -m http.server 8000 --bind 127.0.0.1
 ```
 
 Open <http://localhost:8000/>. “First Demo Post” appears in both the card and table
@@ -24,13 +24,21 @@ In a separate terminal, start the optional API:
 cd backend
 npm ci
 npm test
+# Generate a token in this terminal; do not copy it into browser code.
+export API_TOKEN="$(node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))")"
+export CORS_ORIGINS=http://localhost:8000
 npm run dev
 ```
 
 The API listens at <http://localhost:3001>; set `PORT` to change it. The browser
 continues to use static JSON. API writes update the same file; reload the page to
 see changes. The API caches data: restart it after manually editing JSON.
-There is no authentication. Keep this writable API local.
+The server binds only to 127.0.0.1 and refuses to start without a valid API_TOKEN
+(at least 32 bearer-token characters). Keep the writable API local; do not deploy it.
+`.env.example` documents configuration; `.env` files are ignored and are not loaded
+automatically. Never serve a directory containing real secrets with the static server.
+CORS_ORIGINS accepts exact comma-separated HTTP(S) origins, with no trailing slash;
+unset means no cross-origin browser access. Public GET endpoints require no token.
 
 ## API examples
 
@@ -61,13 +69,14 @@ Response (a plain array, with no wrapper):
 | `POST /api/posts` | Validates, persists, and returns the full updated array with status 201. |
 | `GET /health` | Returns `{"ok":true}`. |
 
-There are no single-post, tags, pagination, or bearer-authentication endpoints.
+There are no single-post, tags, pagination, or token-issuance endpoints.
 
 To add a post (this changes `posts/posts.json`; remove the sample afterward if desired):
 
 ```sh
 curl -i http://localhost:3001/api/posts \
   -H 'Content-Type: application/json' \
+  -H "Authorization: Bearer $API_TOKEN" \
   --data '{"id":"quickstart-note","title":"A local note","date":"2024-01-04","summary":"Created through the API.","tags":["docs"],"url":"https://example.com/note"}'
 ```
 
@@ -78,11 +87,16 @@ A post requires a non-empty string `title` and a real calendar `date` formatted
 `YYYY-MM-DD`. Optional: non-empty string `id`, string `summary`, string `url`, and
 `tags` containing non-empty strings. Strings are trimmed and tags deduplicated.
 An omitted ID is generated from date and title; summary and tags default to `""`
-and `[]`. Source URLs are preserved; relative URLs are allowed.
+and `[]`. Source URLs are preserved; HTTP(S) and relative URLs are allowed. Other schemes,
+embedded credentials, and URL control characters are rejected. Limits (characters):
+title 300, summary 10,000, ID 320, URL 2,048; up to 20 tags of 64 characters each.
+Writes require `Authorization: Bearer <API_TOKEN>`; missing or invalid tokens return
+401. Rotate the token by changing the environment and restarting the server.
+Do not put the token in URLs, logs, Git, frontend code, or public static files.
 
 Errors are JSON objects with one `error` string: 400 for invalid bodies, dates,
 query types, or malformed JSON; 409 for duplicate IDs; 404 for unknown routes;
-413 for oversized bodies; 500 for internal/storage failures (details are hidden).
+401 for unauthorized writes; 413 for bodies over 32 KiB; 429 for rate limits; 500 for internal/storage failures (details are hidden).
 
 ## Digest and checks
 
@@ -101,6 +115,7 @@ With the static server running, run the browser check:
 python3 -m pip install playwright
 python3 -m playwright install chromium
 python3 tests/demo_smoke.py http://localhost:8000/
+python3 tests/security_browser.py http://localhost:8000/
 ```
 
 It checks both views, counts, empty states, search, tags, and script errors.
@@ -112,7 +127,7 @@ It checks both views, counts, empty states, search, tags, and script errors.
 - API connection refused: run `npm ci` then `npm run dev` in `backend`, and check
   the port printed in the terminal. The static demo does not need this server.
 - POST fails: send `Content-Type: application/json`, a title, and a valid date.
-  Use a new ID for each post. Inspect the JSON error response.
+  Use a new ID for each post and the Authorization bearer header. Inspect the JSON error response.
 - Manual JSON edits do not appear in API responses: restart the API to clear its cache.
 - Clipboard copy fails: use localhost or HTTPS and allow clipboard access.
 
@@ -127,3 +142,22 @@ It checks both views, counts, empty states, search, tags, and script errors.
 
 The backend package exports helpers from `@timedilationv2/silov0-backend` and the
 service from `@timedilationv2/silov0-backend/service` when installed as a package.
+
+
+## Security
+
+See [SECURITY.md](SECURITY.md) for protections, verification, compatibility changes,
+and operational limits. API requests are limited per IP to 300/minute and writes
+to 20/minute (including unauthorized attempts); limit responses use HTTP 429.
+Helmet adds API security headers. The separate static host needs its own headers.
+The browser never receives the server token and continues reading static JSON.
+
+## GitHub Pages deployment
+
+GitHub Pages publishes the static site from `main:/`. `_config.yml` excludes
+backend code, tests and project documentation/configuration from Jekyll output.
+Keep Jekyll enabled (do not add `.nojekyll` to main), and never commit secrets.
+The public website is https://timedilationv2.github.io/silov0/; Express is not
+hosted there. Verify `/backend/src/app.js` and `/.env.example` return 404 after
+publication. The separate `gh-pages` branch contains a static-only snapshot;
+it is not the configured Pages source.

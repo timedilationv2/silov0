@@ -1,4 +1,5 @@
 import fs from "fs/promises"
+import { randomUUID } from "node:crypto"
 import path from "path"
 import { fileURLToPath } from "url"
 
@@ -21,6 +22,8 @@ export class PostError extends Error {
     this.status = status
   }
 }
+
+export const LIMITS = { title: 300, summary: 10000, id: 320, url: 2048, tag: 64, tags: 20 }
 
 export function normalizePost(post) {
   if (!post || typeof post !== "object" || Array.isArray(post)) {
@@ -45,6 +48,21 @@ export function normalizePost(post) {
   if (post.tags !== undefined && (!Array.isArray(post.tags) ||
       post.tags.some(tag => typeof tag !== "string" || !tag.trim()))) {
     throw new PostError("tags must be an array of non-empty strings")
+  }
+  for (const field of ["title", "summary", "id", "url"]) {
+    if (post[field] !== undefined && post[field].length > LIMITS[field]) {
+      throw new PostError(`${field} is too long`)
+    }
+  }
+  if (post.tags && (post.tags.length > LIMITS.tags || post.tags.some(tag => tag.length > LIMITS.tag))) {
+    throw new PostError("tags exceed limits")
+  }
+  if (post.url?.trim()) {
+    try {
+      if (/[\u0000-\u0020\u007f]/.test(post.url.trim())) throw new Error()
+      const url = new URL(post.url.trim(), "https://silov0.invalid/")
+      if (!["http:", "https:"].includes(url.protocol) || url.username || url.password) throw new Error()
+    } catch { throw new PostError("url must be an HTTP(S) or relative URL without credentials") }
   }
   return {
     id: post.id?.trim() || createSlug(post.title.trim(), post.date),
@@ -76,7 +94,19 @@ export async function loadPosts(postsPath = DEFAULT_POSTS_PATH) {
 
 export async function savePosts(posts, postsPath = DEFAULT_POSTS_PATH) {
   const payload = JSON.stringify(sortPosts(posts).map(normalizePost), null, 2)
-  await fs.writeFile(postsPath, `${payload}\n`, "utf8")
+  const temporary = `${postsPath}.${randomUUID()}.tmp`
+  let handle
+  try {
+    handle = await fs.open(temporary, "wx", 0o600)
+    await handle.writeFile(`${payload}\n`, "utf8")
+    await handle.sync()
+    await handle.close()
+    handle = null
+    await fs.rename(temporary, postsPath)
+  } finally {
+    if (handle) await handle.close()
+    await fs.rm(temporary, { force: true })
+  }
 }
 
 export function addPost(existingPosts, postInput) {
@@ -111,7 +141,7 @@ export function buildTagIndex(posts) {
   return posts.reduce((acc, post) => {
     const tags = Array.isArray(post.tags) ? post.tags : []
     tags.forEach((tag) => {
-      acc[tag] = (acc[tag] || 0) + 1
+      Object.defineProperty(acc, tag, { value: (Object.hasOwn(acc, tag) ? acc[tag] : 0) + 1, enumerable: true, configurable: true, writable: true })
     })
     return acc
   }, {})
@@ -132,3 +162,20 @@ export function getArchiveBuckets(posts) {
 }
 
 export { DEFAULT_POSTS_PATH }
+
+
+// All cooperating service instances/processes lock the complete read-modify-write.
+// A crash leaves a lock: fail closed until an operator removes it after stopping writers.
+export async function withPostsLock(postsPath, action) {
+  const lock = `${path.resolve(postsPath)}.lock`
+  const deadline = Date.now() + 5000
+  for (;;) {
+    try { await fs.mkdir(lock, { mode: 0o700 }); break }
+    catch (error) {
+      if (error.code !== "EEXIST" || Date.now() >= deadline) throw new Error("Storage unavailable")
+      await new Promise(resolve => setTimeout(resolve, 10))
+    }
+  }
+  try { return await action() }
+  finally { await fs.rmdir(lock) }
+}

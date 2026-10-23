@@ -29,7 +29,7 @@ test("HTTP routes persist URLs, filter posts, and return JSON errors", async t =
   const storagePath = path.join(dir, "posts.json")
   await writeFile(storagePath, JSON.stringify([post]))
   const service = createContentService({ storagePath })
-  const server = createApp({ service }).listen(0, "127.0.0.1")
+  const server = createApp({ service, apiToken: "test-token-abcdefghijklmnopqrstuvwxyz" }).listen(0, "127.0.0.1")
   await new Promise(resolve => server.once("listening", resolve))
   t.after(async () => {
     await new Promise(resolve => server.close(resolve))
@@ -41,7 +41,7 @@ test("HTTP routes persist URLs, filter posts, and return JSON errors", async t =
     assert.match(response.headers.get("content-type"), /application\/json/)
     return { status: response.status, body: await response.json() }
   }
-  const send = data => ({ method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) })
+  const send = data => ({ method: "POST", headers: { "Content-Type": "application/json", Authorization: "Bearer test-token-abcdefghijklmnopqrstuvwxyz" }, body: JSON.stringify(data) })
   assert.deepEqual(await request("/health"), { status: 200, body: { ok: true } })
   assert.deepEqual((await request("/api/posts?q=missing")).body, [post])
   assert.deepEqual((await request("/api/posts/filter?tag=ai&q=NOTE")).body, [post])
@@ -63,7 +63,7 @@ test("HTTP routes persist URLs, filter posts, and return JSON errors", async t =
   await rm(storagePath)
   await assert.rejects(service.refresh())
   // A fresh service must forward async read failures through the JSON error handler.
-  const failing = createApp({ service: createContentService({ storagePath }) }).listen(0, "127.0.0.1")
+  const failing = createApp({ service: createContentService({ storagePath }), apiToken: "test-token-abcdefghijklmnopqrstuvwxyz" }).listen(0, "127.0.0.1")
   await new Promise(resolve => failing.once("listening", resolve))
   try {
     const response = await fetch(`http://127.0.0.1:${failing.address().port}/api/posts`)

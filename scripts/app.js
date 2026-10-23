@@ -26,61 +26,64 @@ function formatDate(dateString) {
   }).format(date)
 }
 
+function element(tag, className, text) {
+  const node = document.createElement(tag)
+  if (className) node.className = className
+  if (text !== undefined) node.textContent = text
+  return node
+}
+
+function tagsFor(post, className) {
+  return (Array.isArray(post.tags) ? post.tags : [])
+    .map(tag => element("span", className, tag))
+}
+
 function renderCards(filtered) {
   if (!postsGrid) return
-
-  postsGrid.innerHTML = ""
-
-  filtered.forEach((post) => {
-    const card = document.createElement("article")
-    card.className = "post-card"
-
-    card.innerHTML = `
-      <h3 class="post-title">${post.title}</h3>
-      <p class="post-meta">${formatDate(post.date)}</p>
-      <p class="post-summary">${post.summary || ""}</p>
-      <div class="post-tags">
-        ${
-          Array.isArray(post.tags)
-            ? post.tags
-                .map((tag) => `<span class="post-tag">${tag}</span>`)
-                .join("")
-            : ""
-        }
-      </div>
-    `
-
-    postsGrid.appendChild(card)
-  })
+  postsGrid.replaceChildren()
+  for (const post of filtered) {
+    const card = element("article", "post-card")
+    const tags = element("div", "post-tags")
+    tags.append(...tagsFor(post, "post-tag"))
+    card.append(element("h3", "post-title", post.title),
+      element("p", "post-meta", formatDate(post.date)),
+      element("p", "post-summary", post.summary || ""), tags)
+    postsGrid.append(card)
+  }
 }
 
 function renderTable(filtered) {
   if (!tableBody) return
+  tableBody.replaceChildren()
+  for (const post of filtered) {
+    const row = element("tr")
+    const title = element("td")
+    title.append(element("strong", "", post.title))
+    const date = element("td", "", formatDate(post.date))
+    date.style.whiteSpace = "nowrap"
+    date.style.color = "var(--muted)"
+    const tags = element("td")
+    tags.append(...tagsFor(post, "table-tag"))
+    const summary = element("td", "", post.summary || "")
+    summary.style.color = "var(--muted)"
+    row.append(title, date, tags, summary)
+    tableBody.append(row)
+  }
+}
 
-  tableBody.innerHTML = ""
+// Static JSON is also untrusted. Relative HTTP(S) sources remain supported.
+function safeSourceUrl(value) {
+  if (typeof value !== "string" || !value.trim() || /[\u0000-\u0020\u007f]/.test(value)) return null
+  try {
+    const url = new URL(value, "https://silov0.invalid/")
+    return ["http:", "https:"].includes(url.protocol) && !url.username && !url.password
+      ? value.replace(/[()<>"\\]/g, c => encodeURIComponent(c).replace(/\(/g, "%28").replace(/\)/g, "%29")) : null
+  } catch { return null }
+}
 
-  filtered.forEach((post) => {
-    const row = document.createElement("tr")
-
-    row.innerHTML = `
-      <td><strong>${post.title}</strong></td>
-      <td style="white-space: nowrap; color: var(--muted);">
-        ${formatDate(post.date)}
-      </td>
-      <td>
-        ${
-          Array.isArray(post.tags)
-            ? post.tags
-                .map((tag) => `<span class="table-tag">${tag}</span>`)
-                .join("")
-            : ""
-        }
-      </td>
-      <td style="color: var(--muted);">${post.summary || ""}</td>
-    `
-
-    tableBody.appendChild(row)
-  })
+function markdownText(value) {
+  return String(value || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/[\\`*_[\]{}()!#]/g, "\\$&")
 }
 
 function updateEmptyStates(filtered) {
@@ -156,7 +159,7 @@ function buildTagFilterOptions() {
   }
 
   if (filterTags) {
-    filterTags.innerHTML = ""
+    filterTags.replaceChildren()
 
     const allButton = document.createElement("button")
     allButton.type = "button"
@@ -258,17 +261,18 @@ function buildMarkdownDigest(posts) {
 
       const tags =
         post.tags && post.tags.length
-          ? ` _(tags: ${post.tags.join(", ")})_`
+          ? ` _(tags: ${post.tags.map(markdownText).join(", ")})_`
           : ""
 
-      const link = post.url
-        ? `\n[Source](${post.url})`
+      const source = safeSourceUrl(post.url)
+      const link = source
+        ? `\n[Source](${source})`
         : ""
 
-      const summary = post.summary || ""
+      const summary = markdownText(post.summary)
 
       return (
-        `## ${post.title}\n` +
+        `## ${markdownText(post.title)}\n` +
         `${date}${tags}\n\n` +
         `${summary}${link}\n`
       )

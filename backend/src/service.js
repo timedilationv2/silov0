@@ -1,6 +1,7 @@
 
 import {
   addPost,
+  withPostsLock,
   PostError,
   buildTagIndex,
   filterPosts,
@@ -29,11 +30,13 @@ export function createContentService({ storagePath = DEFAULT_POSTS_PATH } = {}) 
       return cache
     },
     async add(postInput) {
-      const current = await ensureCache()
-      const updated = addPost(current, postInput)
-      await savePosts(updated, storagePath)
-      cache = updated
-      return cache
+      return withPostsLock(storagePath, async () => {
+        const current = await loadPosts(storagePath)
+        const updated = addPost(current, postInput)
+        await savePosts(updated, storagePath)
+        cache = updated
+        return cache
+      })
     },
     async filter(params) {
       const posts = await ensureCache()
