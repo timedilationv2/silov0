@@ -12,7 +12,7 @@ npm run dev
 ```
 
 The server listens on port 3001 (override with `PORT`) and uses
-`../posts/posts.json`. Routes: `GET /api/posts`, `GET /api/posts/filter?tag=ai&q=digest`,
+`../posts/posts.json`. Routes: `GET /api/posts`, `GET /api/posts/filter?tag=reference&q=filter`,
 `POST /api/posts`, and `GET /health`. Successful post responses are arrays;
 POST returns the updated array with status 201. Errors use `{"error":"message"}`.
 Writes require an Authorization: Bearer token matching server-side API_TOKEN.
