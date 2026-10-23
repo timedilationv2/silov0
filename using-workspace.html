@@ -27,123 +27,344 @@
         <a href="documentation.html">Documentation</a> / Using the workspace
       </p>
       <h1>Using the workspace</h1>
-      <p>
-        Write Markdown at <a href="workspace.html">workspace.html</a>. Your
-        documents belong to this browser profile and site address; the editor
-        does not send them to the API or GitHub.
+      <p class="lead">
+        Author visual HTML documents, Markdown, XML, and a documented subset of
+        DITA 1.3 topics. Everything saves locally in this browser; the sample
+        API is separate.
       </p>
       <nav class="page-index" aria-label="On this page">
         <a href="#create">Create and edit</a
-        ><a href="#review">Review findings</a
-        ><a href="#backups">Export and backups</a>
+        ><a href="#formats">Editors and formats</a
+        ><a href="#templates">Worked templates</a
+        ><a href="#review">Validation scope</a
+        ><a href="#backups">Storage and backups</a>
       </nav>
       <section id="create">
         <h2>Create and edit documents</h2>
         <ol>
           <li>
-            Choose <strong>New document</strong> in the documents sidebar, or
-            <strong>Create a document</strong> in an empty workspace. On a small
-            screen, open <strong>Documents</strong> first.
+            Choose <strong>New document</strong> in the sidebar, or
+            <strong>Create a document</strong> in the empty workspace. On
+            mobile, open <strong>Documents</strong> to reach the library.
           </li>
           <li>
-            Choose a blank document or a template, then
-            <strong>Create document</strong>. Templates provide editable
-            guidance, not finished instructions.
+            Choose the document type, then a blank document or worked template.
+            Choose <strong>Create blank document</strong> or
+            <strong>Use template</strong>.
           </li>
           <li>
-            Change <strong>Document title</strong> to rename it. Write Markdown
-            in the editor. Use Editor, Split, or Preview to change the view.
+            Rename it using <strong>Document name</strong>. Edit in the
+            format-appropriate authoring area. Wait for
+            <strong>Saved locally</strong> before leaving.
           </li>
           <li>
-            Wait for <strong>Saved locally</strong> before leaving. Reloading
-            reopens your last selected document.
+            Use the right document panel for the outline, template guidance, or
+            validation findings. Its toolbar toggle hides or shows it. On
+            narrower screens it moves below the editor.
           </li>
         </ol>
         <p>
-          <strong>Open a realistic example</strong> creates a new editable copy
-          of a completed checklist only when you choose that action. Reloading
-          never adds a copy. Changes to that copy do not change published
-          samples.
+          Templates create independent copies. Editing one does not change the
+          source template, and reloading never creates additional documents.
+          Adaptation guidance stays outside exportable document content. Saving
+          locally, downloading a file, and publishing are separate actions;
+          SiloV does not publish authored documents.
         </p>
         <p>
-          Use <strong>Document options</strong> to assign a collection, copy
-          Markdown, export HTML, or delete the active document. Search saved
-          titles in the sidebar; <strong>Library options</strong> contains the
-          collection filter and import/backup controls. Imports of .md or .txt
-          files create new documents.
+          Undo and redo use each editor's own history; history is per open
+          document and is not retained across reload. Ctrl/Cmd+S saves locally
+          and Ctrl/Cmd+F opens find/replace. Formatting shortcuts include
+          Ctrl/Cmd+B and I in visual/Markdown modes, U in visual mode, and K for
+          a Markdown link. Native source editors use Tab to indent and Shift+Tab
+          to outdent; press Escape then Tab to leave the editor with the
+          keyboard.
+        </p>
+      </section>
+      <section id="formats">
+        <h2>Editors and formats</h2>
+        <h3>Visual documents (.html)</h3>
+        <p>
+          The visual editor uses Tiptap/ProseMirror, not a textarea. Select text
+          to apply bold, italic, underline, or inline code. Choose
+          paragraph/heading styles, nested bullet or numbered lists, links,
+          blockquotes, and code blocks. Insert a table, then place the cursor in
+          a cell to add or delete rows/columns or delete the table. Undo, redo,
+          find/replace, and a clickable heading outline are available.
         </p>
         <p>
-          Formatting shortcuts: Ctrl/Cmd+B for bold, I for italic, K for links,
-          and S to save. Tab inserts two spaces; Shift+Tab moves focus out of
-          the editor. The Formatting menu offers headings, lists, code, and
-          tables.
+          Insert local PNG, JPEG, or WebP images with required alt text. Each
+          image is limited to 200 KB; a document can contain at most three
+          images. Images are stored as data URLs inside the document and count
+          toward its 1,000,000-character limit. They are included in HTML
+          downloads and JSON backups. Remote images, SVG, and arbitrary pasted
+          image files are not accepted; use <strong>Insert image</strong>.
         </p>
+        <p>
+          Downloads are sanitized standalone HTML with supported headings,
+          paragraphs, inline marks, lists, tables, links, code, and local
+          images. This is visual editing, not Microsoft Word compatibility. DOCX
+          import/export, tracked changes, arbitrary CSS layouts, and Word
+          pagination are not implemented.
+        </p>
+        <h3>Markdown (.md)</h3>
+        <p>
+          CodeMirror 6 provides highlighted source, line numbers, indentation,
+          list continuation, undo/redo, folding, find/replace, and formatting
+          shortcuts. Source, Split, and Preview views share the same Markdown
+          source. The preview follows edits; diagnostics mark source lines and
+          can move focus to an approximate location.
+        </p>
+        <p>
+          The supported dialect is a GFM subset: headings, emphasis,
+          strikethrough, inline/fenced code, blockquotes, lists, tables, and
+          safe links. Raw HTML displays literally. Images become alt-text
+          placeholders rather than loading remote content. GFM task-list text is
+          retained, but preview checkboxes are not interactive. Underline and
+          rich image/table layout are not represented as Markdown controls.
+        </p>
+        <h3>XML (.xml)</h3>
+        <p>
+          CodeMirror provides highlighted XML source, tag completion and closing
+          tags, matching-tag highlighting, indentation, folding, and
+          find/replace. Native import/export preserves the document's XML
+          structure, comments, attributes, processing instructions, and source
+          text; editing uses LF line endings. Import accepts UTF-8, not
+          arbitrary legacy encodings.
+        </p>
+        <p>
+          Every XML document gets libxml2 well-formedness checks. Select
+          <strong>Documentation release manifest 1.0</strong> for actual XSD
+          validation against the bundled
+          <a href="assets/schemas/release-manifest.xsd">release-manifest.xsd</a
+          >. Other XML schemas are not supported. A document with no selected
+          schema is checked only for well-formedness; the status states this
+          explicitly. Diagnostics include source line and column; XSD errors
+          generally identify an element line, with column 1 when libxml2 does
+          not provide a precise column.
+        </p>
+        <h3>DITA (.dita)</h3>
+        <p>
+          The supported scope is an unnamespaced, unspecialized subset of
+          <strong>DITA 1.3</strong> concept, task, and reference topics. Source
+          editing, outline navigation, schema-informed completion, context-aware
+          child insertion, and custom structural diagnostics are provided.
+          Select an element in the outline or place the caret inside it; the
+          insertion menu offers permitted children and inserts structural
+          elements in the supported order.
+        </p>
+        <p>
+          Checks cover the topic ID; title and body presence/order; taskbody
+          prerequisites/context/steps/result order; one cmd per step; permitted
+          children and attributes; nonempty titles/commands; unique IDs; and
+          nonempty lists/steps. Supported blocks include paragraphs, sections,
+          notes, ordered/unordered lists, code blocks, steps and substeps, with
+          basic inline emphasis, code, and xref markup.
+        </p>
+        <p>
+          <strong>This is not full OASIS DITA grammar validation.</strong> The
+          editor does not bundle the complete OASIS DTD/XSD set or DITA-OT.
+          Maps, specialization, conref/keyref resolution, domains, conditional
+          processing, external references, publication, and full link validation
+          are outside its scope. Valid DITA outside the subset may be flagged as
+          unsupported; the original source remains editable and exportable. Full
+          publishing and grammar validation require an external DITA toolchain.
+        </p>
+        <h3>Conversions and original source</h3>
+        <p>
+          Visual HTML and Markdown are separate document types. There is no
+          automatic cross-format conversion or mode toggle that could silently
+          drop rich formatting. The Source/Split/Preview toggle is
+          Markdown-only. Bundled prose templates can create either a visual or
+          Markdown copy because their known structure is supported.
+        </p>
+        <p>
+          HTML import asks for confirmation that unsupported styles/structures
+          may be normalized. It preserves the complete original HTML alongside
+          the sanitized visual copy, includes it in backups, and offers
+          <strong>Download original imported HTML</strong>. That original is
+          downloaded as inert text; treat it as untrusted before opening it
+          elsewhere. Markdown, XML, and DITA import keep source directly. An
+          HTML reading export of Markdown is one-way and does not replace its
+          Markdown source. No general lossless HTML↔Markdown round trip is
+          claimed.
+        </p>
+      </section>
+      <section id="templates">
+        <h2>Worked templates</h2>
+        <p>
+          Harbor is a fictional service used consistently in these examples. Its
+          API and dashboard are not SiloV functionality. Audience, purpose, and
+          adaptation notes appear in Template guidance, not in exported content.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Template</th>
+              <th>Purpose and native format</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Standard operating procedure</td>
+              <td>
+                Rotate a fictional staging key with prerequisites, verification,
+                and recovery. Markdown or visual HTML.
+              </td>
+            </tr>
+            <tr>
+              <td>API reference</td>
+              <td>
+                Create a message with the fictional Harbor Queue API, with
+                matching request, response, limits, and errors. Markdown or
+                visual HTML.
+              </td>
+            </tr>
+            <tr>
+              <td>Troubleshooting guide</td>
+              <td>
+                Diagnose and recover a stalled staging worker safely. Markdown
+                or visual HTML.
+              </td>
+            </tr>
+            <tr>
+              <td>User guide</td>
+              <td>
+                Complete and record a documentation review. Markdown or visual
+                HTML.
+              </td>
+            </tr>
+            <tr>
+              <td>Release notes</td>
+              <td>
+                Explain fictional Harbor Queue 1.4 changes, migration, and known
+                issues. Markdown or visual HTML.
+              </td>
+            </tr>
+            <tr>
+              <td>DITA concept</td>
+              <td>
+                Explain queue acceptance and acknowledgment using
+                concept/conbody.
+              </td>
+            </tr>
+            <tr>
+              <td>DITA task</td>
+              <td>
+                Verify a staging worker using task/taskbody, prereq, context,
+                steps, cmd/info, and result.
+              </td>
+            </tr>
+            <tr>
+              <td>DITA reference</td>
+              <td>Define queue states using reference/refbody/section.</td>
+            </tr>
+            <tr>
+              <td>XML release manifest</td>
+              <td>
+                Inventory documentation artifacts with an owner, date, paths,
+                and approval states; validates against the bundled XSD 1.0
+                schema.
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </section>
       <section id="review">
-        <h2>Understand review findings</h2>
+        <h2>Understand validation findings</h2>
         <p>
-          Choose <strong>Review</strong> to show structural checks. Findings
-          cover missing titles, empty or duplicate headings, skipped heading
-          levels, broken heading links, empty code blocks, missing image alt
-          text, placeholders, and long paragraphs. Select a finding to focus the
-          title or its approximate source line.
+          The visible validation summary always states its scope. Choose
+          <strong>Validation findings</strong> in the document panel to inspect
+          issues; select a source finding to navigate to its line/column.
+          Validation does not prevent saving or exporting unfinished documents.
         </p>
-        <p>
-          Checks are deterministic; there is no AI. A warning is a prompt for
-          judgment, not proof that writing is wrong. No findings does not verify
-          facts, completeness, accessibility, or external links.
-        </p>
-        <p>
-          Preview renders Markdown safely. Raw HTML remains literal; images are
-          omitted to avoid remote requests. Exported HTML follows the same
-          restrictions.
-        </p>
-      </section>
-      <section id="backups">
-        <h2>Export, back up, and restore</h2>
         <ul>
           <li>
-            <strong>Download .md</strong> keeps the current document as portable
-            source, including unsaved editor text.
+            Visual checks currently cover a missing document name and empty
+            text; they do not judge rich-text writing quality.
           </li>
           <li>
-            <strong>Document options → Export HTML</strong> downloads a
-            standalone sanitized reading copy.
+            Markdown review checks structural issues such as empty/duplicate
+            headings, skipped heading levels, broken heading links, empty code
+            blocks, missing image alt text, drafting placeholders, and long
+            paragraphs. Locations may be approximate inside nested Markdown.
           </li>
           <li>
-            <strong>Library options → Download JSON backup</strong> saves the
-            whole document library. Keep this file somewhere outside browser
-            storage.
+            XML parsing checks well-formedness; the named release-manifest
+            option additionally performs real XSD validation.
           </li>
           <li>
-            <strong>Library options → Restore backup</strong> validates a SiloV
-            version 1 JSON backup and asks for confirmation. It creates new
-            copies with new IDs and adds suffixes to colliding titles; existing
-            documents are preserved.
+            DITA checks combine XML parsing with the custom DITA 1.3 subset
+            rules described above, not full grammar validation.
           </li>
         </ul>
         <p>
-          There is no automatic backup, synchronization, encryption, or
-          publishing. Clearing site data, private browsing, storage eviction, or
-          losing the device can remove documents. Different browsers, profiles,
-          hostnames, and ports have separate libraries. Protect downloads: they
-          contain complete document text.
+          No checks use AI or verify factual correctness. No findings does not
+          prove accuracy or completeness. Malformed source remains editable;
+          repairing it and validating again updates findings.
         </p>
         <p>
-          Limits: 500 documents; 200 title characters; 80 collection characters;
-          1,000,000 content characters per document; 2 MB per imported file; 10
-          MB per JSON backup/restore. Split a library into individual Markdown
-          exports if its backup exceeds the limit.
+          DTD and entity declarations are blocked before parsing. External
+          entities, schema locations, XInclude, stylesheets, and DITA references
+          are not resolved. Runtime assets and the supported XSD are bundled
+          locally; normal authoring needs no third-party CDN or API service.
+        </p>
+      </section>
+      <section id="backups">
+        <h2>Storage, export, backup, and restore</h2>
+        <p>
+          Documents stay in this browser profile and origin. Changing domain,
+          port, profile, or device changes the available library. There is no
+          synchronization, encryption, automatic backup, or automatic
+          publishing. Clearing site data, eviction, private browsing, or device
+          loss can remove documents. Export regularly and protect downloads,
+          which contain full text and local images.
+        </p>
+        <p>
+          The version 2 storage upgrade archives original version 1 records in a
+          separate store without rewriting them. Existing documents open as
+          Markdown with their original IDs, titles, content, timestamps, and
+          revisions. Normal edits then save typed version 2 records. Export a
+          JSON backup before moving to another origin.
+        </p>
+        <ul>
+          <li>
+            <strong>Download .html/.md/.xml/.dita</strong> exports the current
+            document, including an unsaved draft. XML/DITA remain source files,
+            not rendered publications.
+          </li>
+          <li>
+            <strong>Document options</strong> contains collection assignment,
+            source copy, appropriate reading-HTML export, original-import
+            download, and deletion.
+          </li>
+          <li>
+            <strong>Library options → Download JSON backup</strong> saves every
+            format, schema selection, template reference, source, and retained
+            import original in a version 2 backup.
+          </li>
+          <li>
+            <strong>Restore backup</strong> accepts version 1 and 2 backups. It
+            validates them, asks for confirmation, and creates copies with fresh
+            IDs and unique titles. Existing documents are never replaced;
+            insertion is atomic.
+          </li>
+        </ul>
+        <p>
+          Limits remain 500 documents, 200 name characters, 80 collection
+          characters, 1,000,000 content characters per document, 2 MB per
+          imported file, and 10 MB per JSON backup/restore. Original imported
+          HTML is separately capped at 1,000,000 characters. Images count toward
+          content and backup limits.
         </p>
         <h3>If saving fails</h3>
         <p>
-          Keep the tab open and download the current Markdown. Retry after
-          resolving browser storage permissions or capacity. A conflict means
-          another tab saved a newer version: use <strong>Save a copy</strong> to
-          keep both drafts. Refresh to see another tab’s changes; there is no
-          live collaboration. Backup after a failed save includes the stored
-          version and an unsaved recovery copy when capacity permits. Forced
-          closing before a save completes can lose recent edits.
+          Keep the tab open and download the current document. Retry after
+          resolving storage permissions or capacity. A stale-tab conflict offers
+          <strong>Save a copy</strong> to preserve both drafts. A backup after a
+          failed save adds a separate unsaved recovery copy when capacity
+          allows. Navigation within the library does not discard a failed save.
+          Forced closure before commit can lose recent edits. There is no live
+          collaborative editing.
         </p>
       </section>
     </main>

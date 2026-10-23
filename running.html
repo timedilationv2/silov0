@@ -132,20 +132,29 @@ python3 -m http.server 8000 --bind 127.0.0.1</code></pre>
         <p>
           The workspace controller in
           <code>scripts/workspace/app.mjs</code> composes the model, storage,
-          templates, Markdown renderer, and review modules. Marked parses
-          Markdown; DOMPurify sanitizes the result. Local vendor files avoid
-          remote library requests. The workspace content security policy blocks
-          connections and images.
+          templates, editor adapters, Markdown rendering, review, and XML/DITA
+          validation modules. Tiptap/ProseMirror powers visual editing;
+          CodeMirror powers source editing. Marked parses Markdown; DOMPurify
+          sanitizes rendering and HTML imports. Local vendor files avoid
+          third-party requests. The workspace policy permits same-origin
+          assets/workers, WASM, and data-URL images while blocking remote images
+          and active embeds.
         </p>
         <p>
           Documents use the existing IndexedDB database
-          <code>silov0-workspace</code>, version 1, object store
-          <code>documents</code>. Records contain <code>id</code>,
+          <code>silov0-workspace</code>, version 2, object store
+          <code>documents</code>, with originals archived in
+          <code>legacy-v1</code>. Records contain <code>id</code>,
           <code>title</code>, <code>content</code>, <code>collection</code>,
-          creation/modification timestamps, and <code>revision</code>. Theme,
-          view, and last selected document use optional localStorage
-          preferences. Navigation changes do not rename the database or migrate
-          documents.
+          creation/modification timestamps, <code>revision</code>, format,
+          schema version, and optional schema/template/original-source metadata.
+          Theme, view, and last selected document use optional localStorage
+          preferences. The v2 upgrade archives original v1 records without
+          rewriting them; old documents open as Markdown. Navigation uses the
+          same database and origin. See
+          <a href="using-workspace.html#formats"
+            >editor formats and validation limits</a
+          >.
         </p>
         <p>
           Autosave is debounced by 450 ms. Transaction completion marks a save
@@ -169,7 +178,9 @@ python3 -m http.server 8000 --bind 127.0.0.1</code></pre>
         <h2>Development and tests</h2>
         <p>
           Node 20+ is required at the root; the separate backend supports Node
-          18+. No compilation step is needed.
+          18+. No runtime compilation step is needed. Run
+          <code>npm run vendor</code> after changing editor dependencies to
+          regenerate the checked-in browser bundle and XML validator assets.
         </p>
         <pre><code>npm ci
 npm test

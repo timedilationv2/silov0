@@ -1,8 +1,11 @@
-# Browser dependencies
+# Bundled runtime assets
 
-Locally bundled for privacy and GitHub Pages. Regenerate with npm ci && npm run vendor.
+Run npm ci && npm run vendor from the repository root to reproduce these files. No CDN or runtime build is required.
 
-- Marked 17.0.6 (Markdown parsing)
-- DOMPurify 3.4.17 (sanitization)
+- Tiptap/ProseMirror: visual editor (MIT)
+- CodeMirror 6/Lezer: source editors (MIT)
+- xmllint-wasm 5.3.0 / libxml2 2.13.8: worker-based XML and XSD validation (MIT)
+- Marked: GFM parsing (MIT)
+- DOMPurify: sanitization (Apache-2.0 OR MPL-2.0)
 
-Licenses are included. Do not edit the bundled files directly.
+Exact versions are locked in package-lock.json. NOTICES.txt and xmllint/COPYING retain upstream notices. The esbuild development bundler is MIT.

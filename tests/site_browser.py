@@ -35,6 +35,9 @@ with sync_playwright() as p:
     for link in sorted(links):
         response = context.request.get(link.split('#')[0])
         assert response.status == 200, link
+        if urlparse(link).path.endswith('.xsd'):
+            assert '<xs:schema' in response.text(), link
+            continue
         checker.goto(link)
         fragment = unquote(urlparse(checker.url).fragment)
         if fragment:
@@ -70,11 +73,14 @@ with sync_playwright() as p:
     page.set_viewport_size({'width':390,'height':844})
     page.screenshot(path=str(artifacts/'overview-mobile.png'), full_page=True)
     page.goto(urljoin(base, 'workspace.html'))
-    expect(page.locator('#open-example')).to_be_enabled()
-    page.click('#open-example')
+    expect(page.locator('#welcome-create')).to_be_enabled()
+    page.click('#welcome-create')
+    page.select_option('#new-format','visual')
+    page.select_option('#template','sop')
+    page.click('#create')
     expect(page.locator('#save-status')).to_have_text('Saved locally')
     page.set_viewport_size({'width':1440,'height':1000})
-    page.locator('#editor').focus()
+    page.locator('.tiptap').focus()
     page.screenshot(path=str(artifacts/'workspace-desktop.png'), full_page=True)
     page.click('#theme')
     page.screenshot(path=str(artifacts/'workspace-dark.png'), full_page=True)

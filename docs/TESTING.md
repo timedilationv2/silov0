@@ -1,38 +1,41 @@
 # Verification notes
 
-## Current restructuring
+## Commands
 
-Local validation uses Node 24, Python 3.12, Playwright 1.62, and system Chromium 154. The browser suites also support Playwright's downloaded Chromium by omitting `SILOV_CHROMIUM_EXECUTABLE`.
+Node 20+ supports development; Python 3 serves the static site. Chromium browser suites use isolated synthetic documents and temporary profiles, never a user's saved library.
 
 ```sh
+npm ci
+npm run vendor
 npm test
-(cd backend && npm test)
-SILOV_CHROMIUM_EXECUTABLE=/usr/bin/chromium python3 tests/workspace_browser.py
+(cd backend && npm ci && npm test)
+python3 -m pip install playwright
+python3 -m playwright install chromium
+python3 tests/workspace_browser.py
 # With python3 -m http.server 8000 --bind 127.0.0.1 running:
-SILOV_CHROMIUM_EXECUTABLE=/usr/bin/chromium python3 tests/demo_smoke.py http://localhost:8000/
-SILOV_CHROMIUM_EXECUTABLE=/usr/bin/chromium python3 tests/security_browser.py http://localhost:8000/
-SILOV_CHROMIUM_EXECUTABLE=/usr/bin/chromium python3 tests/site_browser.py http://localhost:8000/
+python3 tests/demo_smoke.py http://localhost:8000/
+python3 tests/security_browser.py http://localhost:8000/
+python3 tests/site_browser.py http://localhost:8000/
 ```
 
-| Suite                        | Coverage                                                                                                                                                  |
-| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Root Node tests (5)          | Document/backup validation, template structure, deterministic review findings and anchors                                                                 |
-| Backend tests (26)           | API behavior, authentication, validation, CORS, rate limits, concurrent writes, storage failures, CLI and checked-in reference accuracy                   |
-| Workspace browser tests (17) | Editing, persistence, templates, example copies, review, exports, backup/restore, recovery, conflicts, storage compatibility, responsive behavior and XSS |
-| Documentation example smoke  | Bundled JSON reads, summary/table views, filters, digest copying, empty selections, sample links, responsive layout                                       |
-| Sample security regression   | Hostile titles/summaries/tags remain text; unsafe source URLs are omitted                                                                                 |
-| Site browser regression      | Nine pages, internal links/fragments, old URLs, shared navigation and theme, keyboard skip link, four viewport widths, screenshots                        |
+Set `SILOV_CHROMIUM_EXECUTABLE=/usr/bin/chromium` to use an installed system browser instead of Playwright's downloaded Chromium. The browser executable and platform libraries must be available. Current local validation uses Node 24, Python 3.12, Playwright 1.62, and system Chromium 154.
 
-The workspace suite serves its own loopback HTTP server beneath `/silov0/`. It uses isolated synthetic documents and browser profiles. It checks browser-restart persistence, the former homepage entry point, and a record seeded directly into the unchanged database with a known ID, timestamps, collection, and revision. Navigating through the new pages must preserve that record exactly.
+## Coverage
 
-New-document tests check cancellation, all five content templates, a realistic example copy, deliberate creation of a second copy with existing work preserved, and no extra documents on reload. Review, import, export, JSON validation, restore rollback, concurrent-tab conflicts, quota failure, and recovery checks remain in place. A storage-unavailable case checks that creation stays disabled.
+- Eight Node tests exercise typed records, v1/v2 backups, all-format restore, worked templates, Markdown review findings, and real libxml2 XSD validation. The XML manifest passes; invalid enumeration values, missing required owner, and invalid date types fail.
+- Twenty-six backend tests retain API responses, authentication, CORS, limits, validation, CLI/sample-reference accuracy, concurrent writes, and storage-failure coverage. They use temporary fixtures for writes.
+- Sixteen workspace browser tests exercise visual selected-text formatting, nested lists, heading outline, rich find/replace, table row/column edits, undo/redo, local images with alt/size limits, save/reload and HTML export/reimport; Markdown source/preview, shortcuts, continuation and native round trips; XML matching/closing tags, folding, search/replace, parsing errors, XSD errors/repair and native round trips; all three DITA topic types, permitted-child insertion, ordering/singleton checks, errors/repair and native round trips; all nine templates, independent copies, separate guidance and no reload duplication.
+- Storage workflows cover exact v1-record preservation and original archive, browser restart, all-format backups and legacy restores, stale-tab conflicts, quota/recovery download, failed-save backup, atomic restore rollback, disabled storage, malformed backups and oversized imports. Keyboard and four viewport widths are checked across every format.
+- Untrusted HTML retains inert original source while scripts/events/SVG/remote images are removed from the visual copy/export. Markdown preview remains inert. XML DTD/entity declarations are rejected before parsing; no external requests are made.
+- Documentation smoke tests retain bundled JSON loading, filters, summaries/table, digest export, and sample links. The metadata security regression retains XSS and unsafe-URL checks.
+- Site regression checks nine pages, local links/fragments including the bundled schema, legacy routes, consistent navigation/theme, keyboard skip link, and responsive widths.
 
-The site suite checks actual link destinations and fragments, including redirects for former landing-page sections and the `learn.html` alias. Screenshots go outside the checkout to `/tmp/silov-screenshots` by default; `SILOV_SCREENSHOTS` overrides that location. Desktop, mobile, and dark-theme renders support visual inspection. Tests select a system browser through Playwright's supported `executable_path` option, without changing browser security settings.
+The workspace suite self-hosts beneath `/silov0/` to test GitHub Pages project paths. Editor screenshots are written outside the checkout to `/tmp/silov-editors` (or `SILOV_SCREENSHOTS`) for visual inspection; site screenshots default to `/tmp/silov-screenshots`. Desktop and mobile variants are captured for visual, Markdown, XML, and DITA. No private content belongs in Git.
 
 ## Limits and deployment
 
-Only Chromium is covered here. Firefox, Safari, assistive technologies, touch hardware, browser eviction, and disk/power-loss scenarios need separate validation. Clipboard checks use browser stubs for success and rejection; they do not establish OS permission behavior. IndexedDB commit completion is tested, but forced close before commit can lose edits.
+Only Chromium is exercised automatically here. Other browsers, assistive technology, hardware touch interaction, eviction, and power-loss behavior need separate testing. Clipboard/OS permissions vary. The source editor can leave focus with Escape then Tab. History is not persisted across reload. Large documents may encounter browser performance/storage limits despite the content cap.
 
-Review findings check structure, not factual accuracy, external-link reachability, or completeness. Source lines are approximate for nested Markdown. There is no service worker or guaranteed offline reopening. Downloads and browser storage are not encrypted.
+DITA checks are the documented custom 1.3 topic subset, not full OASIS grammar validation. Full grammar checks and publication require a separate toolchain; maps, specialization and reference resolution are not claimed. Only the named XML manifest XSD is supported. Visual HTML↔Markdown conversion is deliberately not offered. HTML import may normalize unsupported rich structures while retaining the complete original source. No DOCX compatibility or factual validation is claimed.
 
-This restructuring is implemented and validated locally. It has not been deployed or verified on the live Pages site. GitHub Pages serves static files from `main:/` after deployment; no writable API is hosted. Publishing and checking the live routes remain separate steps.
+This editor rebuild is implemented locally and has not been deployed or verified on the live Pages site. The existing `main` deployment belongs to the preceding site restructuring. Publishing the new editor changes and verifying live assets/routes remain separate actions. No editor API service is required; the sample API remains optional and local.

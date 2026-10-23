@@ -28,7 +28,7 @@ materialized through the GitHub connector because Git clone was unavailable.
   Field types, calendar dates, duplicate IDs, normalization and sorting remain
   enforced. HTTP(S) and relative source URLs remain supported; other schemes,
   credentials and embedded whitespace/control characters are rejected.
-- Tag indexing handles __proto__ and constructor as ordinary keys.
+- Tag indexing handles **proto** and constructor as ordinary keys.
 - Service writes acquire a filesystem directory lock for the complete
   read-modify-write, reload current disk data, and update cache only on success.
   This protects cooperating services and processes using the same resolved path.
@@ -129,23 +129,13 @@ its authentication, CORS, headers, limits and locked atomic writes are unchanged
 
 Workspace protections:
 
-- Marked and DOMPurify are locally bundled with locked dependency versions and
-  licenses. Raw HTML is displayed literally, image requests are omitted, and
-  sanitization uses a small element/attribute allowlist. Link protocols are checked
-  separately. The title, sidebar, findings and messages use textContent.
-- Root CSP blocks network connections and remote images, active embedded content,
-  base URLs and form submissions. HTML downloads contain sanitized content and
-  their own restrictive CSP. Markdown downloads contain raw author source; other
-  renderers must apply their own XSS protections.
-- IndexedDB saves check revisions atomically. Stale writers cannot silently
-  overwrite newer data. Save failures keep the in-memory draft and expose retry,
-  copy and recovery-download controls. Navigation will not discard a failed save.
-- Import sizes/types and backup schemas are validated. Restore is confirmed,
-  non-destructive, and atomic. Existing documents are never overwritten; copies
-  receive fresh IDs and collision-safe titles. Downloads contain plaintext user
-  content and should be handled as private data by the user.
-- No real authored documents, backups, private browser profiles or credentials
-  belong in Git. Browser tests use isolated temporary profiles and synthetic data.
+- Tiptap/ProseMirror, CodeMirror, Marked, DOMPurify, and libxml2/WASM are bundled locally with locked versions and license notices. No third-party CDN is needed.
+- Visual imports and pasted HTML use a small DOMPurify allowlist before reaching the editor; exports are sanitized again. Remote images, SVG, event handlers and active content are excluded. Local raster images require alt text and obey 200 KB / three-image limits. Original imported HTML is retained as inert source, never mounted, and downloaded as text/plain.
+- Markdown raw HTML remains literal; image placeholders make no remote requests. Preview and reading exports use the existing sanitizer. Native source exports require safe rendering by other consumers.
+- XML/DITA are edited as source, never mounted as HTML. DTD/entity declarations are blocked before parsing/outline creation. libxml2 workers use --nonet, no entity-expansion/XInclude switches, and only the explicitly selected bundled XSD. Remote schemaLocation, stylesheet and DITA references are not resolved. DITA findings are custom subset checks, not complete OASIS grammar validation.
+- Workspace CSP permits same-origin asset fetches/workers and WebAssembly compilation. Inline styles support editor-generated UI; scripts remain same-origin only. Image sources are data: only. Objects, frames, base URLs and form submissions remain blocked. Normal authoring sends no document-bearing network requests. HTML downloads have restrictive CSPs.
+- IndexedDB version 2 archives original v1 records in legacy-v1 without rewriting them. Revision-checked writes, generation-aware autosave, retained failure drafts, recovery downloads, conflict copies and atomic restores apply to all formats. Restores accept v1/v2 backups and preserve format, source, schema choice, guidance reference and retained imports.
+- Browser tests use isolated synthetic data/profiles. Authored documents, original HTML, images, backups, credentials and browser profiles must not be committed.
 
 Limits: IndexedDB is neither encryption nor a backup service. Browser resets,
 eviction, profile/device loss, and forced kills before a save completes can lose

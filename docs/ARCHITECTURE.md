@@ -1,121 +1,56 @@
 # Workspace architecture
 
-## Boundaries
+## Components and boundaries
 
 ```text
-workspace.html + workspace.css
-        │
-        ▼
-scripts/workspace/app.mjs (UI controller)
-  ├── model.mjs        document schema, limits, backup validation, recovery copies
-  ├── storage.mjs      IndexedDB repository, transactions, revision checks
-  ├── templates.mjs    editable content scaffolds
-  ├── example.mjs      completed checklist, copied only by explicit action
-  ├── markdown.mjs     Marked → DOMPurify → safe DOM fragment / HTML export
-  └── quality.mjs      pure deterministic review(document) → finding[]
+workspace.html + styles.css + workspace.css
+  → scripts/workspace/app.mjs (UI, native format routing, generation-aware autosave)
+      ├── editors.mjs      Tiptap/ProseMirror and CodeMirror adapters, safe visual HTML
+      ├── model.mjs        typed documents, limits, versioned backups, restore copies
+      ├── storage.mjs      IndexedDB v2, legacy archive, transactions and revision checks
+      ├── templates.mjs    worked examples + separate audience/purpose/guidance
+      ├── markdown.mjs     Marked → DOMPurify → preview / reading HTML
+      ├── quality.mjs      deterministic Markdown structural review
+      └── validation.mjs   XML safety gate, libxml2 worker, explicit XSD, DITA subset
 
-IndexedDB: silov0-workspace / documents
-  { id, title, content, collection, createdAt, updatedAt, revision }
+assets/vendor/editors.js              bundled maintained editor components
+assets/vendor/xmllint/                worker module + WASM + notices
+assets/schemas/release-manifest.xsd   named XML schema (not DITA grammar)
 
-Documentation examples:
+IndexedDB: silov0-workspace (version 2)
+  documents: typed current records, existing v1 records retained until edited
+  legacy-v1: original v1 records archived by the upgrade transaction
+
+Separate examples path:
 documentation.html (also learn.html) → scripts/app.js → posts/posts.json
-                                                          │ metadata + links
-                                                          ▼
-                                                     samples.html
-posts/posts.json ↔ local-only Express API (not used by workspace)
-
-Overview: index.html
-Operating guides: using-workspace.html, running.html, api.html
-Optional background: history.html
+                                                         │ metadata + links
+                                                         ▼
+                                                    samples.html
+posts/posts.json ↔ optional local Express API (never used by the workspace)
 ```
 
-No authored content travels along a network edge. Dependencies are vendored;
-workspace CSP blocks connections, images, frames, objects and form submissions. The
-workspace has no fetch, analytics, backend adapter, API key, or service worker.
-Theme, view preference, and last selected ID use optional localStorage; document
-content only uses IndexedDB. The documentation search fetches public example JSON. The JSON contains metadata and links; full prose stays in samples.html. API writes do not create articles or publish changes.
+The Overview / Workspace / Documentation / GitHub navigation and stable workspace URL remain. `scripts/site.js` manages non-workspace theme and legacy fragment routing; the workspace retains its own controller. Both use the existing `silov0-theme` preference. No authored content is sent to the sample API, GitHub, analytics, AI, or a CDN. The local validator fetches only its bundled assets/XSD and receives source by worker message.
 
-## Navigation and compatibility
+## Editor contracts
 
-All pages use Overview, Workspace, Documentation, and GitHub navigation, the shared
-styles.css foundation, and the existing silov0-theme preference. The workspace
-continues to manage its own theme control; other pages use scripts/site.js.
-The stable workspace.html URL, database version, object store, document schema,
-and preference keys are unchanged. Old landing-page section fragments route to
-the corresponding documentation, API, and history pages. learn.html retains a
-functional documentation/search alias, and all four samples.html fragments remain.
+See [EDITORS.md](EDITORS.md) for libraries, supported dialects, exact DITA scope, templates, and conversion limitations. Visual editing is real contenteditable ProseMirror state, not textarea Markdown controls. CodeMirror owns all three source editors. The controller consumes a common adapter for content, commands, outline navigation, line selection, and diagnostics. Native format is immutable per document; no silent cross-format serialization is offered.
 
-New document opens a native dialog containing the template selector. The empty
-state and new-document dialog offer explicit example-copy actions. Both use the
-same flush, capacity check, unique title, random ID, and store.save path as normal
-creation; initialization never inserts examples. Collection management, imports,
-backup, and restore remain available in secondary menus. Review is collapsed until
-requested. No storage migration or background example seeding takes place.
+Markdown Source/Split/Preview views share one source string. Visual HTML stores supported schema content and sanitizes HTML imports/paste/exports. Unsupported imported HTML is retained separately in `originalSource` after explicit confirmation. XML and DITA keep source rather than reserializing a DOM. DTD/entity declarations are rejected before parsing, and no external resources are resolved. DITA is a custom DITA 1.3 structural subset, explicitly not full OASIS grammar validation. The XML manifest option performs actual libxml2 XSD validation.
 
-## Save semantics
+## Storage and migration
 
-Edits update an in-memory document and mark it dirty. A 450 ms debounce triggers a
-save; switching/create/delete/restore first flush pending changes. Only one save
-runs at a time. Each snapshot carries the current revision and edit generation;
-a successful older snapshot does not mark newer keystrokes as saved. A leave
-warning covers pending edits where the browser permits it. No unload-time
-asynchronous write is claimed to be guaranteed.
+Records contain the existing ID, title, content, collection, timestamps and revision, plus `format`, `schemaVersion`, `templateId`, optional `schemaId`, and optional `originalSource`. Version 1 records receive Markdown defaults when read; opening them does not rewrite them. Upgrade adds `legacy-v1` and copies original records within the upgrade transaction without altering the documents store. IDs, timestamps, revisions, and source remain intact. Editing writes the typed current record; archived originals stay unchanged. A failed upgrade rolls back; old open tabs close their connection on versionchange or prompt retry if blocked.
 
-The repository checks the stored revision in the same readwrite transaction as
-its update. A stale tab or a deleted document causes a conflict rather than an
-upsert that recreates or overwrites another tab's version. The editor retains
-its draft; Save a copy creates a new ID. Navigation reloads current stored records.
-There is no real-time collaboration or background tab synchronization.
+The same database/origin preserves documents created under the former homepage entry point. Theme, view, and last selected ID use optional localStorage; content uses IndexedDB. Origin/profile/port changes do not migrate storage automatically. The legacy archive is a local upgrade safeguard, not an external backup.
 
-A document timestamp changes on edit, not merely when opened. IndexedDB transaction
-completion, not the individual request's success event, marks the save complete.
-Quota and transaction failures leave the existing committed version intact.
+## Save semantics and failures
 
-## Imports, backups and rendering
+Edits update in-memory content and set dirty state. A 450 ms debounce saves; switching, creation, deletion, and restore first flush pending changes. One save runs at a time. Snapshot generation prevents an older successful save from marking later keystrokes as saved. Transaction completion marks success. Revision checks happen atomically with writes; a stale tab cannot overwrite or recreate another tab's deleted document. Save a copy assigns a fresh ID with the current complete typed draft. There is no live collaboration.
 
-Imports add documents; they never replace an existing one. Backup format/version,
-field types, sizes, IDs, dates and duplicate IDs are validated before confirmation.
-Restore generates new IDs, handles title collisions, and inserts the whole batch
-in one transaction. A failed batch is rolled back. Dates from backups are retained;
-restored copies start a new revision sequence. Backups are plain JSON, not encrypted.
+Quota/storage failures retain drafts and expose retry/native download/copy recovery. Backup after a failed save includes committed records and a separate unsaved recovery record when capacity allows. Restore is a validated, confirmed, all-or-nothing insertion of new-ID copies. Beforeunload warnings are best effort; forced close before commit can lose work. Editor undo history is per mounted document, not persisted.
 
-Marked handles GFM syntax. Raw HTML is escaped, images become inert alt-text
-placeholders, and DOMPurify applies a small tag/attribute allowlist before the DOM
-is mounted. Links have a separate protocol check. Heading anchors are generated
-with the same normalization used by quality checks, including duplicate suffixes.
-Standalone HTML export uses the same sanitized renderer and a restrictive CSP.
-Quality line references are approximate for nested structures and inline content.
-These checks do not validate external URLs or factual correctness.
+Version 2 JSON backup preserves all formats, schema selection, template reference, native source, and original imported HTML. Restore accepts v1 and v2. Content/image/import/backup limits are validated. Downloaded files and local storage are plaintext. Review findings do not verify facts; XML well-formedness, selected XSD validation, and DITA subset checks are always labeled separately.
 
-## Extension contracts for future AI work
+## Static hosting
 
-The current modules deliberately keep storage, rendering, checks and UI separate.
-No fake provider, assistant, semantic search, or embeddings are implemented.
-A future capability can adopt the following contracts without changing the schema:
-
-- Drafting / notes conversion: immutable `{ instruction, documentSnapshot, sources }`
-  plus an AbortSignal → a proposed `{ title, content, citations }`. Show a diff and
-  require explicit acceptance; never mutate the stored document inside a provider.
-- Review: `{ documentSnapshot, sources }` → findings shaped like the current
-  `{ severity, rule, line, message, explanation }`, with provenance identifying AI
-  output. Keep deterministic checks independent and reproducible.
-- Grounded Q&A: an explicitly selected source snapshot → answer plus citations
-  carrying source ID, revision and location. Reject unsupported claims or mark
-  uncertainty. Do not imply the current workspace provides this capability.
-- Semantic search: an optional index keyed by document ID and revision, invalidated
-  on edit/delete. Keyword title search remains a simple local fallback.
-
-Any remote provider requires a separate privacy/consent design, credentials on a
-trusted server, reviewed CSP changes and explicit user selection of transmitted
-content. It must not silently upload the local library. A local-only provider
-would still need resource limits and tests. Do not add an API key input to this
-static page or repurpose the public example-post API for private documents.
-
-## Deliberate limits
-
-The native textarea offers predictable keyboard editing and undo, not syntax
-coloring or a rich-text/WYSIWYG model. Large documents are size-limited; rendering
-and checks currently run on the main thread. Moving expensive work into a worker
-is a future optimization requiring measured need. The same-origin trust model,
-browser eviction, absence of sync/encryption, and backup limits are documented
-in the README. All current editing is account-free and local.
+Runtime assets, worker/WASM, schema and notices are checked in. Python's static server and GitHub Pages can serve the application; no editor backend or API key is required. `npm ci && npm run vendor` rebuilds runtime assets after dependency changes using esbuild. Workspace CSP allows same-origin assets/workers, WebAssembly compilation, editor-generated styles and data-URL raster images; remote scripts/images, objects, frames, base replacement and form submissions are blocked. There is no service worker or guaranteed offline install. Full DITA grammar validation/publishing uses an external OASIS-aware toolchain and is not simulated in the browser.

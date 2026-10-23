@@ -1,6 +1,6 @@
 # SiloV
 
-SiloV combines a browser-based Markdown editor, a searchable collection of documentation examples, and an optional local API for managing sample metadata.
+SiloV combines a browser-based technical-documentation editor, a searchable collection of documentation examples, and an optional local API for managing sample metadata.
 
 - [Overview](https://timedilationv2.github.io/silov0/)
 - [Workspace](https://timedilationv2.github.io/silov0/workspace.html)
@@ -51,10 +51,11 @@ api.html                     Optional API operating guide
 samples.html                 Full tutorial, reference, troubleshooting, how-to
 learn.html                   Compatibility alias for the documentation hub
 history.html                 Optional development background
-scripts/workspace/           UI, model, storage, templates, example, rendering, review
+scripts/workspace/           UI, editors, typed storage, templates, rendering, validation
 scripts/app.js               Example search, filters, digest export
 posts/posts.json             Example metadata and article links
-assets/vendor/               Bundled browser libraries and licenses
+assets/vendor/               Bundled editor libraries, XML worker/WASM, licenses
+assets/schemas/              Supported release-manifest XSD
 backend/src/                 Express routes, service, and JSON store
 backend/bin/silov0-digest.js  CLI export of sample summaries
 backend/test/                API, validation, security, concurrency tests
@@ -64,19 +65,34 @@ SECURITY.md                  Security model and limitations
 _config.yml                  GitHub Pages exclusions
 ```
 
-## Writing and storage
+## Editors, templates, and storage
 
-Choose **New document**, select a template, and create it. An empty library also offers **Open a realistic example**; that explicit action creates a new editable copy. Reloading does not add copies. Rename using Document title; edits autosave. Wait for **Saved locally** before leaving.
+Choose **New document → document type → blank or template**. Templates create independent editable copies; reloading never creates duplicates. The right document panel provides outline, separate adaptation guidance, and validation findings. Saving locally, downloading, and publishing are distinct; the editor never publishes your documents.
 
-Use Editor, Split, or Preview, **Review** for structural findings, and **Download .md** for a portable copy. Document options contains collection assignment, Markdown copying, HTML export, and deletion. Library options contains import, collection filtering, backup, and restore. See the [workspace guide](https://timedilationv2.github.io/silov0/using-workspace.html).
+| Editor      | Implemented authoring capabilities                                                                                                                                                                                                 | Native export               |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| Visual HTML | Tiptap/ProseMirror selection-based bold/italic/underline/code, paragraphs/headings, nested lists, links, quotes, code blocks, tables with row/column editing, local images with alt text, undo/redo, find/replace, heading outline | `.html`                     |
+| Markdown    | CodeMirror highlighted GFM-subset source, indentation/list continuation, formatting shortcuts, history, folding, find/replace, synchronized preview, line diagnostics, outline                                                     | `.md`; one-way reading HTML |
+| XML         | CodeMirror highlighting, matching/closing tags, completion, indentation, folding, search/replace, source outline, libxml2 well-formedness checks, bundled release-manifest XSD validation                                          | `.xml`                      |
+| DITA        | DITA 1.3 concept/task/reference source, outline, permitted-child completion/insertion, required element/order/structure checks                                                                                                     | `.dita`                     |
 
-The database remains `silov0-workspace`, version 1, object store `documents`. Its name, schema, document IDs, origin, and `workspace.html` route are unchanged by this restructuring. Documents saved under the former homepage entry point remain accessible on the same origin. Theme, view, and active-document preferences retain their existing `silov0-` localStorage keys.
+Libraries are maintained open-source components: Tiptap/ProseMirror, CodeMirror 6/Lezer, prosemirror-search, and xmllint-wasm/libxml2 are MIT licensed. Marked parses Markdown; DOMPurify sanitizes rendering/imports. Runtime assets, WASM, the supported XSD, and license notices are bundled locally. See [docs/EDITORS.md](docs/EDITORS.md) for exact contracts and [assets/vendor/NOTICES.txt](assets/vendor/NOTICES.txt) for notices. The lockfile pins installed versions.
 
-There is no synchronization, encryption, automatic backup, or automatic publishing. Clearing browser data, private sessions, eviction, or device loss can remove documents. Browsers, profiles, domains, and ports have separate libraries. GitHub Pages projects on the same hostname share an origin, so avoid highly sensitive material there.
+The Markdown dialect supports headings, emphasis, strike, code, quotes, lists, safe links, and GFM tables. Raw HTML remains literal and remote images are omitted. Task-list source is preserved without interactive preview checkboxes. Visual HTML supports a richer schema, so there is **no automatic visual↔Markdown conversion**. HTML import warns about normalization and retains the complete original source separately for download and backup. No Microsoft Word/DOCX compatibility, arbitrary CSS preservation, or lossless general HTML↔Markdown round trip is claimed.
 
-Download JSON backups regularly and protect them: they contain full text. Restore validates a version 1 backup and creates new copies with new IDs, preserving existing documents. Limits are 500 documents, 200 title characters, 80 collection characters, 1,000,000 content characters per document, 2 MB per imported file, and 10 MB per backup/restore.
+XML import accepts UTF-8. Source editing/export keeps document structure and uses LF line endings after edits. XML schema validation is real libxml2 XSD validation, explicitly limited to `assets/schemas/release-manifest.xsd` (Documentation release manifest 1.0). Otherwise XML receives well-formedness checks only. DTD/entity declarations are blocked, and no external entities, schemas, XInclude, stylesheets, or references are resolved.
 
-A failed save retains the draft for retry or Markdown recovery. A stale tab cannot overwrite another tab’s newer revision; **Save a copy** preserves both versions. There is no live collaboration. Forced closure before save completion can lose recent edits. Markdown preview and HTML export sanitize content; raw HTML is literal and images are omitted. Review findings check structure, not facts or completeness.
+DITA support targets a documented **DITA 1.3 topic subset**, not the complete OASIS grammar. Custom checks cover supported children/attributes, topic IDs, required title/body, ordering, task steps/commands, unique IDs, and nonempty structures. Full OASIS grammar validation, maps, specialization, domains, conref/keyref, conditional processing, reference resolution, and DITA-OT publishing require an external toolchain and are not claimed here. Source outside the supported subset remains editable/exportable and receives unsupported-structure findings.
+
+The nine worked templates are: SOP (staging key rotation), API reference (a fictional Harbor Queue operation with coherent request/response), troubleshooting (stalled worker), user guide (documentation review), release notes (fictional Harbor 1.4), DITA concept, DITA task, DITA reference, and XML documentation release manifest. Each has audience, purpose, and adaptation guidance outside exportable content. The five prose templates can initialize Markdown or visual copies. Harbor's API and dashboard are fictional and are not SiloV functionality.
+
+The stable `workspace.html` route and `silov0-workspace` IndexedDB database name remain. Version 2 adds a `legacy-v1` archive of original version 1 records without rewriting them. Existing documents open as Markdown with original IDs, source, names, timestamps, collection, and revision. Normal edits save typed version 2 records. Theme/view/active-document preference keys remain unchanged.
+
+Version 2 JSON backups include every document type, source, schema choice, template reference, and retained original HTML. Restore accepts version 1 and 2 backups and creates fresh-ID copies atomically, never overwriting documents. Stale-tab revision conflicts offer **Save a copy**. Storage failures retain the draft with retry and native recovery downloads; failed-save backups include a separate unsaved copy when capacity permits. Wait for **Saved locally** before leaving. Forced closure before commit can still lose recent edits.
+
+Limits: 500 documents, 200 name characters, 80 collection characters, 1,000,000 content characters per document, 2 MB per import, 10 MB per backup/restore. Original imported HTML is separately capped at 1,000,000 characters. Visual images require alt text and must be PNG/JPEG/WebP up to 200 KB, maximum three per document; base64 data counts toward document and backup caps. There is no sync, encryption, automatic backup, or automatic publishing. Browser/profile/domain/port changes create separate libraries; data clearing, private mode, eviction, and device loss can remove documents. Keep downloads safe and avoid secrets on shared GitHub Pages origins.
+
+See [Using the workspace](https://timedilationv2.github.io/silov0/using-workspace.html) and the detailed source guide [docs/EDITORS.md](docs/EDITORS.md). These updated routes/features need deployment before they appear on the public site.
 
 ## Optional API setup
 
@@ -111,7 +127,7 @@ Reads are cached; restart after manual JSON edits. Writes use locking and atomic
 
 ## Development and tests
 
-Root dependencies require Node 20+. Use the lockfiles; no compilation step is needed. `npm run vendor` is only for intentional browser-library updates.
+Root development dependencies require Node 20+. Static use needs no build. After changing runtime dependencies, run `npm run vendor` to regenerate the checked-in editor bundle, worker/WASM files, and license notices. Use the lockfiles.
 
 ```sh
 npm ci
@@ -128,9 +144,9 @@ python3 tests/site_browser.py http://localhost:8000/
 
 To use a system Chromium instead of Playwright’s downloaded browser, prefix browser commands with `SILOV_CHROMIUM_EXECUTABLE=/usr/bin/chromium`. Platform browser libraries are required.
 
-- Root tests: document/backup validation, template structures, review findings.
+- Root tests: typed documents, legacy backups, all-format restoration, worked templates, Markdown review, and real XML/XSD validation.
 - Backend tests: API responses, authentication, CORS, limits, validation, concurrent writes, storage failures, and sample-reference accuracy. Writes use temporary fixtures.
-- Workspace browser suite: creation, templates and example copies, editing, renaming, persistence across reload/browser restart, legacy stored documents, preview, review, import/export, backup/restore, conflicts, recovery, responsive layout, and malicious content.
+- Workspace browser suite: real visual selection/table/list/search editing, source/preview round trips, XML parsing and XSD errors/repair, DITA topics/insertion/order, all templates, v1 migration/archive, every-format backups, quota/conflict recovery, safe imports/images, keyboard operation, responsive layouts, and screenshots of each editor.
 - Example smoke suite: static JSON loading, search/filter, summary/table views, digest copy and failures, and sample links.
 - Security browser suite: hostile sample metadata remains text; unsafe links are omitted.
 - Site browser suite: shared navigation/theme, internal links and fragments, legacy routes, keyboard entry, mobile layout, and screenshots.

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SiloV Documentation release manifest 1.0. Local example schema, not DITA. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="releaseManifest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="owner" type="xs:string"/>
+        <xs:element name="releaseDate" type="xs:date"/>
+        <xs:element name="artifact" minOccurs="1" maxOccurs="32">
+          <xs:complexType>
+            <xs:sequence><xs:element name="title" type="xs:string"/></xs:sequence>
+            <xs:attribute name="path" type="xs:anyURI" use="required"/>
+            <xs:attribute name="status" use="required"><xs:simpleType><xs:restriction base="xs:string"><xs:enumeration value="draft"/><xs:enumeration value="approved"/></xs:restriction></xs:simpleType></xs:attribute>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:ID" use="required"/>
+      <xs:attribute name="version" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
