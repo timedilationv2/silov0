@@ -24,7 +24,7 @@ class WorkspaceTests(unittest.TestCase):
     def setUpClass(cls):
         cls.server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
         threading.Thread(target=cls.server.serve_forever, daemon=True).start()
-        cls.base = f'http://127.0.0.1:{cls.server.server_address[1]}/silov0/'
+        cls.base = f'http://127.0.0.1:{cls.server.server_address[1]}/silov0/workspace.html'
         cls.playwright = sync_playwright().start()
         cls.browser = cls.playwright.chromium.launch()
     @classmethod
@@ -78,6 +78,7 @@ class WorkspaceTests(unittest.TestCase):
         expect(self.page.locator('.document-item')).to_have_count(1)
         self.page.click('#delete'); expect(self.page.locator('#confirm-dialog')).to_be_visible()
         self.page.get_by_role('button',name='Cancel',exact=True).click()
+        expect(self.page.locator('#create')).to_be_enabled()
         expect(self.page.locator('#doc-title')).to_have_value('Alpha')
         self.page.click('#delete'); self.page.click('#dialog-confirm')
         expect(self.page.locator('#doc-title')).to_have_value('Beta')
@@ -116,6 +117,7 @@ class WorkspaceTests(unittest.TestCase):
         self.page.locator('#restore-file').set_input_files(payload)
         expect(self.page.locator('#confirm-dialog')).to_be_visible()
         self.page.get_by_role('button',name='Cancel',exact=True).click()
+        expect(self.page.locator('#create')).to_be_enabled()
         expect(self.page.locator('.document-item')).to_have_count(1)
         self.page.locator('#restore-file').set_input_files(payload); self.page.click('#dialog-confirm')
         expect(self.page.locator('.document-item')).to_have_count(2)
@@ -239,6 +241,19 @@ class WorkspaceTests(unittest.TestCase):
         self.page.evaluate('()=>{IDBObjectStore.prototype.add=window.originalAdd}')
         self.page.reload();expect(self.page.locator('.document-item')).to_have_count(1)
         expect(self.page.locator('#editor')).to_have_value('# Keep original')
+
+
+    def test_former_homepage_documents_reopen_at_feature_url(self):
+        old=self.context.new_page()
+        root=self.base.removesuffix('workspace.html')
+        old.route(root,lambda route:route.fulfill(content_type='text/html',body=(ROOT/'workspace.html').read_text()))
+        old.goto(root);expect(old.locator('#create')).to_be_enabled()
+        old.select_option('#template','sop');old.click('#create')
+        old.fill('#doc-title','Existing homepage document');old.fill('#editor','# Keep my existing work')
+        expect(old.locator('#save-status')).to_have_text('Saved locally')
+        old.close();self.page.reload()
+        expect(self.page.locator('#doc-title')).to_have_value('Existing homepage document')
+        expect(self.page.locator('#editor')).to_have_value('# Keep my existing work')
 
     def test_browser_restart_persistence(self):
         with tempfile.TemporaryDirectory() as profile:

@@ -10,7 +10,7 @@ with sync_playwright() as playwright:
     page.on('request', lambda request: requests.append(request.url))
     # Exercise the export button without depending on OS clipboard permissions.
     page.add_init_script("Object.defineProperty(navigator, 'clipboard', {value: {writeText: async text => {window.copiedDigest = text}}})")
-    page.goto(sys.argv[1] if len(sys.argv) > 1 else 'http://localhost:8000/learn.html')
+    page.goto(sys.argv[1] if len(sys.argv) > 1 else 'http://localhost:8000/')
     cards = page.locator('#posts-grid .post-card')
     rows = page.locator('#post-rows tr')
     expect(cards).to_have_count(4)

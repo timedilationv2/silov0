@@ -1,13 +1,18 @@
-# SiloV0 documentation workspace
+# SiloV0: portfolio and documentation workspace
 
-A working browser-local Markdown workspace for technical documentation. Create,
+The original portfolio, interactive sample library, case study, and API reference
+remain on the homepage. **Workspace** in the navigation opens an additional
+browser-local Markdown tool at [workspace.html](workspace.html).
+
+The workspace supports technical documentation. Create,
 edit, organize, preview, review, reopen, and export documents without an account,
 backend server, paid API, or AI key. The workspace does not transmit document
 content. It uses IndexedDB on the current browser origin, not the GitHub repository.
 
 ## Start using it
 
-The configured GitHub Pages address is <https://timedilationv2.github.io/silov0/>.
+Portfolio: <https://timedilationv2.github.io/silov0/>.
+Workspace: <https://timedilationv2.github.io/silov0/workspace.html>.
 A workspace change reaches that address only after its PR is reviewed and merged
 into `main` and the Pages build completes. Development branches are not published.
 
@@ -17,7 +22,8 @@ To run this branch locally, from the repository root:
 python3 -m http.server 8000 --bind 127.0.0.1
 ```
 
-Open <http://localhost:8000/>. No npm installation or build is required to use the
+Open <http://localhost:8000/> for the existing portfolio, or
+<http://localhost:8000/workspace.html> for the additional workspace. No npm installation or build is required to use the
 site: its two browser libraries are bundled locally in `assets/vendor/`. Use HTTP or
 HTTPS, not a `file://` URL. Keep real credentials outside the served directory.
 
@@ -88,8 +94,9 @@ shared origin; an isolated custom domain is a future deployment option.
 
 ## Examples / Learn
 
-[learn.html](learn.html) preserves the previous portfolio, searchable sample demo,
-architecture explanation, API reference, and case study. [samples.html](samples.html)
+[index.html](index.html) retains the original portfolio, searchable sample demo,
+architecture explanation, API reference, and case study. `learn.html` remains a
+compatibility alias for the same page. [samples.html](samples.html)
 contains all four original writing samples. The Learn demo still reads
 `posts/posts.json` directly; those checked-in examples are separate from authored
 workspace documents. The workspace never writes to that file or calls Express.
@@ -115,8 +122,8 @@ python3 -m pip install playwright
 python3 -m playwright install chromium
 python3 tests/workspace_browser.py
 # With the static server running:
-python3 tests/demo_smoke.py http://localhost:8000/learn.html
-python3 tests/security_browser.py http://localhost:8000/learn.html
+python3 tests/demo_smoke.py http://localhost:8000/
+python3 tests/security_browser.py http://localhost:8000/
 ```
 
 The workspace suite starts its own loopback HTTP server and tests under `/silov0/`,
@@ -215,3 +222,12 @@ modules and local vendor files are static assets using relative paths that work
 under `/silov0/`. No writable server is deployed. There is no service worker or
 promised offline installation; saved documents survive restarts, but reopening
 the app itself requires its static assets to be available.
+
+
+### Workspace URL and existing documents
+
+The workspace is an additive feature at `workspace.html`, not a replacement for
+the portfolio homepage. Moving its HTML entry point does not change the browser
+origin, IndexedDB database name, document IDs, or preferences: documents created
+with the earlier homepage workspace remain available at the new URL. No export
+or migration is needed. No private document content is changed by this routing fix.
