@@ -8,3 +8,7 @@ exclude:
   - readme.txt
   - .env.example
   - .gitignore
+  - node_modules
+  - package.json
+  - package-lock.json
+  - scripts/vendor.mjs

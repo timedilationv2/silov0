@@ -119,3 +119,38 @@ Modified: `.gitignore`, `README.md`, `index.html`, `scripts/app.js`,
 
 Added: `.env.example`, `SECURITY.md`, `backend/test/security.test.js`,
 `tests/security_browser.py`.
+
+## Browser-local workspace (separate from the example-post API)
+
+The product homepage stores authored documents only in IndexedDB. No API adapter,
+telemetry, CDN asset, or AI service receives them. The old static demonstration
+and API documentation are retained at learn.html; the Express implementation and
+its authentication, CORS, headers, limits and locked atomic writes are unchanged.
+
+Workspace protections:
+
+- Marked and DOMPurify are locally bundled with locked dependency versions and
+  licenses. Raw HTML is displayed literally, image requests are omitted, and
+  sanitization uses a small element/attribute allowlist. Link protocols are checked
+  separately. The title, sidebar, findings and messages use textContent.
+- Root CSP blocks network connections and remote images, active embedded content,
+  base URLs and form submissions. HTML downloads contain sanitized content and
+  their own restrictive CSP. Markdown downloads contain raw author source; other
+  renderers must apply their own XSS protections.
+- IndexedDB saves check revisions atomically. Stale writers cannot silently
+  overwrite newer data. Save failures keep the in-memory draft and expose retry,
+  copy and recovery-download controls. Navigation will not discard a failed save.
+- Import sizes/types and backup schemas are validated. Restore is confirmed,
+  non-destructive, and atomic. Existing documents are never overwritten; copies
+  receive fresh IDs and collision-safe titles. Downloads contain plaintext user
+  content and should be handled as private data by the user.
+- No real authored documents, backups, private browser profiles or credentials
+  belong in Git. Browser tests use isolated temporary profiles and synthetic data.
+
+Limits: IndexedDB is neither encryption nor a backup service. Browser resets,
+eviction, profile/device loss, and forced kills before a save completes can lose
+work. Backups are explicit user downloads. Pages project sites share an origin;
+other scripts on that origin have access to the same browser storage. Use a
+separate origin/custom domain for stronger isolation and avoid storing secrets.
+There is no multi-user access control, synchronization, offline installation,
+AI processing or factual verification. Native leave warnings are best effort.
