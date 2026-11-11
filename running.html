@@ -22,167 +22,204 @@
       </nav>
       <button id="theme" type="button" aria-label="Switch theme">Theme</button>
     </header>
-    <main id="main" class="content" tabindex="-1">
-      <p class="breadcrumb">
-        <a href="documentation.html">Documentation</a> / Running the repository
-      </p>
-      <h1>Running the repository</h1>
-      <nav class="page-index" aria-label="On this page">
-        <a href="#setup">Setup</a><a href="#structure">Structure</a
-        ><a href="#storage">Architecture and storage</a
-        ><a href="#tests">Tests</a>
-      </nav>
-      <section id="setup">
-        <h2>Setup</h2>
-        <pre><code>git clone https://github.com/timedilationv2/silov0.git
+    <div class="docs-layout">
+      <aside class="docs-sidebar" aria-label="Documentation navigation">
+        <details class="docs-navigation" open>
+          <summary>Browse documentation</summary>
+          <nav aria-label="Documentation topics">
+            <p class="nav-group">Start here</p>
+            <a href="index.html">Overview</a>
+            <a href="documentation.html">Documentation hub</a>
+            <p class="nav-group">Writing workspace</p>
+            <a href="using-workspace.html">Workspace guide</a>
+            <a href="using-workspace.html#formats">Editors and formats</a>
+            <a href="using-workspace.html#backups">Export and recovery</a>
+            <p class="nav-group">Writing examples</p>
+            <a href="samples.html">All writing examples</a>
+            <a href="samples.html#local-preview">Tutorial</a>
+            <a href="samples.html#filter-posts">API reference</a>
+            <a href="samples.html#unauthorized-write">Troubleshooting</a>
+            <a href="samples.html#markdown-export">How-to guide</a>
+            <p class="nav-group">Development</p>
+            <a href="running.html" aria-current="page">Run locally</a>
+            <a href="api.html">Local API</a>
+            <a href="history.html">Project background</a>
+          </nav>
+        </details>
+        <a class="rail-workspace" href="workspace.html">Open workspace</a>
+      </aside>
+      <main id="main" class="content" tabindex="-1">
+        <p class="breadcrumb">
+          <a href="documentation.html">Documentation</a> / Running the
+          repository
+        </p>
+        <h1>Running the repository</h1>
+        <nav class="page-index" aria-label="On this page">
+          <a href="#setup">Setup</a><a href="#structure">Structure</a
+          ><a href="#storage">Architecture and storage</a
+          ><a href="#tests">Tests</a>
+        </nav>
+        <section id="setup">
+          <h2>Setup</h2>
+          <pre><code>git clone https://github.com/timedilationv2/silov0.git
 cd silov0
 python3 -m http.server 8000 --bind 127.0.0.1</code></pre>
-        <p>
-          Open <code>http://localhost:8000/</code>. Python 3 is enough to serve
-          the site; browser libraries are bundled. No build, account, API key,
-          or running backend is needed.
-        </p>
-        <p>
-          Use HTTP rather than opening a file directly. Keep credentials outside
-          the served directory. Stop the server with Ctrl+C. The
-          <a href="api.html">local API</a> is optional and is not part of GitHub
-          Pages.
-        </p>
-      </section>
-      <section id="structure">
-        <h2>Repository structure</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Path</th>
-              <th>Purpose</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><code>workspace.html</code>, <code>workspace.css</code></td>
-              <td>Writing interface</td>
-            </tr>
-            <tr>
-              <td><code>scripts/workspace/</code></td>
-              <td>Editor, storage, templates, rendering, and review</td>
-            </tr>
-            <tr>
-              <td>
-                <code>documentation.html</code>, <code>samples.html</code>
-              </td>
-              <td>Documentation hub and full writing examples</td>
-            </tr>
-            <tr>
-              <td>
-                <code>posts/posts.json</code>, <code>scripts/app.js</code>
-              </td>
-              <td>Example metadata and browser search</td>
-            </tr>
-            <tr>
-              <td><code>backend/src/</code></td>
-              <td>Optional Express API and JSON storage helpers</td>
-            </tr>
-            <tr>
-              <td><code>tests/</code>, <code>backend/test/</code></td>
-              <td>Model, browser, and API tests</td>
-            </tr>
-            <tr>
-              <td><code>docs/</code>, <code>SECURITY.md</code></td>
-              <td>Technical notes and security boundaries</td>
-            </tr>
-          </tbody>
-        </table>
-        <p>
-          <code>index.html</code> is the overview;
-          <code>using-workspace.html</code>, <code>running.html</code>, and
-          <code>api.html</code> are operating guides.
-          <code>learn.html</code> remains an alias for the documentation hub.
-          <code>assets/vendor/</code> holds Marked and DOMPurify;
-          <code>scripts/vendor.mjs</code> refreshes them only when intentionally
-          updating dependencies.
-        </p>
-      </section>
-      <section id="storage">
-        <h2>Architecture and data storage</h2>
-        <figure
-          class="component-diagram"
-          aria-label="Three separate component paths"
-        >
-          <div>
-            <strong>Writing workspace</strong
-            ><span>Editor ↔ this browser’s document library → exports</span>
+          <p>
+            Open <code>http://localhost:8000/</code>. Python 3 is enough to
+            serve the site; browser libraries are bundled. No build, account,
+            API key, or running backend is needed.
+          </p>
+          <p>
+            Use HTTP rather than opening a file directly. Keep credentials
+            outside the served directory. Stop the server with Ctrl+C. The
+            <a href="api.html">local API</a> is optional and is not part of
+            GitHub Pages.
+          </p>
+        </section>
+        <section id="structure">
+          <h2>Repository structure</h2>
+          <div
+            class="table-wrapper"
+            role="region"
+            aria-label="Reference table"
+            tabindex="0"
+          >
+            <table>
+              <thead>
+                <tr>
+                  <th>Path</th>
+                  <th>Purpose</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <code>workspace.html</code>, <code>workspace.css</code>
+                  </td>
+                  <td>Writing interface</td>
+                </tr>
+                <tr>
+                  <td><code>scripts/workspace/</code></td>
+                  <td>Editor, storage, templates, rendering, and review</td>
+                </tr>
+                <tr>
+                  <td>
+                    <code>documentation.html</code>, <code>samples.html</code>
+                  </td>
+                  <td>Documentation hub and full writing examples</td>
+                </tr>
+                <tr>
+                  <td>
+                    <code>posts/posts.json</code>, <code>scripts/app.js</code>
+                  </td>
+                  <td>Example metadata and browser search</td>
+                </tr>
+                <tr>
+                  <td><code>backend/src/</code></td>
+                  <td>Optional Express API and JSON storage helpers</td>
+                </tr>
+                <tr>
+                  <td><code>tests/</code>, <code>backend/test/</code></td>
+                  <td>Model, browser, and API tests</td>
+                </tr>
+                <tr>
+                  <td><code>docs/</code>, <code>SECURITY.md</code></td>
+                  <td>Technical notes and security boundaries</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-          <div>
-            <strong>Documentation examples</strong
-            ><span>Bundled JSON → search → full samples in samples.html</span>
-          </div>
-          <div>
-            <strong>Optional local API</strong
-            ><span
-              >Local client ↔ Express ↔ posts/posts.json in your
-              checkout</span
-            >
-          </div>
-          <figcaption>
-            The API does not power the editor. Workspace documents do not become
-            published examples automatically.
-          </figcaption>
-        </figure>
-        <p>
-          The workspace controller in
-          <code>scripts/workspace/app.mjs</code> composes the model, storage,
-          templates, editor adapters, Markdown rendering, review, and XML/DITA
-          validation modules. Tiptap/ProseMirror powers visual editing;
-          CodeMirror powers source editing. Marked parses Markdown; DOMPurify
-          sanitizes rendering and HTML imports. Local vendor files avoid
-          third-party requests. The workspace policy permits same-origin
-          assets/workers, WASM, and data-URL images while blocking remote images
-          and active embeds.
-        </p>
-        <p>
-          Documents use the existing IndexedDB database
-          <code>silov0-workspace</code>, version 2, object store
-          <code>documents</code>, with originals archived in
-          <code>legacy-v1</code>. Records contain <code>id</code>,
-          <code>title</code>, <code>content</code>, <code>collection</code>,
-          creation/modification timestamps, <code>revision</code>, format,
-          schema version, and optional schema/template/original-source metadata.
-          Theme, view, and last selected document use optional localStorage
-          preferences. The v2 upgrade archives original v1 records without
-          rewriting them; old documents open as Markdown. Navigation uses the
-          same database and origin. See
-          <a href="using-workspace.html#formats"
-            >editor formats and validation limits</a
-          >.
-        </p>
-        <p>
-          Autosave is debounced by 450 ms. Transaction completion marks a save
-          successful; revision checks reject stale saves from another tab. A
-          failed restore transaction rolls back its batch. See
-          <a href="using-workspace.html#backups">backup and recovery guidance</a
-          >.
-        </p>
-        <p>
-          The documentation search fetches
-          <code>posts/posts.json</code> directly. Entries describe and link to
-          full articles in <code>samples.html</code>; a JSON entry is not an
-          article body. Express reads and adds entries in that file in a local
-          checkout using locked writes and atomic replacement. It caches reads;
-          restart it after manual file edits. Neither API writes nor workspace
-          edits publish anything. Source changes must be reviewed, merged, and
-          deployed separately.
-        </p>
-      </section>
-      <section id="tests">
-        <h2>Development and tests</h2>
-        <p>
-          Node 20+ is required at the root; the separate backend supports Node
-          18+. No runtime compilation step is needed. Run
-          <code>npm run vendor</code> after changing editor dependencies to
-          regenerate the checked-in browser bundle and XML validator assets.
-        </p>
-        <pre><code>npm ci
+          <p>
+            <code>index.html</code> is the overview;
+            <code>using-workspace.html</code>, <code>running.html</code>, and
+            <code>api.html</code> are operating guides.
+            <code>learn.html</code> remains an alias for the documentation hub.
+            <code>assets/vendor/</code> holds Marked and DOMPurify;
+            <code>scripts/vendor.mjs</code> refreshes them only when
+            intentionally updating dependencies.
+          </p>
+        </section>
+        <section id="storage">
+          <h2>Architecture and data storage</h2>
+          <figure
+            class="component-diagram"
+            aria-label="Three separate component paths"
+          >
+            <div>
+              <strong>Writing workspace</strong
+              ><span>Editor ↔ this browser’s document library → exports</span>
+            </div>
+            <div>
+              <strong>Documentation examples</strong
+              ><span>Bundled JSON → search → full samples in samples.html</span>
+            </div>
+            <div>
+              <strong>Optional local API</strong
+              ><span
+                >Local client ↔ Express ↔ posts/posts.json in your
+                checkout</span
+              >
+            </div>
+            <figcaption>
+              The API does not power the editor. Workspace documents do not
+              become published examples automatically.
+            </figcaption>
+          </figure>
+          <p>
+            The workspace controller in
+            <code>scripts/workspace/app.mjs</code> composes the model, storage,
+            templates, editor adapters, Markdown rendering, review, and XML/DITA
+            validation modules. Tiptap/ProseMirror powers visual editing;
+            CodeMirror powers source editing. Marked parses Markdown; DOMPurify
+            sanitizes rendering and HTML imports. Local vendor files avoid
+            third-party requests. The workspace policy permits same-origin
+            assets/workers, WASM, and data-URL images while blocking remote
+            images and active embeds.
+          </p>
+          <p>
+            Documents use the existing IndexedDB database
+            <code>silov0-workspace</code>, version 2, object store
+            <code>documents</code>, with originals archived in
+            <code>legacy-v1</code>. Records contain <code>id</code>,
+            <code>title</code>, <code>content</code>, <code>collection</code>,
+            creation/modification timestamps, <code>revision</code>, format,
+            schema version, and optional schema/template/original-source
+            metadata. Theme, view, and last selected document use optional
+            localStorage preferences. The v2 upgrade archives original v1
+            records without rewriting them; old documents open as Markdown.
+            Navigation uses the same database and origin. See
+            <a href="using-workspace.html#formats"
+              >editor formats and validation limits</a
+            >.
+          </p>
+          <p>
+            Autosave is debounced by 450 ms. Transaction completion marks a save
+            successful; revision checks reject stale saves from another tab. A
+            failed restore transaction rolls back its batch. See
+            <a href="using-workspace.html#backups"
+              >backup and recovery guidance</a
+            >.
+          </p>
+          <p>
+            The documentation search fetches
+            <code>posts/posts.json</code> directly. Entries describe and link to
+            full articles in <code>samples.html</code>; a JSON entry is not an
+            article body. Express reads and adds entries in that file in a local
+            checkout using locked writes and atomic replacement. It caches
+            reads; restart it after manual file edits. Neither API writes nor
+            workspace edits publish anything. Source changes must be reviewed,
+            merged, and deployed separately.
+          </p>
+        </section>
+        <section id="tests">
+          <h2>Development and tests</h2>
+          <p>
+            Node 20+ is required at the root; the separate backend supports Node
+            18+. No runtime compilation step is needed. Run
+            <code>npm run vendor</code> after changing editor dependencies to
+            regenerate the checked-in browser bundle and XML validator assets.
+          </p>
+          <pre><code>npm ci
 npm test
 cd backend
 npm ci
@@ -195,32 +232,34 @@ python3 tests/workspace_browser.py
 python3 tests/demo_smoke.py http://localhost:8000/
 python3 tests/security_browser.py http://localhost:8000/
 python3 tests/site_browser.py http://localhost:8000/</code></pre>
-        <p>
-          Model tests validate templates, backups, and review findings. Backend
-          tests cover API responses, authentication, validation, concurrency,
-          and storage failures. Browser tests cover persistence, editing,
-          recovery, exports, sample search, navigation, responsive layouts, and
-          XSS regressions. Chromium needs its platform libraries. Use
-          <code>SILOV_CHROMIUM_EXECUTABLE=/usr/bin/chromium</code> with the
-          browser tests to select an already installed system browser.
-        </p>
-        <p>
-          Further source notes:
-          <a
-            href="https://github.com/timedilationv2/silov0/blob/main/docs/ARCHITECTURE.md"
-            >architecture</a
-          >,
-          <a
-            href="https://github.com/timedilationv2/silov0/blob/main/docs/TESTING.md"
-            >testing</a
-          >, and
-          <a
-            href="https://github.com/timedilationv2/silov0/blob/main/SECURITY.md"
-            >security</a
-          >.
-        </p>
-      </section>
-    </main>
+          <p>
+            Model tests validate templates, backups, and review findings.
+            Backend tests cover API responses, authentication, validation,
+            concurrency, and storage failures. Browser tests cover persistence,
+            editing, recovery, exports, sample search, navigation, responsive
+            layouts, and XSS regressions. Chromium needs its platform libraries.
+            Use
+            <code>SILOV_CHROMIUM_EXECUTABLE=/usr/bin/chromium</code> with the
+            browser tests to select an already installed system browser.
+          </p>
+          <p>
+            Further source notes:
+            <a
+              href="https://github.com/timedilationv2/silov0/blob/main/docs/ARCHITECTURE.md"
+              >architecture</a
+            >,
+            <a
+              href="https://github.com/timedilationv2/silov0/blob/main/docs/TESTING.md"
+              >testing</a
+            >, and
+            <a
+              href="https://github.com/timedilationv2/silov0/blob/main/SECURITY.md"
+              >security</a
+            >.
+          </p>
+        </section>
+      </main>
+    </div>
     <footer class="site-footer">
       <span>SiloV · Writing workspace and documentation</span
       ><a href="https://github.com/timedilationv2/silov0">Source on GitHub</a>

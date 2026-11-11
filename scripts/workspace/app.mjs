@@ -962,3 +962,17 @@ setTheme(
 setView(preferences.get("view", "split"));
 panel();
 init();
+
+// Dismiss document options predictably without changing editor selection.
+const documentMenu = $("document-menu");
+document.addEventListener("pointerdown", (event) => {
+  if (documentMenu.open && !documentMenu.contains(event.target))
+    documentMenu.open = false;
+});
+documentMenu.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    documentMenu.open = false;
+    documentMenu.querySelector("summary").focus();
+    event.stopPropagation();
+  }
+});

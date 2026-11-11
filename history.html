@@ -22,34 +22,63 @@
       </nav>
       <button id="theme" type="button" aria-label="Switch theme">Theme</button>
     </header>
-    <main id="main" class="content" tabindex="-1">
-      <p class="breadcrumb">
-        <a href="documentation.html">Documentation</a> / Background
-      </p>
-      <h1>Development history</h1>
-      <p>
-        This repository began as a small content-feed and local API exercise. A
-        later portfolio page added four task-based writing examples, browser
-        search, and a digest export. The browser-local Markdown workspace
-        introduced a separate document library with preview, review, and
-        backups.
-      </p>
-      <p>
-        The current structure gives each component a clear entry point: Overview
-        explains the project, Workspace supports writing, and Documentation
-        separates operating guides from finished writing samples. The editor
-        continues to use its existing storage schema and stable URL.
-      </p>
-      <h2>Tradeoffs</h2>
-      <p>
-        Plain HTML, CSS, and JavaScript keep the site inspectable and compatible
-        with GitHub Pages. Browser-local storage avoids a hosted account service
-        but provides no synchronization or automatic backup. A flat JSON
-        collection suits a small library; it supplies neither editorial roles
-        nor automatic publication. Review findings check structure, not factual
-        correctness. No user-research or business-outcome claims are made.
-      </p>
-    </main>
+    <div class="docs-layout">
+      <aside class="docs-sidebar" aria-label="Documentation navigation">
+        <details class="docs-navigation" open>
+          <summary>Browse documentation</summary>
+          <nav aria-label="Documentation topics">
+            <p class="nav-group">Start here</p>
+            <a href="index.html">Overview</a>
+            <a href="documentation.html">Documentation hub</a>
+            <p class="nav-group">Writing workspace</p>
+            <a href="using-workspace.html">Workspace guide</a>
+            <a href="using-workspace.html#formats">Editors and formats</a>
+            <a href="using-workspace.html#backups">Export and recovery</a>
+            <p class="nav-group">Writing examples</p>
+            <a href="samples.html">All writing examples</a>
+            <a href="samples.html#local-preview">Tutorial</a>
+            <a href="samples.html#filter-posts">API reference</a>
+            <a href="samples.html#unauthorized-write">Troubleshooting</a>
+            <a href="samples.html#markdown-export">How-to guide</a>
+            <p class="nav-group">Development</p>
+            <a href="running.html">Run locally</a>
+            <a href="api.html">Local API</a>
+            <a href="history.html" aria-current="page">Project background</a>
+          </nav>
+        </details>
+        <a class="rail-workspace" href="workspace.html">Open workspace</a>
+      </aside>
+      <main id="main" class="content" tabindex="-1">
+        <p class="breadcrumb">
+          <a href="documentation.html">Documentation</a> / Background
+        </p>
+        <h1>Development history</h1>
+        <p>
+          This repository began as a small content-feed and local API exercise.
+          A later portfolio page added four task-based writing examples, browser
+          search, and a digest export. The browser-local Markdown workspace
+          introduced a separate document library with preview, review, and
+          backups.
+        </p>
+        <p>
+          The current structure gives each component a clear entry point:
+          Overview explains the project, Workspace supports writing, and
+          Documentation separates operating guides from finished writing
+          samples. The editor continues to use its existing storage schema and
+          stable URL.
+        </p>
+        <h2>Tradeoffs</h2>
+        <p>
+          Plain HTML, CSS, and JavaScript keep the site inspectable and
+          compatible with GitHub Pages. Browser-local storage avoids a hosted
+          account service but provides no synchronization or automatic backup. A
+          flat JSON collection suits a small library; it supplies neither
+          editorial roles nor automatic publication. Review findings check
+          structure, not factual correctness. No user-research or
+          business-outcome claims are made.
+        </p>
+      </main>
+    </div>
     <footer class="site-footer">
       <span>SiloV · Writing workspace and documentation</span
       ><a href="https://github.com/timedilationv2/silov0">Source on GitHub</a>

@@ -52,3 +52,14 @@ function followLegacyLink() {
 }
 window.addEventListener("hashchange", followLegacyLink);
 followLegacyLink();
+
+// Keep topic navigation available on small screens without displacing the article.
+const topicNavigation = document.querySelector(".docs-navigation");
+if (topicNavigation) {
+  const narrow = matchMedia("(max-width: 760px)");
+  const sizeNavigation = () => {
+    topicNavigation.open = !narrow.matches;
+  };
+  sizeNavigation();
+  narrow.addEventListener("change", sizeNavigation);
+}

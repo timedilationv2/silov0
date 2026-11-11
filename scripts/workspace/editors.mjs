@@ -334,10 +334,10 @@ export function mountEditor(host, doc, onChange, onSelection) {
             },
             ".cm-cursor": { borderLeftColor: "var(--text)" },
             ".cm-selectionBackground": {
-              backgroundColor: "#78a69455!important",
+              backgroundColor: "var(--accent-soft)!important",
             },
             "&.cm-focused .cm-selectionBackground": {
-              backgroundColor: "#78a69466",
+              backgroundColor: "var(--accent-soft)",
             },
             ".cm-panels": { background: "var(--raised)", color: "var(--text)" },
             ".cm-textfield": {

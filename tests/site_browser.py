@@ -64,6 +64,17 @@ with sync_playwright() as p:
     page.get_by_role('navigation', name='Main navigation').get_by_text('Workspace', exact=True).click()
     expect(page.locator('html')).to_have_attribute('data-theme', theme)
     page.reload(); expect(page.locator('html')).to_have_attribute('data-theme', theme)
+    # Topic navigation remains reachable on mobile and returns on desktop.
+    page.goto(urljoin(base, 'using-workspace.html'))
+    topic_menu = page.locator('.docs-navigation')
+    page.set_viewport_size({'width':390,'height':844})
+    expect(topic_menu).not_to_have_attribute('open', '')
+    topic_menu.locator('summary').click()
+    expect(page.get_by_role('navigation', name='Documentation topics').get_by_text('Export and recovery', exact=True)).to_be_visible()
+    page.get_by_role('navigation', name='Documentation topics').get_by_text('Export and recovery', exact=True).click()
+    expect(page).to_have_url(urljoin(base, 'using-workspace.html#backups'))
+    page.set_viewport_size({'width':1440,'height':1000})
+    expect(topic_menu).to_have_attribute('open', '')
     # Capture both themes and mobile layouts using synthetic data only.
     page.evaluate("localStorage.setItem('silov0-theme','light')")
     page.goto(urljoin(base, 'documentation.html'))
@@ -80,10 +91,32 @@ with sync_playwright() as p:
     page.click('#create')
     expect(page.locator('#save-status')).to_have_text('Saved locally')
     page.set_viewport_size({'width':1440,'height':1000})
+    # Opening options preserves the writing canvas position; Escape returns focus.
+    editor_top = page.locator('.authoring-layout').bounding_box()['y']
+    page.locator('#document-menu summary').click()
+    expect(page.locator('#doc-collection')).to_be_visible()
+    assert page.locator('.authoring-layout').bounding_box()['y'] == editor_top
+    page.locator('#doc-collection').focus()
+    page.keyboard.press('Escape')
+    expect(page.locator('#document-menu summary')).to_be_focused()
+    expect(page.locator('#doc-collection')).to_be_hidden()
+    page.locator('#document-menu summary').click()
+    page.locator('#doc-title').click()
+    expect(page.locator('#doc-collection')).to_be_hidden()
     page.locator('.tiptap').focus()
     page.screenshot(path=str(artifacts/'workspace-desktop.png'), full_page=True)
     page.click('#theme')
     page.screenshot(path=str(artifacts/'workspace-dark.png'), full_page=True)
+    # Split view stacks on tablets rather than squeezing two narrow text columns.
+    page.click('#new-document')
+    page.select_option('#new-format', 'markdown')
+    page.select_option('#template', 'sop')
+    page.click('#create')
+    page.set_viewport_size({'width':768,'height':1000})
+    source = page.locator('#authoring-pane').bounding_box()
+    preview = page.locator('#preview-pane').bounding_box()
+    assert source['width'] > 450 and preview['y'] >= source['y'] + source['height']
+    page.screenshot(path=str(artifacts/'workspace-tablet.png'), full_page=True)
     page.set_viewport_size({'width':390,'height':844})
     page.screenshot(path=str(artifacts/'workspace-mobile.png'), full_page=True)
     assert not errors, errors

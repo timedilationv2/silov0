@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="workspace.css" />
     <script type="module" src="scripts/workspace/app.mjs"></script>
   </head>
-  <body>
+  <body class="workspace-app">
     <a class="skip-link" href="#workspace">Skip to editor</a>
     <header class="site-header">
       <button
@@ -37,8 +37,9 @@
       <button id="theme">Theme</button>
     </header>
     <div class="privacy-note">
-      <strong>Saved in this browser.</strong> No sync, automatic backup, or
-      publishing. Download backups to keep your work.
+      <strong>Local document library</strong
+      ><span>Saved in this browser. No sync or automatic publishing.</span>
+      <a href="using-workspace.html#backups">Backup and recovery</a>
     </div>
     <div id="notice" role="status" aria-live="polite"></div>
     <div id="error" class="error-banner" role="alert" hidden>
@@ -57,7 +58,12 @@
         </div>
         <button id="new-document" class="primary" disabled>New document</button
         ><label for="search-docs">Search titles</label
-        ><input id="search-docs" type="search" autocomplete="off" />
+        ><input
+          id="search-docs"
+          type="search"
+          autocomplete="off"
+          placeholder="Find a document…"
+        />
         <div id="document-list" class="document-list">
           Opening document library…
         </div>
@@ -77,11 +83,34 @@
       </aside>
       <main id="workspace" class="workspace" tabindex="-1" data-view="split">
         <section id="welcome" class="welcome">
-          <h1>Write technical documentation</h1>
+          <p class="eyebrow">Writing workspace</p>
+          <h1>Create your first document</h1>
           <p>
-            Choose a visual document, Markdown, XML, or a DITA topic. Start
-            blank or use a worked example.
+            Start with a blank document or adapt a worked template. Choose the
+            format that fits your authoring workflow.
           </p>
+          <dl class="format-guide">
+            <div>
+              <dt>Visual HTML</dt>
+              <dd>Formatted writing with tables, links, and local images.</dd>
+            </div>
+            <div>
+              <dt>Markdown</dt>
+              <dd>Source editing with a rendered preview.</dd>
+            </div>
+            <div>
+              <dt>XML</dt>
+              <dd>
+                Structured source with well-formedness and supported XSD checks.
+              </dd>
+            </div>
+            <div>
+              <dt>DITA</dt>
+              <dd>
+                Concept, task, and reference topics in the supported 1.3 subset.
+              </dd>
+            </div>
+          </dl>
           <button id="welcome-create" class="primary" disabled>
             Create a document
           </button>
@@ -109,8 +138,14 @@
             </div>
           </div>
           <div class="document-toolbar">
-            <button id="undo">Undo</button><button id="redo">Redo</button
-            ><button id="find">Find / replace</button>
+            <div
+              class="toolbar-group"
+              role="group"
+              aria-label="Edit history and search"
+            >
+              <button id="undo">Undo</button><button id="redo">Redo</button
+              ><button id="find">Find / replace</button>
+            </div>
             <div
               id="view-controls"
               class="view-switch"
@@ -123,25 +158,28 @@
             </div>
             <button
               id="review-toggle"
+              title="Show or hide outline, guidance, and validation"
               aria-controls="inspector"
               aria-expanded="true"
             >
-              Outline / guidance / validation</button
+              Document panel</button
             ><button id="export-md">Download document</button>
             <details id="document-menu" class="secondary-menu">
               <summary>Document options</summary>
-              <label for="doc-collection"
-                >Collection<input
-                  id="doc-collection"
-                  maxlength="80"
-                  list="collections" /><datalist
-                  id="collections"
-                ></datalist></label
-              ><button id="copy">Copy source</button
-              ><button id="export-html">Download reading HTML</button
-              ><button id="export-original" hidden>
-                Download original imported HTML</button
-              ><button id="delete" class="danger">Delete document…</button>
+              <div class="menu-content">
+                <label for="doc-collection"
+                  >Collection<input
+                    id="doc-collection"
+                    maxlength="80"
+                    list="collections" /><datalist
+                    id="collections"
+                  ></datalist></label
+                ><button id="copy">Copy source</button
+                ><button id="export-html">Download reading HTML</button
+                ><button id="export-original" hidden>
+                  Download original imported HTML</button
+                ><button id="delete" class="danger">Delete document…</button>
+              </div>
             </details>
           </div>
           <div
@@ -230,6 +268,7 @@
                 class="editor-pane"
                 aria-label="Authoring area"
               >
+                <div class="pane-heading">Editor</div>
                 <div id="editor-host"></div>
               </section>
               <section
@@ -237,7 +276,7 @@
                 class="preview-pane"
                 aria-label="Markdown rendered preview"
               >
-                <h2>Rendered preview</h2>
+                <h2 class="pane-heading">Rendered preview</h2>
                 <article
                   id="preview"
                   class="markdown-body"

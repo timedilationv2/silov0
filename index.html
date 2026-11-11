@@ -23,133 +23,170 @@
       </nav>
       <button id="theme" type="button" aria-label="Switch theme">Theme</button>
     </header>
-    <main id="main" class="content" tabindex="-1">
-      <section id="overview" class="intro">
-        <h1>Writing workspace and documentation</h1>
-        <p class="lead">
-          SiloV combines a browser-based technical-documentation editor, a
-          searchable collection of documentation examples, and a local API for
-          managing the sample collection.
-        </p>
-        <div class="actions">
-          <a class="button primary" href="workspace.html">Open workspace</a
-          ><a class="button" href="documentation.html">Read documentation</a>
-        </div>
-      </section>
-      <section>
-        <h2>Three components</h2>
-        <dl class="component-list">
-          <dt>Writing workspace</dt>
-          <dd>
-            Author visual HTML, Markdown, XML, and scoped DITA topics; check and
-            export documents. Documents are stored in this browser.
-          </dd>
-          <dt>Documentation examples</dt>
-          <dd>
-            Finished writing samples bundled with the site: a tutorial, API
-            reference, troubleshooting guide, and how-to.
-          </dd>
-          <dt>Optional local API</dt>
-          <dd>
-            Read and add entries to the sample collection’s JSON file in a local
-            checkout. It does not edit the full sample articles or publish
-            changes.
-          </dd>
-        </dl>
-        <figure
-          class="component-diagram"
-          aria-label="Three separate component paths"
-        >
-          <div>
-            <strong>Writing workspace</strong
-            ><span>Editor ↔ this browser’s document library → exports</span>
+    <div class="docs-layout">
+      <aside class="docs-sidebar" aria-label="Documentation navigation">
+        <details class="docs-navigation" open>
+          <summary>Browse documentation</summary>
+          <nav aria-label="Documentation topics">
+            <p class="nav-group">Start here</p>
+            <a href="index.html" aria-current="page">Overview</a>
+            <a href="documentation.html">Documentation hub</a>
+            <p class="nav-group">Writing workspace</p>
+            <a href="using-workspace.html">Workspace guide</a>
+            <a href="using-workspace.html#formats">Editors and formats</a>
+            <a href="using-workspace.html#backups">Export and recovery</a>
+            <p class="nav-group">Writing examples</p>
+            <a href="samples.html">All writing examples</a>
+            <a href="samples.html#local-preview">Tutorial</a>
+            <a href="samples.html#filter-posts">API reference</a>
+            <a href="samples.html#unauthorized-write">Troubleshooting</a>
+            <a href="samples.html#markdown-export">How-to guide</a>
+            <p class="nav-group">Development</p>
+            <a href="running.html">Run locally</a>
+            <a href="api.html">Local API</a>
+            <a href="history.html">Project background</a>
+          </nav>
+        </details>
+        <a class="rail-workspace" href="workspace.html">Open workspace</a>
+      </aside>
+      <main id="main" class="content" tabindex="-1">
+        <section id="overview" class="intro">
+          <p class="eyebrow">SiloV / Overview</p>
+          <h1>A workspace for technical documentation</h1>
+          <p class="lead">
+            Create, review, and export visual HTML, Markdown, XML, and DITA
+            documents in your browser. Use the documentation for workflows,
+            format limits, and worked writing examples.
+          </p>
+          <div class="actions">
+            <a class="button primary" href="workspace.html">Open workspace</a
+            ><a class="button" href="documentation.html">Read documentation</a>
           </div>
-          <div>
-            <strong>Documentation examples</strong
-            ><span>Bundled JSON → search → full samples in samples.html</span>
+        </section>
+        <section>
+          <h2>How SiloV is organized</h2>
+          <dl class="component-list">
+            <dt>Writing workspace</dt>
+            <dd>
+              Author visual HTML, Markdown, XML, and scoped DITA topics; check
+              and export documents. Documents are stored in this browser.
+            </dd>
+            <dt>Documentation examples</dt>
+            <dd>
+              Finished writing samples bundled with the site: a tutorial, API
+              reference, troubleshooting guide, and how-to.
+            </dd>
+            <dt>Optional local API</dt>
+            <dd>
+              Read and add entries to the sample collection’s JSON file in a
+              local checkout. It does not edit the full sample articles or
+              publish changes.
+            </dd>
+          </dl>
+          <figure
+            class="component-diagram"
+            aria-label="Three separate component paths"
+          >
+            <div>
+              <strong>Writing workspace</strong
+              ><span>Editor ↔ this browser’s document library → exports</span>
+            </div>
+            <div>
+              <strong>Documentation examples</strong
+              ><span>Bundled JSON → search → full samples in samples.html</span>
+            </div>
+            <div>
+              <strong>Optional local API</strong
+              ><span
+                >Local client ↔ Express ↔ posts/posts.json in your
+                checkout</span
+              >
+            </div>
+            <figcaption>
+              The API does not power the editor. Workspace documents do not
+              become published examples automatically.
+            </figcaption>
+          </figure>
+        </section>
+        <section id="repository-map">
+          <h2>Repository map</h2>
+          <div
+            class="table-wrapper"
+            role="region"
+            aria-label="Reference table"
+            tabindex="0"
+          >
+            <table>
+              <thead>
+                <tr>
+                  <th>Path</th>
+                  <th>Purpose</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <code>workspace.html</code>, <code>workspace.css</code>
+                  </td>
+                  <td>Writing interface</td>
+                </tr>
+                <tr>
+                  <td><code>scripts/workspace/</code></td>
+                  <td>Editor, storage, templates, rendering, and review</td>
+                </tr>
+                <tr>
+                  <td>
+                    <code>documentation.html</code>, <code>samples.html</code>
+                  </td>
+                  <td>Documentation hub and full writing examples</td>
+                </tr>
+                <tr>
+                  <td>
+                    <code>posts/posts.json</code>, <code>scripts/app.js</code>
+                  </td>
+                  <td>Example metadata and browser search</td>
+                </tr>
+                <tr>
+                  <td><code>backend/src/</code></td>
+                  <td>Optional Express API and JSON storage helpers</td>
+                </tr>
+                <tr>
+                  <td><code>tests/</code>, <code>backend/test/</code></td>
+                  <td>Model, browser, and API tests</td>
+                </tr>
+                <tr>
+                  <td><code>docs/</code>, <code>SECURITY.md</code></td>
+                  <td>Technical notes and security boundaries</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-          <div>
-            <strong>Optional local API</strong
-            ><span
-              >Local client ↔ Express ↔ posts/posts.json in your
-              checkout</span
-            >
-          </div>
-          <figcaption>
-            The API does not power the editor. Workspace documents do not become
-            published examples automatically.
-          </figcaption>
-        </figure>
-      </section>
-      <section id="repository-map">
-        <h2>Repository map</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Path</th>
-              <th>Purpose</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><code>workspace.html</code>, <code>workspace.css</code></td>
-              <td>Writing interface</td>
-            </tr>
-            <tr>
-              <td><code>scripts/workspace/</code></td>
-              <td>Editor, storage, templates, rendering, and review</td>
-            </tr>
-            <tr>
-              <td>
-                <code>documentation.html</code>, <code>samples.html</code>
-              </td>
-              <td>Documentation hub and full writing examples</td>
-            </tr>
-            <tr>
-              <td>
-                <code>posts/posts.json</code>, <code>scripts/app.js</code>
-              </td>
-              <td>Example metadata and browser search</td>
-            </tr>
-            <tr>
-              <td><code>backend/src/</code></td>
-              <td>Optional Express API and JSON storage helpers</td>
-            </tr>
-            <tr>
-              <td><code>tests/</code>, <code>backend/test/</code></td>
-              <td>Model, browser, and API tests</td>
-            </tr>
-            <tr>
-              <td><code>docs/</code>, <code>SECURITY.md</code></td>
-              <td>Technical notes and security boundaries</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-      <section>
-        <h2>Run locally</h2>
-        <pre><code>git clone https://github.com/timedilationv2/silov0.git
+        </section>
+        <section>
+          <h2>Run locally</h2>
+          <pre><code>git clone https://github.com/timedilationv2/silov0.git
 cd silov0
 python3 -m http.server 8000 --bind 127.0.0.1</code></pre>
-        <p>
-          Open <code>http://localhost:8000/</code>. Python 3 is enough to serve
-          the site; browser libraries are bundled. No build, account, API key,
-          or running backend is needed.
-        </p>
-        <p>
-          <a href="running.html">Setup, tests, and architecture</a> ·
-          <a href="api.html">Local API guide</a> ·
-          <a href="https://github.com/timedilationv2/silov0"
-            >Browse the source</a
-          >
-          ·
-          <a
-            href="https://github.com/timedilationv2/silov0/blob/main/SECURITY.md"
-            >Security notes</a
-          >
-        </p>
-      </section>
-    </main>
+          <p>
+            Open <code>http://localhost:8000/</code>. Python 3 is enough to
+            serve the site; browser libraries are bundled. No build, account,
+            API key, or running backend is needed.
+          </p>
+          <p>
+            <a href="running.html">Setup, tests, and architecture</a> ·
+            <a href="api.html">Local API guide</a> ·
+            <a href="https://github.com/timedilationv2/silov0"
+              >Browse the source</a
+            >
+            ·
+            <a
+              href="https://github.com/timedilationv2/silov0/blob/main/SECURITY.md"
+              >Security notes</a
+            >
+          </p>
+        </section>
+      </main>
+    </div>
     <footer class="site-footer">
       <span>SiloV · Writing workspace and documentation</span
       ><a href="https://github.com/timedilationv2/silov0">Source on GitHub</a>
